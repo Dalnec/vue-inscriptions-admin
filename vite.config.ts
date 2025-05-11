@@ -11,7 +11,7 @@ import AutoImport from "unplugin-auto-import/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-    base: '/admin/',
+    base: '/administrador/',
     plugins: [
         vue(),
         vueDevTools(),

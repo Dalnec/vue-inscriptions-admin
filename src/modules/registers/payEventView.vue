@@ -2,7 +2,7 @@
 
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
 import type { FileUploadSelectEvent } from "primevue";
 import FormItem from "@/components/formItem.vue";
@@ -124,6 +124,13 @@ const onValueSelectPayment = (id: number) => {
     if ( !found) return;
     dataForViewPayment.value = found;
 };
+
+onMounted(() => {
+    const dataRate = storeRate().rate.find(rt => rt.selected);
+    if (dataRate) {
+        onSelected({ idRate: dataRate.id, priceRate: dataRate.price, nameRate: dataRate.description });
+    }
+});
 
 </script>
 

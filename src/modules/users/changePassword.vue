@@ -14,12 +14,12 @@ const toast = useToast();
 const schemaValidate = ref(yup.object({
     password: yup.string().trim().when("$isNew", {
         is: () => props.userID,
-        then: (schema) => schema.required("Ingrese su contraseña").min(8, "Ingresa al menos 8 caracteres"),
+        then: (schema) => schema.required("Ingrese su contraseña").min(4, "Ingresa al menos 4 caracteres"),
         otherwise: (schema) => schema.notRequired()
     }).label("Contraseña"),
     passwordConfirm: yup.string().trim().when("$isNew", {
         is: () => props.userID,
-        then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(8, "Ingresa al menos 8 caracteres"),
+        then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(4, "Ingresa al menos 4 caracteres"),
         otherwise: (schema) => schema.notRequired()
     }).label("Confirm. Contraseña")
 }));

@@ -110,7 +110,7 @@ const saveAllMembers = handleSubmit(async() => {
 });
 
 const filterPaymentMethods = computed(() => {
-    return usePaymentMethodStore.paymentMethod.filter(pm => pm.id !== 1 && pm.description !== "EFECTIVO" && pm.active);
+    return usePaymentMethodStore.paymentMethod.filter(pm => pm.id !== 1 /*&& pm.description !== "EFECTIVO" */ && pm.active);
 });
 
 const onSelected = (payload: { idRate: number, priceRate: string, nameRate: string }) => {

@@ -11,7 +11,7 @@ import * as yup from "yup";
 import toastEvent from "@/composables/toastEvent.ts";
 import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
 import { format, isDate, parseISO } from "date-fns";
-import { storeActivities, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
+import { storeActivities, storeActivityActive, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import router from "@/router/index.ts";
 
@@ -29,6 +29,7 @@ const useStoreTotalRate = storePriceRate();
 const useStoreActivities = storeActivities();
 const useStoreRates = storeRate();
 const labelRateSelected = ref("");
+const useStoreActivityActive = storeActivityActive();
 
 const validationSchema = ref(yup.object({
     paymentmethod: yup.number().required("Seleccione el método de pago"),
@@ -47,7 +48,7 @@ const { handleSubmit, errors, resetForm } =
 
 const { value: voucherfile, setValue: setVoucherImage } = useField<VoucherImageType | {}>("voucherfile");
 const { value: paymentmethod } = useField<number | null>("paymentmethod");
-const { value: tarifa, setValue: setRate } = useField<number>("tarifa");
+const { value: tarifa, setValue: setRate } = useField<number | undefined>("tarifa");
 const { value: voucheramount, setValue: setVoucheramount } = useField<number>("voucheramount");
 
 const setVoucherImageFile = (file: File | null) => {
@@ -63,6 +64,10 @@ const saveAllMembers = handleSubmit(async() => {
     try {
 
         loadingSave.value = true;
+
+        const dataRate = storeRate().rate.find(rt => rt.selected);
+        const dataActivity = useStoreActivities.activities.find(act => act.id === 1 && act.is_active);
+
         const normalizedPeople = storeDataMembers.membersData.map(person => {
             const raw = person.birthdate;
             const date: Date = isDate(raw) ? raw as Date : parseISO(raw as string);
@@ -72,14 +77,12 @@ const saveAllMembers = handleSubmit(async() => {
         });
         const payload: Record<string, any> = {
             voucheramount: useStoreTotalRate.calculateRate(voucheramount.value),
-            tarifa: tarifa.value,
+            tarifa: useStoreActivityActive.showRatesActivity ? setRate(dataRate?.id || undefined) : tarifa.value,
             activity: null,
             paymentmethod: paymentmethod.value,
             people: normalizedPeople
         };
         if (isVoucherImage(voucherfile.value)) payload.voucherfile = await fileToBase64(voucherfile.value.file);
-
-        const dataActivity = useStoreActivities.activities.find(act => act.id === 1 && act.is_active);
 
         if ( !dataActivity) payload.activity = null;
         else payload.activity = dataActivity.id;
@@ -142,7 +145,7 @@ const onValueSelectPayment = (id: number) => {
                     <view-payment-methods :name-account="dataForViewPayment.description" :number-account="dataForViewPayment.account"
                                           :img-account="dataForViewPayment.icon"/>
                 </FormItem>
-                <FormItem cols="12" hide-label :error="errors.tarifa">
+                <FormItem cols="12" hide-label :error="errors.tarifa" v-if="!useStoreActivityActive.showRatesActivity">
                     <div class="grid grid-cols-4 gap-3">
                         <rate-data v-for="act in useStoreRates.rate" :key="act.id" :name-rate="act.description" :id-rate="act.id"
                                    :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>

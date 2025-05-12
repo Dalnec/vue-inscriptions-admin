@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { Api } from "@/api/connection.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
+import type { InterfaceActivities } from "@/stores/interfaceActivities.ts";
 
 export const storeChurches = defineStore("storeChurches", {
     state: () => ({
@@ -46,10 +47,7 @@ export const storePaymentMethod = defineStore("storePaymentMethod", {
 
 export const storeActivities = defineStore("storeActivities", {
     state: () => ({
-        activities: [] as {
-            id: number, created: string, modified: string, title: string, description: string,
-            location: string, start_date: string, end_date: string, is_active: boolean
-        }[]
+        activities: [] as InterfaceActivities[]
     }),
     actions: {
         async getActivities() {
@@ -98,6 +96,24 @@ export const storeKind = defineStore("storeKind", {
             if (response && response.status === 200) {
                 this.kind = response.data;
             }
+        }
+    }
+});
+
+export const storeActivityActive = defineStore("storeActivityActive", {
+    state: () => ({
+        showRatesActivity: false as boolean,
+        activityId: null as number | null
+    }),
+    actions: {
+        async getActiveActivity() {
+            const activitiesStore = storeActivities();
+            const useStoreActivities = activitiesStore.activities.find(
+                act => act.is_active
+            );
+
+            this.showRatesActivity = useStoreActivities?.settings.inscription?.show_tarifas || false;
+            this.activityId = useStoreActivities?.id || null;
         }
     }
 });

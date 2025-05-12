@@ -67,7 +67,7 @@ const confirm1 = () => {
     <Menubar :model="menuOptions" class="text-[12px]" breakpoint="840px">
         <template #start>
             <div class="mr-1 flex h-9 w-14 items-center justify-center rounded-md">
-                <img src="../../public/kadosh.png" class="h-8" alt="logo">
+                <img src="/kadosh.png" class="h-8" alt="logo">
             </div>
         </template>
         <template #item="{ item, props }">

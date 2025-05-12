@@ -14,6 +14,7 @@ import type { InscriptionsMembers, InterfaceResponseInscriptions } from "@/modul
 import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
 import showVoucherFile from "@/components/showVoucherFile.vue";
 import changeAmount from "@/modules/registers/changeAmount.vue";
+import { storeActivityActive } from "@/stores/generalInfoStore.ts";
 
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
@@ -21,6 +22,7 @@ const loading = ref<boolean>(false);
 const rows = ref(25);
 const currentPage = ref(1);
 const totalRecords = ref(0);
+const useStoreActivityActive = storeActivityActive();
 
 const onPageChange = async(event: DataTablePageEvent) => {
     currentPage.value = event.page + 1;
@@ -50,6 +52,7 @@ const loadInscriptionsList = useDebounceFn(async(): Promise<void> => {
     const { response }: InterfaceResponseInscriptions = await Api.Get({
         route: "inscription", params: {
             page: currentPage.value,
+            activity: useStoreActivityActive.activityId,
             page_size: rows.value
         }
     });
@@ -145,7 +148,7 @@ defineExpose({ loadInscriptionsList });
         <!--        <Column style="width: 10%" field="person.jobStart" header="Cod. Grupo"/>-->
         <Column style="width: 5%" header="M. Pago">
             <template #body="{data}">
-                <div class="flex gap-2 items-center justify-between">
+                <div class="flex items-center justify-between gap-2">
                     <p class="font-bold">{{ data.group.paymentmethod.description }}</p>
                     <Button v-if="data.group.paymentmethod.id !== 1" @click="onShowVoucher(data)">
                         <template #icon>

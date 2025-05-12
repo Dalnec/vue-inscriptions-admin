@@ -20,6 +20,7 @@ declare module 'vue' {
     Dialog: typeof import('primevue/dialog')['default']
     DrawerMembersSaved: typeof import('./src/components/drawerMembersSaved.vue')['default']
     EmptyTable: typeof import('./src/components/emptyTable.vue')['default']
+    FileUpload: typeof import('primevue/fileupload')['default']
     FormItem: typeof import('./src/components/formItem.vue')['default']
     ICarbonColorPalette: typeof import('~icons/carbon/color-palette')['default']
     ICarbonReportData: typeof import('~icons/carbon/report-data')['default']

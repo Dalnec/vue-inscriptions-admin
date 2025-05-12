@@ -77,7 +77,7 @@ const saveAllMembers = handleSubmit(async() => {
         });
         const payload: Record<string, any> = {
             voucheramount: useStoreTotalRate.calculateRate(voucheramount.value),
-            tarifa: useStoreActivityActive.showRatesActivity ? setRate(dataRate?.id || undefined) : tarifa.value,
+            tarifa: useStoreActivityActive.showRatesActivity ? tarifa.value : setRate(dataRate?.id || undefined),
             activity: null,
             paymentmethod: paymentmethod.value,
             people: normalizedPeople
@@ -145,7 +145,7 @@ const onValueSelectPayment = (id: number) => {
                     <view-payment-methods :name-account="dataForViewPayment.description" :number-account="dataForViewPayment.account"
                                           :img-account="dataForViewPayment.icon"/>
                 </FormItem>
-                <FormItem cols="12" hide-label :error="errors.tarifa" v-if="!useStoreActivityActive.showRatesActivity">
+                <FormItem cols="12" hide-label :error="errors.tarifa" v-if="useStoreActivityActive.showRatesActivity">
                     <div class="grid grid-cols-4 gap-3">
                         <rate-data v-for="act in useStoreRates.rate" :key="act.id" :name-rate="act.description" :id-rate="act.id"
                                    :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>

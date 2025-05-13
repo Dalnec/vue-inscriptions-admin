@@ -26,11 +26,12 @@ const props = defineProps({
 });
 
 const formMembers = ref<InterfaceMembers>({
-    birthdate: "", church: null, doc_num: "", documenttype: 1, gender: "", kind: null, lastnames: "", names: "", phone: "", status: true
+    birthdate: "", church: null, doc_num: "", documenttype: 1, gender: "", kind: null, lastnames: "", names: "", phone: "", status: true,
+    age: null
 });
 
 const validationSchema = ref(yup.object({
-    birthdate: yup.string().required("Agrega una fecha valida"),
+    // birthdate: yup.string().required("Agrega una fecha valida"),
     church: yup.string().required("Seleccione una iglesia"),
     documenttype: yup.string().required("Seleccione un tipo de identificación"),
     doc_num: yup.string().required("Agregue un DNI"),
@@ -43,7 +44,7 @@ const validationSchema = ref(yup.object({
 
 const { handleReset, handleSubmit, errors, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
 
-const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | null>("birthdate");
+// const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | null>("birthdate");
 const { value: church, handleBlur: churchHandle } = useField<string>("church");
 const { value: doc_num, handleBlur: doc_numHandle } = useField<string>("doc_num");
 const { value: documenttype, handleBlur: documenttypeHandle } = useField<number>("documenttype");
@@ -52,6 +53,7 @@ const { value: kind, handleBlur: kindHandle } = useField<number>("kind");
 const { value: lastnames, handleBlur: lastnamesHandle } = useField<string>("lastnames");
 const { value: names, handleBlur: namesHandle } = useField<string>("names");
 const { value: phone, handleBlur: phoneHandle } = useField<string>("phone");
+const { value: age } = useField<number | null>("age");
 
 const optionsDocuments = computed(() => storeDocumentType().documentType);
 const optionsChurches = computed(() => storeChurches().churches);
@@ -173,9 +175,12 @@ onMounted(() => {
                 </div>
             </div>
         </FormItem>
-        <FormItem label="F. de Nacimiento" cols="12" :error="errors.gender">
-            <DatePicker fluid v-model="birthdate" @blur="birthdateHandle(undefined, true)" :invalid="!!errors.birthdate" size="large"
-                        date-format="d/m/yy"/>
+        <!--        <FormItem label="F. de Nacimiento" cols="12" :error="errors.gender">-->
+        <!--            <DatePicker fluid v-model="birthdate" @blur="birthdateHandle(undefined, true)" :invalid="!!errors.birthdate" size="large"-->
+        <!--                        date-format="d/m/yy"/>-->
+        <!--        </FormItem>-->
+        <FormItem label="Edad" cols="12">
+            <InputNumber fluid v-model="age" size="large"/>
         </FormItem>
         <FormItem label="Celular" cols="12" :error="errors.birthdate">
             <InputText fluid v-model="phone" @blur="phoneHandle($event, true)" maxlength="9" v-key-filter.num :invalid="!!errors.phone"

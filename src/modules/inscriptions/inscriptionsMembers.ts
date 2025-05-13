@@ -60,6 +60,7 @@ export interface Person {
     lastnames: string;
     id: number;
     user: number;
+    age: number | null;
     email: string;
     status: boolean;
 }

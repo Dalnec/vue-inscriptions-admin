@@ -14,6 +14,7 @@ import { format, isDate, parseISO } from "date-fns";
 import { storeActivities, storeActivityActive, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import router from "@/router/index.ts";
+import type { PaymentMethod } from "@/stores/interfaceActivities.ts";
 
 type VoucherImageType = { file: File; objectURL: string; };
 
@@ -23,7 +24,7 @@ const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer =
 const storeDataMembers = useMembersStore();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
-const dataForViewPayment = ref({ description: "", icon: "", account: "", active: true });
+const dataForViewPayment = ref<PaymentMethod>({ account: "", active: true, cci: null, description: "", icon: "", id: null });
 const usePaymentMethodStore = storePaymentMethod();
 const useStoreTotalRate = storePriceRate();
 const useStoreActivities = storeActivities();
@@ -110,7 +111,7 @@ const saveAllMembers = handleSubmit(async() => {
 });
 
 const filterPaymentMethods = computed(() => {
-    return usePaymentMethodStore.paymentMethod.filter(pm => pm.id !== 1 /*&& pm.description !== "EFECTIVO" */ && pm.active);
+    return usePaymentMethodStore.paymentMethod.filter(pm =>  /*pm.id !== 1&& pm.description !== "EFECTIVO" &&*/  pm.active);
 });
 
 const onSelected = (payload: { idRate: number, priceRate: string, nameRate: string }) => {
@@ -149,8 +150,9 @@ onMounted(() => {
                             size="large" @value-change="(value) => onValueSelectPayment(value)"/>
                 </FormItem>
                 <FormItem cols="12" hide-error hide-label v-if="paymentmethod">
-                    <view-payment-methods :name-account="dataForViewPayment.description" :number-account="dataForViewPayment.account"
-                                          :img-account="dataForViewPayment.icon"/>
+                    <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
+                                          :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
+                                          :active="dataForViewPayment.active"/>
                 </FormItem>
                 <FormItem cols="12" hide-label :error="errors.tarifa" v-if="useStoreActivityActive.showRatesActivity">
                     <div class="grid grid-cols-4 gap-3">

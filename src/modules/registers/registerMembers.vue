@@ -121,10 +121,11 @@ watch(doc_num, () => {
 });
 
 watch(() => membersStoreOptions.selectedMember, (member) => {
-    if (member) {
+    if (member?.doc_num) {
+        console.log(member);
         setValues({ ...member }, false);
+        isClickCard.value = false;
     }
-    isClickCard.value = true;
 }, { immediate: true });
 
 onMounted(() => {
@@ -140,16 +141,14 @@ onMounted(() => {
     <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
         <FormItem label="Tipo de Documento" cols="12">
             <Select fluid v-model="documenttype" @blur="documenttypeHandle($event, true)" :options="optionsDocuments"
-                    optionLabel="description"
-                    option-value="id" size="large" :disabled="isClickCard"/>
+                    optionLabel="description" option-value="id" size="large" :disabled="isClickCard"/>
         </FormItem>
         <FormItem label="DNI" cols="12" :error="errors.doc_num">
             <InputGroup>
                 <InputText fluid v-model="doc_num" @blur="doc_numHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
-                           maxlength="8" :invalid="!!errors.doc_num" size="large"
-                           :disabled="isClickCard && !isClickCard && props.formData?.id !== null"
-                           @keyup.enter="addDataFromReniec"/>
-                <Button label="Buscar" :disabled="isClickCard || loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
+                           maxlength="8" :invalid="!!errors.doc_num" size="large" @keyup.enter="addDataFromReniec"
+                           :disabled="isClickCard && !isClickCard && props.formData?.id !== null"/>
+                <Button label="Buscar" :disabled="loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
                         :loading="loadingSearch">
                     <template #icon>
                         <i-material-symbols-database-search/>

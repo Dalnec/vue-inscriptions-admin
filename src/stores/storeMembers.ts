@@ -6,6 +6,11 @@ import routes from "@/router/index";
 
 export const useMembersStore = defineStore("membersStore", () => {
     const membersData = ref<InterfaceMembers[]>([]);
+    const selectedMember = ref<InterfaceMembers>();
+
+    const setSelectedMember = (member: InterfaceMembers) => {
+        selectedMember.value = member;
+    };
 
     const addNewMembers = (members: InterfaceMembers, resetFilters: () => void, isClickCard: boolean) => {
         const index = membersData.value.findIndex(dt => dt.doc_num === members.doc_num);
@@ -46,5 +51,5 @@ export const useMembersStore = defineStore("membersStore", () => {
         }
     };
 
-    return { membersData, addNewMembers, removeMembers };
+    return { membersData, addNewMembers, removeMembers, setSelectedMember, selectedMember };
 });

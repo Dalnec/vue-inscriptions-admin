@@ -10,22 +10,12 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
     names: "",
     lastnames: "",
     gender: "",
-    birthdate: "",
+    age: null,
     phone: "",
     kind: null,
     church: null,
     docType: null
 });
-
-// const convertDate = (data: string | Date | Date[] | (Date | null)[] | null) => {
-//     if ( !data) return { birthdate: null };
-//
-//     const rawDate = Array.isArray(data) ?data[0] : data;
-//     if ( !rawDate) return { birthdate: null };
-//
-//     const date = typeof rawDate === "string" ?parseISO(rawDate) : rawDate;
-//     return isValid(date) ?format(date as Date, "dd-MM-yyyy") : null;
-// };
 
 </script>
 

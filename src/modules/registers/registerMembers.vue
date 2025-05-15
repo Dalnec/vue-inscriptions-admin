@@ -6,7 +6,6 @@ import type { InterfaceMembers, UsersActiosMembers } from "@/composables/interfa
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
-import { parseISO, isValid, format } from "date-fns";
 import FormItem from "@/components/formItem.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
@@ -26,8 +25,7 @@ const props = defineProps({
 });
 
 const formMembers = ref<InterfaceMembers>({
-    birthdate: "", church: null, doc_num: "", documenttype: 1, gender: "", kind: null, lastnames: "", names: "", phone: "", status: true,
-    age: null
+    church: null, doc_num: "", documenttype: 1, gender: "", kind: null, lastnames: "", names: "", phone: "", status: true, age: null
 });
 
 const validationSchema = ref(yup.object({
@@ -83,10 +81,10 @@ const addDataFromReniec = async(): Promise<void> => {
 
 const saveNewMember = handleSubmit(async(values): Promise<void> => {
     if (props.formData?.id) {
-        const parsedDate = typeof values.birthdate === "string" ? parseISO(values.birthdate) : values.birthdate;
+        // const parsedDate = typeof values.birthdate === "string" ? parseISO(values.birthdate) : values.birthdate;
         const { response }: UsersActiosMembers = await Api.Put({
             route: `person/${ props.formData?.id }`,
-            data: { ...values, birthdate: format(parsedDate, "yyyy-MM-dd") }
+            data: { ...values }
         });
         if (response.status && response.status === 200) {
             props.closeModal();
@@ -101,6 +99,7 @@ const saveNewMember = handleSubmit(async(values): Promise<void> => {
 
         if ( !props.formData?.id) {
             membersStoreOptions.addNewMembers(values, clearDataForm, isClickCard.value);
+            membersStoreOptions.selectedMember = {} as InterfaceMembers;
             updateVisibilityDrawer();
         }
         isClickCard.value = false;
@@ -110,8 +109,7 @@ const saveNewMember = handleSubmit(async(values): Promise<void> => {
 });
 
 const onClickCardMember = (data: InterfaceMembers) => {
-    const parsedDate = typeof data.birthdate === "string" ? parseISO(data.birthdate) : data.birthdate;
-    setValues({ ...data, birthdate: parsedDate && isValid(parsedDate) ? parsedDate : "" });
+    setValues({ ...data });
     isClickCard.value = true;
 };
 
@@ -122,10 +120,16 @@ watch(doc_num, () => {
     wasDniChecked.value = false;
 });
 
+watch(() => membersStoreOptions.selectedMember, (member) => {
+    if (member) {
+        setValues({ ...member }, false);
+    }
+    isClickCard.value = true;
+}, { immediate: true });
+
 onMounted(() => {
     if (props.formData?.id) {
-        const parsedDate = typeof props.formData.birthdate === "string" ? parseISO(props.formData.birthdate) : props.formData.birthdate;
-        setValues({ ...props.formData, birthdate: parsedDate && isValid(parsedDate) ? parsedDate : null }, false);
+        setValues({ ...props.formData }, false);
         isClickCard.value = true;
     }
 });
@@ -182,11 +186,11 @@ onMounted(() => {
         <FormItem label="Edad" cols="12">
             <InputNumber fluid v-model="age" size="large"/>
         </FormItem>
-        <FormItem label="Celular" cols="12" :error="errors.birthdate">
+        <FormItem label="Celular" cols="12" :error="errors.phone">
             <InputText fluid v-model="phone" @blur="phoneHandle($event, true)" maxlength="9" v-key-filter.num :invalid="!!errors.phone"
                        size="large"/>
         </FormItem>
-        <FormItem label="¿Perteneces a alguna iglesia?" cols="12" :error="errors.phone">
+        <FormItem label="¿Perteneces a alguna iglesia?" cols="12" :error="errors.kind">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
                     <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
@@ -196,7 +200,7 @@ onMounted(() => {
                 </div>
             </div>
         </FormItem>
-        <FormItem label="Iglesia" cols="12" :error="errors.kind">
+        <FormItem label="Iglesia" cols="12" :error="errors.church">
             <Select :options="optionsChurches" fluid v-model="church" @blur="churchHandle($event, true)" filter show-clear size="large"
                     :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description"
                     option-value="id"/>

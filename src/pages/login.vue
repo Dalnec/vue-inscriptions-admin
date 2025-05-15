@@ -16,6 +16,7 @@ const { loginUserData } = useUserDataConfigStore();
 const fields = ref<Fields>({ username: "", password: "" });
 const toast = useToast();
 const refPassword = ref();
+const loading = ref(false);
 
 const schemaValidate = yup.object({
     password: yup.string().required("Ingrese su contraseña").label("password").min(5, "Ingresa al menos 5 caracteres"),
@@ -27,11 +28,13 @@ const { value: username, errorMessage: usernameError, handleBlur: usernameBlur }
 const { value: password, errorMessage: passwordError, handleBlur: passwordBlur } = useField<string>("password");
 
 const onSubmit = handleSubmit(async(values: Fields) => {
+    loading.value = true;
     const { response }: InterfaceUserLoginActions = await Api.Post({ route: "login", data: { ...values } });
     if (response.status === 200) {
         await loginUserData(response.data);
+        loading.value = false;
         // configureAxiosInterceptors()
-    }
+    } else loading.value = false;
 }, ({ errors }) => {
     const errorMessages: string = Object?.["entries"](errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", ");
     toast.add({ severity: "error", summary: "Error", detail: `Complete los siguientes campos: ${ errorMessages }`, life: 10000 });
@@ -68,7 +71,7 @@ const focusPassword = () => refPassword.value.$el.querySelector("input").focus()
                               placeholder="********"/>
                 </form-item>
 
-                <Button label="Ingresar" @click="onSubmit()" class="mt-4 w-full">
+                <Button label="Ingresar" @click="onSubmit()" class="mt-4 w-full" :disabled="loading" :loading>
                     <span>Iniciar Sesión </span>
                     <i-noto-turtle class="absolute right-2 order-1 h-7 w-7"/>
                 </Button>

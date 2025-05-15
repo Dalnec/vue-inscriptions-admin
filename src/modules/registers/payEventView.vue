@@ -10,11 +10,12 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import toastEvent from "@/composables/toastEvent.ts";
 import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
-import { format, isDate, parseISO } from "date-fns";
 import { storeActivities, storeActivityActive, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import router from "@/router/index.ts";
 import type { PaymentMethod } from "@/stores/interfaceActivities.ts";
+import { useRoute } from "vue-router";
+import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
 
 type VoucherImageType = { file: File; objectURL: string; };
 
@@ -37,9 +38,17 @@ const validationSchema = ref(yup.object({
     // activity: yup.number().required("Seleccione una actividad"),
     tarifa: yup.number().required("Seleccione una tarifa"),
     voucheramount: yup.number().min(1, "Agregue un valor valido").required("Requerido"),
-    voucherfile: yup.object().shape({
-        file: yup.mixed().required("Img. requerida"), objectURL: yup.string().required("Img. requerida")
-    }).nullable()
+    voucherfile: yup.object<{ file: File; objectURL: string }>().nullable().when("paymentmethod", {
+        is: () => {
+            return dataForViewPayment.value.description !== "EFECTIVO";
+        },
+        then: (schema) =>
+            schema.required("Imagen requerida").shape({
+                file: yup.mixed<File>().required("Img. requerida"),
+                objectURL: yup.string().required("Img. requerida")
+            }),
+        otherwise: (schema) => schema.nullable()
+    })
 }));
 
 const { handleSubmit, errors, resetForm } =
@@ -69,19 +78,12 @@ const saveAllMembers = handleSubmit(async() => {
         const dataRate = storeRate().rate.find(rt => rt.selected);
         const dataActivity = useStoreActivities.activities.find(act => act.id === 1 && act.is_active);
 
-        const normalizedPeople = storeDataMembers.membersData.map(person => {
-            const raw = person.birthdate;
-            const date: Date = isDate(raw) ? raw as Date : parseISO(raw as string);
-            const formatted = format(date, "yyyy-MM-dd");
-
-            return { ...person, birthdate: formatted };
-        });
         const payload: Record<string, any> = {
             voucheramount: useStoreTotalRate.calculateRate(voucheramount.value),
             tarifa: useStoreActivityActive.showRatesActivity ? tarifa.value : setRate(dataRate?.id || undefined),
             activity: null,
             paymentmethod: paymentmethod.value,
-            people: normalizedPeople
+            people: storeDataMembers.membersData
         };
         if (isVoucherImage(voucherfile.value)) payload.voucherfile = await fileToBase64(voucherfile.value.file);
 
@@ -105,8 +107,9 @@ const saveAllMembers = handleSubmit(async() => {
         loadingSave.value = false;
         console.log(error);
     }
-}, () => {
-    refVoucherImage.value.remove();
+}, ({ errors }) => {
+    console.log(errors);
+    refVoucherImage.value?.remove();
     toastEvent({ severity: "error", summary: "Error al guardar", message: "Por favor, agregue la imagen." });
 });
 
@@ -124,6 +127,17 @@ const onValueSelectPayment = (id: number) => {
     const found = filterPaymentMethods.value.find(pm => pm.id === id);
     if ( !found) return;
     dataForViewPayment.value = found;
+};
+
+const route = useRoute();
+const membersStore = useMembersStore();
+
+const handleClickCard = async(memberData: InterfaceMembers) => {
+    membersStore.setSelectedMember(memberData); // Guarda el miembro
+    console.log(route.name);
+    if (route.name !== "newRegister") {
+        await router.push({ name: "newRegister" });
+    }
 };
 
 onMounted(() => {
@@ -163,7 +177,8 @@ onMounted(() => {
                 <FormItem cols="12" :error="errors.voucheramount" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
                     <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large"/>
                 </FormItem>
-                <FormItem label="Voucher de pago" cols="12" :error="errors.voucherfile">
+                <FormItem label="Voucher de pago" cols="12" :error="errors.voucherfile"
+                          v-if="dataForViewPayment.description !== 'EFECTIVO'">
                     <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full"
                                 ref="refVoucherImage" @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])"
                                 :show-cancel-button="false" @remove="setVoucherImage({})" :show-upload-button="false" input-id="voucherfile"
@@ -195,7 +210,7 @@ onMounted(() => {
                     </Button>
                 </div>
             </div>
-            <drawer-members-saved ref="refDrawerMembersSaved"/>
+            <drawer-members-saved ref="refDrawerMembersSaved" @onClickCard="handleClickCard"/>
         </template>
     </Card>
 </template>

@@ -76,7 +76,7 @@ const saveAllMembers = handleSubmit(async() => {
         loadingSave.value = true;
 
         const dataRate = storeRate().rate.find(rt => rt.selected);
-        const dataActivity = useStoreActivities.activities.find(act => act.id === 1 && act.is_active);
+        const dataActivity = useStoreActivities.activities.find(act => act.is_active);
 
         const payload: Record<string, any> = {
             voucheramount: useStoreTotalRate.calculateRate(voucheramount.value),

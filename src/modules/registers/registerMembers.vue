@@ -121,10 +121,11 @@ watch(doc_num, () => {
 });
 
 watch(() => membersStoreOptions.selectedMember, (member) => {
-    if (member) {
+    if (member?.doc_num) {
+        console.log(member);
         setValues({ ...member }, false);
+        isClickCard.value = false;
     }
-    isClickCard.value = true;
 }, { immediate: true });
 
 onMounted(() => {

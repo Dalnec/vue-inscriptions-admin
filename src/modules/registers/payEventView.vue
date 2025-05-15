@@ -80,7 +80,7 @@ const saveAllMembers = handleSubmit(async() => {
 
         const payload: Record<string, any> = {
             voucheramount: useStoreTotalRate.calculateRate(voucheramount.value),
-            tarifa: useStoreActivityActive.showRatesActivity ? tarifa.value : setRate(dataRate?.id || undefined),
+            tarifa: useStoreActivityActive.showRatesActivity ? tarifa.value : dataRate?.id,
             activity: null,
             paymentmethod: paymentmethod.value,
             people: storeDataMembers.membersData
@@ -143,6 +143,7 @@ const handleClickCard = async(memberData: InterfaceMembers) => {
 onMounted(() => {
     const dataRate = storeRate().rate.find(rt => rt.selected);
     if (dataRate) {
+        setRate(dataRate?.id);
         onSelected({ idRate: dataRate.id, priceRate: dataRate.price, nameRate: dataRate.description });
     }
 });

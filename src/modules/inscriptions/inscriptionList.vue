@@ -97,7 +97,7 @@ const onShowVoucher = (data: InscriptionsMembers): void => {
         footer: "",
         header: `Voucher de: ${ data.person.names }`,
         visible: true,
-        width: "35vw"
+        width: "25vw"
     };
 };
 
@@ -146,7 +146,7 @@ defineExpose({ loadInscriptionsList });
         <Column style="width: 10%" field="person.church_description" header="Iglesia"/>
         <Column style="width: 4%" field="group.id" header="# Grupo"/>
         <!--        <Column style="width: 10%" field="person.jobStart" header="Cod. Grupo"/>-->
-        <Column style="width: 5%" header="M. Pago">
+        <Column style="width: 10%" header="M. Pago">
             <template #body="{data}">
                 <div class="flex items-center justify-between gap-2">
                     <p class="font-bold">{{ data.group.paymentmethod.description }}</p>

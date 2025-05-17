@@ -1,8 +1,5 @@
 <script setup lang="ts">
 
-/**
- * @type {{ parameters: ModalParameters }}
- */
 const { parameters } = defineProps({
     parameters: {
         type: Object,

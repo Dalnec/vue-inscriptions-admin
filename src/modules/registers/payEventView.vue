@@ -33,6 +33,10 @@ const useStoreRates = storeRate();
 const labelRateSelected = ref("");
 const useStoreActivityActive = storeActivityActive();
 
+const filterRates = computed(() => {
+    return useStoreRates.rate.filter(rt => rt.active);
+});
+
 const validationSchema = ref(yup.object({
     paymentmethod: yup.number().required("Seleccione el método de pago"),
     // activity: yup.number().required("Seleccione una actividad"),
@@ -95,10 +99,11 @@ const saveAllMembers = handleSubmit(async() => {
         if (response && response?.status === 201) {
             toastEvent({ severity: "success", summary: `${ response.data.message }` });
             storeDataMembers.membersData = [];
-            await router.push({ name: "newRegister", force: true });
+            storeDataMembers.selectedMember = {} as InterfaceMembers;
             refVoucherImage.value.remove();
             resetForm();
             loadingSave.value = false;
+            await router.push({ name: "newRegister", force: true });
         } else {
             console.error("Fail", response);
             loadingSave.value = false;
@@ -133,8 +138,7 @@ const route = useRoute();
 const membersStore = useMembersStore();
 
 const handleClickCard = async(memberData: InterfaceMembers) => {
-    membersStore.setSelectedMember(memberData); // Guarda el miembro
-    console.log(route.name);
+    membersStore.setSelectedMember(memberData);
     if (route.name !== "newRegister") {
         await router.push({ name: "newRegister" });
     }
@@ -171,7 +175,7 @@ onMounted(() => {
                 </FormItem>
                 <FormItem cols="12" hide-label :error="errors.tarifa" v-if="useStoreActivityActive.showRatesActivity">
                     <div class="grid grid-cols-4 gap-3">
-                        <rate-data v-for="act in useStoreRates.rate" :key="act.id" :name-rate="act.description" :id-rate="act.id"
+                        <rate-data v-for="act in filterRates" :key="act.id" :name-rate="act.description" :id-rate="act.id"
                                    :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>
                     </div>
                 </FormItem>

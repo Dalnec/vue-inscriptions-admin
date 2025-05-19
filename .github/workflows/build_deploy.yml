@@ -13,7 +13,7 @@ jobs:
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd /var/www/inscriptions/vue-inscriptions-admin/
+            cd /var/www/inscriptions/demoinscriptions/vue-inscriptions-admin/
             git pull
             export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh
             npm install

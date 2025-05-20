@@ -231,3 +231,13 @@ input {
     color: #e0e6ee !important; /* Forzar color del texto */
     text-decoration: none !important; /* Evitar subrayado rojo del navegador */
 }
+
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}

@@ -122,4 +122,14 @@ async function Put(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
     }
 }
 
-export const Api = { Get, Post, Put/* Destroy*/ };
+async function Destroy(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
+    try {
+        const response = await axiosInstance.delete<AxiosResponse>(`/api/${ props.route }/`, props.data);
+        return { response };
+    } catch (error) {
+        console.log(error);
+        throw { response: null };
+    }
+}
+
+export const Api = { Get, Post, Put, Destroy };

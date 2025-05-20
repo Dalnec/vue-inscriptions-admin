@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import TheNavbar from "@/components/TheNavbar.vue";
+import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
+import { onMounted } from "vue";
+
+onMounted(async() => {
+    await storeChurches().getDataChurches();
+    await storeDocumentType().getDocumentType();
+    await storePaymentMethod().getPaymentMethod();
+    await storeActivities().getActivities();
+    await storeRate().getRates();
+    await storeKind().getKinds();
+    await storeActivityActive().getActiveActivity();
+});
 
 </script>
 <template>
@@ -18,15 +30,3 @@ import TheNavbar from "@/components/TheNavbar.vue";
         </div>
     </div>
 </template>
-<style>
-.v-enter-active,
-.v-leave-active {
-    transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-    opacity: 0;
-}
-
-</style>

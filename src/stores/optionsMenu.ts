@@ -27,7 +27,8 @@ const navBarStore = defineStore("optionsMenu", {
         async createOptionsMenu(): Promise<void> {
             const authStore = useUserDataConfigStore();
             const routerViews: RouteRecordRaw[] = router.resolve({ name: "home" })?.matched[0].children || [];
-            this.options = this.processRoutes(routerViews, authStore.userData?.user?.profile_description === "ADMINISTRADOR");
+            const dataUser = authStore.userData?.user;
+            this.options = this.processRoutes(routerViews, dataUser?.profile_description === "ADMINISTRADOR" || dataUser?.is_superuser);
         },
         processRoutes(routes: RouteRecordRaw[], isSuperUser: boolean): Option[] {
             return routes.reduce((processedRoutes: Option[], route: RouteRecordRaw) => {

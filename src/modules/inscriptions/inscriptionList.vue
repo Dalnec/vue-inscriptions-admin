@@ -9,12 +9,13 @@ import { type ModalParameters } from "@/composables/parametersModalType";
 import { ref, h, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { Api } from "@/api/connection";
-import type { DataTablePageEvent } from "primevue";
-import type { InscriptionsMembers, InterfaceResponseInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
+import { type DataTablePageEvent, useConfirm } from "primevue";
+import type { InscriptionsMembers, InterfaceActionsInscriptions, InterfaceResponseInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
 import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
 import showVoucherFile from "@/components/showVoucherFile.vue";
 import changeAmount from "@/modules/registers/changeAmount.vue";
 import { storeActivityActive } from "@/stores/generalInfoStore.ts";
+import toastEvent from "@/composables/toastEvent.ts";
 
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
@@ -23,6 +24,8 @@ const rows = ref(25);
 const currentPage = ref(1);
 const totalRecords = ref(0);
 const useStoreActivityActive = storeActivityActive();
+const menus = ref<Record<number, any>>({});
+const confirm = useConfirm();
 
 const onPageChange = async(event: DataTablePageEvent) => {
     currentPage.value = event.page + 1;
@@ -114,6 +117,63 @@ const onChangeAmount = (data: InscriptionsMembers): void => {
     };
 };
 
+const onChangeStatusMember = async(data: InscriptionsMembers, status: string, isForDelete?: boolean): Promise<void> => {
+    if (isForDelete) {
+        confirm.require({
+            message: `¿Estas seguro de eliminar a ${ data.person.names } ${ data.person.lastnames }?`,
+            header: "Confirmación",
+            rejectProps: {
+                label: "Cancelar",
+                severity: "secondary",
+                outlined: true
+            },
+            acceptProps: {
+                label: "Eliminar"
+            },
+            accept: async() => {
+                const { response }: InterfaceActionsInscriptions = await Api.Destroy({ route: `inscription/${ data.id }` });
+                if (response && response.status === 204) {
+                    console.log(response);
+                    await loadInscriptionsList();
+                    toastEvent({ severity: "info", summary: "Éxito", message: "Eliminado correctamente", life: 3000 });
+                }
+            },
+            reject: () => {
+                toastEvent({ severity: "error", summary: "Cancelado", message: "Acción Cancelada", life: 3000 });
+            }
+        });
+    } else {
+        const { response }: InterfaceActionsInscriptions = await Api.Put({ route: `inscription/${ data.id }`, data: { ...data, status } });
+        if (response && response.status === 200) {
+            await loadInscriptionsList();
+            toastEvent({ message: "Estado actualizado correctamente", severity: "success" });
+            console.log(response);
+        }
+    }
+};
+
+const optionsActions = (data: InscriptionsMembers) => [
+    {
+        label: "Confirmar", value: 1, command: () => {
+            onChangeStatusMember(data, "C");
+        }, class: IconMaterialSymbolsBookmarkCheck as unknown
+    },
+    {
+        label: "Rechazar", value: 2, command: () => {
+            onChangeStatusMember(data, "R");
+        }, class: IconMaterialSymbolsPersonRemove as unknown
+    },
+    {
+        label: "Eliminar", value: 2, command: () => {
+            onChangeStatusMember(data, "", true);
+        }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
+    }
+];
+
+const toggle = (event: MouseEvent, id: number) => {
+    if (menus.value[id]) menus.value[id].toggle(event);
+};
+
 onMounted(async() => {
     await loadInscriptionsList();
 });
@@ -127,7 +187,7 @@ defineExpose({ loadInscriptionsList });
         <i-ri-search-line class="absolute top-2/4 left-3 -mt-2.5 text-surface-400 dark:text-surface-600"/>
         <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid/>
     </div>
-    <DataTable size="small" :value="dataMembers" scroll-height="65vh" scrollable tableStyle="min-width: 100rem;" lazy :loading dataKey="id"
+    <DataTable size="small" :value="dataMembers" scroll-height="65vh" scrollable tableStyle="min-width: 110rem;" lazy :loading dataKey="id"
                :rows-per-page-options="[25, 50, 100]" :totalRecords paginator :rows :first="currentPage * rows - rows" @page="onPageChange">
         <template #empty>
             <empty-table/>
@@ -143,10 +203,15 @@ defineExpose({ loadInscriptionsList });
         </Column>
         <Column style="width: 4%" field="person.phone" header="Teléfono"/>
         <Column style="width: 3%" field="person.gender" header="Género"/>
-        <Column style="width: 10%" field="person.church_description" header="Iglesia"/>
-        <Column style="width: 4%" field="group.id" header="# Grupo"/>
+        <Column style="width: 10%" field="person.church_description" header="Iglesia">
+            <template #body="{data}">
+                <p class="font-bold">{{ data?.person?.church_description }}</p>
+                <!--                <p>{{ data.person.kind }}</p>-->
+            </template>
+        </Column>
+        <Column style="width: 4%" field="group.vouchergroup" header="# Grupo"/>
         <!--        <Column style="width: 10%" field="person.jobStart" header="Cod. Grupo"/>-->
-        <Column style="width: 10%" header="M. Pago">
+        <Column style="width: 15%" header="M. Pago">
             <template #body="{data}">
                 <div class="flex items-center justify-between gap-2">
                     <p class="font-bold">{{ data.group.paymentmethod.description }}</p>
@@ -166,7 +231,8 @@ defineExpose({ loadInscriptionsList });
         <Column style="width: 10%" field="observations" header="Observaciones"/>
         <Column style="width: 4%" header="Estado" field="active">
             <template #body="{data}">
-                <Message size="small" :severity="data.status === 'E' ? 'error' : data.status === 'P' ? 'warn' : 'success'">
+                <Message size="small"
+                         :severity="data.status === 'E' || data.status === 'R' ? 'error' : data.status === 'P' ? 'warn' : 'success'">
                     {{ data.status_description }}
                 </Message>
             </template>
@@ -180,12 +246,21 @@ defineExpose({ loadInscriptionsList });
                             <i-tabler-user-edit/>
                         </template>
                     </Button>
-                    <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)"
-                            class="h-6 !w-6">
+                    <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)" class="h-6 !w-6">
                         <template #icon>
                             <i-ic-round-attach-money/>
                         </template>
                     </Button>
+                    <Button @click="toggle($event, data.id)" aria-haspopup="true" :aria-controls="`menu_${data.id}`" class="h-7 w-8">
+                        <template #icon>
+                            <i-material-symbols-action-key-outline/>
+                        </template>
+                    </Button>
+                    <Menu :ref="el => menus[data.id] = el" :id="`menu_${data.id}`" :model="optionsActions(data)" :popup="true">
+                        <template #itemicon="{item}">
+                            <component :is="item.class"/>
+                        </template>
+                    </Menu>
                 </div>
             </template>
         </Column>

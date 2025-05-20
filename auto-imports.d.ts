@@ -6,7 +6,12 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const IconMaterialSymbolsAutoDeleteOutlineRounded: typeof import('~icons/material-symbols/auto-delete-outline-rounded')['default']
+  const IconMaterialSymbolsBookmarkCheck: typeof import('~icons/material-symbols/bookmark-check')['default']
   const IconMaterialSymbolsCalendarAppsScript: typeof import('~icons/material-symbols/calendar-apps-script')['default']
+  const IconMaterialSymbolsPersonRemove: typeof import('~icons/material-symbols/person-remove')['default']
+  const IconMaterialSymbolsTableEdit: typeof import('~icons/material-symbols/table-edit')['default']
+  const IconMdiPencilBoxMultiple: typeof import('~icons/mdi/pencil-box-multiple')['default']
   const IconSolarClipboardAddBold: typeof import('~icons/solar/clipboard-add-bold')['default']
   const IconSolarUsersGroupRoundedBold: typeof import('~icons/solar/users-group-rounded-bold')['default']
   const IconTablerClipboardDataFilled: typeof import('~icons/tabler/clipboard-data-filled')['default']

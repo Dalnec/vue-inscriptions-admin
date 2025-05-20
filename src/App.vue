@@ -3,7 +3,6 @@ import LoadingPage from "@/components/loadingPage.vue";
 import { ref, onMounted, watch } from "vue";
 import { useDark } from "@vueuse/core";
 import Toast from "primevue/toast";
-import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
 
 const loadingPage = ref(true);
 const isDark = useDark({ disableTransition: false, initialValue: "auto" });
@@ -21,17 +20,6 @@ watch(isDark, (newVal) => {
     else document.body.classList.remove("dark");
 
 }, { immediate: true });
-
-
-onMounted(async() => {
-    await storeChurches().getDataChurches();
-    await storeDocumentType().getDocumentType();
-    await storePaymentMethod().getPaymentMethod();
-    await storeActivities().getActivities();
-    await storeRate().getRates();
-    await storeKind().getKinds();
-    await storeActivityActive().getActiveActivity()
-});
 
 </script>
 

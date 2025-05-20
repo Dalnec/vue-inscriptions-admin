@@ -18,7 +18,7 @@ const copyToClipboard = async() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center justify-between gap-2" v-if="description !== 'EFECTIVO'">
         <div class="flex items-center gap-2">
             <img :src="`${props.icon}`" :alt="props.description" class="h-16 w-16 rounded-lg">
             <div>

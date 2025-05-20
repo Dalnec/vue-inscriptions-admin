@@ -100,8 +100,8 @@ const saveAllMembers = handleSubmit(async() => {
             toastEvent({ severity: "success", summary: `${ response.data.message }` });
             storeDataMembers.membersData = [];
             storeDataMembers.selectedMember = {} as InterfaceMembers;
-            refVoucherImage.value.remove();
             resetForm();
+            refVoucherImage.value.remove();
             loadingSave.value = false;
             await router.push({ name: "newRegister", force: true });
         } else {
@@ -112,8 +112,7 @@ const saveAllMembers = handleSubmit(async() => {
         loadingSave.value = false;
         console.log(error);
     }
-}, ({ errors }) => {
-    console.log(errors);
+}, () => {
     refVoucherImage.value?.remove();
     toastEvent({ severity: "error", summary: "Error al guardar", message: "Por favor, agregue la imagen." });
 });

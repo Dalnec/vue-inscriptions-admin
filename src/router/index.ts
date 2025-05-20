@@ -76,7 +76,9 @@ router.beforeEach(async(to, _, next) => {
     }
 
     // Usuario superusuario → acceso total
-    if (useAuthStore.userData?.user?.profile_description === 'ADMINISTRADOR') {
+    const dataUser = useAuthStore.userData?.user;
+    
+    if (dataUser?.profile_description === 'ADMINISTRADOR' || dataUser?.is_superuser) {
         return next();
     }
 

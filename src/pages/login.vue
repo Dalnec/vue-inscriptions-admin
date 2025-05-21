@@ -28,13 +28,17 @@ const { value: username, errorMessage: usernameError, handleBlur: usernameBlur }
 const { value: password, errorMessage: passwordError, handleBlur: passwordBlur } = useField<string>("password");
 
 const onSubmit = handleSubmit(async(values: Fields) => {
-    loading.value = true;
-    const { response }: InterfaceUserLoginActions = await Api.Post({ route: "login", data: { ...values } });
-    if (response.status === 200) {
-        await loginUserData(response.data);
+    try {
+        loading.value = true;
+        const { response }: InterfaceUserLoginActions = await Api.Post({ route: "login", data: { ...values } });
+        if (response.status === 200) {
+            await loginUserData(response.data);
+            loading.value = false;
+        }
+    } catch (e) {
+        console.log(e);
         loading.value = false;
-        // configureAxiosInterceptors()
-    } else loading.value = false;
+    }
 }, ({ errors }) => {
     const errorMessages: string = Object?.["entries"](errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", ");
     toast.add({ severity: "error", summary: "Error", detail: `Complete los siguientes campos: ${ errorMessages }`, life: 10000 });
@@ -50,9 +54,6 @@ const focusPassword = () => refPassword.value.$el.querySelector("input").focus()
     </div>
     <div class="flex min-h-screen items-center justify-center p-2 bg-primary-100 dark:bg-slate-900">
         <div class="w-full max-w-md rounded-2xl border border-slate-300 bg-white p-4 shadow-lg dark:border-slate-600 dark:bg-gray-800 sm:p-6">
-            <!--            <div class="mb-4 flex justify-center">-->
-            <!--                <img src="@/assets/img/businessLogo.png" alt="Business Logo" class="h-16 w-auto object-contain sm:h-20 md:h-24 lg:h-28"/>-->
-            <!--            </div>-->
 
             <h2 class="text-center text-3xl font-bold text-gray-800 dark:text-white">Iniciar sesión</h2>
             <p class="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">Ingresa tus credenciales</p>

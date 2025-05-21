@@ -13,6 +13,7 @@ const router = createRouter({
                     path: "/register", name: "newRegister", component: () => import("@/modules/registers/registersCard.vue"),
                     meta: { label: "Nueva Inscripción", icon: IconSolarClipboardAddBold }
                 },
+                { path: "/settings", name: "settings", component: () => import("@/modules/settings.vue") },
                 {
                     path: "/pay-event", name: "payEvent", component: () => import("@/modules/registers/payEventView.vue"),
                     beforeEnter: async() => {
@@ -77,8 +78,8 @@ router.beforeEach(async(to, _, next) => {
 
     // Usuario superusuario → acceso total
     const dataUser = useAuthStore.userData?.user;
-    
-    if (dataUser?.profile_description === 'ADMINISTRADOR' || dataUser?.is_superuser) {
+
+    if (dataUser?.profile_description === "ADMINISTRADOR" || dataUser?.is_superuser) {
         return next();
     }
 

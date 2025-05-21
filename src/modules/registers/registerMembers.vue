@@ -17,6 +17,8 @@ const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStore();
 const isClickCard = ref(false);
 const wasDniChecked = ref(false);
+const showMessage = ref(false);
+const infoMessage = ref({ dni: "", names: "" });
 
 const props = defineProps({
     closeModal: { default: () => ({}), required: false, type: Function },
@@ -60,21 +62,31 @@ const optionsKinds = computed(() => storeKind().kind);
 const addDataFromReniec = async(): Promise<void> => {
     loadingSearch.value = true;
     wasDniChecked.value = false;
+
     const dataConsult = await getDataReniec(doc_num.value);
 
-    if ( !dataConsult) {
+    if ( !dataConsult || !dataConsult.success) {
         loadingSearch.value = false;
-        toastEvent({ severity: "warn", summary: "DNI no encontrado", message: "No se encontró información con ese DNI." });
+        toastEvent({
+            severity: "warn", summary: "DNI no encontrado", message: dataConsult?.message || "No se encontró información con ese DNI."
+        });
         return;
     }
 
-    if ("nombre_completo" in dataConsult) {
-        const dataConsultDNI: DataDNI = dataConsult;
+    const result = dataConsult.data;
+
+    if ("doc_num" in result && "names" in result && "lastnames" in result) {
+        showMessage.value = true;
+        infoMessage.value = { dni: result.doc_num, names: `${ result.names } ${ result.lastnames }` };
+    }
+
+    if ("nombre_completo" in result) {
+        const dataConsultDNI = result as DataDNI;
         setValues({
             names: dataConsultDNI.nombres, lastnames: `${ dataConsultDNI.apellido_paterno } ${ dataConsultDNI.apellido_materno }`
         }, false);
-        wasDniChecked.value = true;
     }
+
     wasDniChecked.value = true;
     loadingSearch.value = false;
 };
@@ -155,6 +167,9 @@ onMounted(() => {
                     </template>
                 </Button>
             </InputGroup>
+        </FormItem>
+        <FormItem cols="12" hide-label hide-error v-if="showMessage">
+            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>
         </FormItem>
         <FormItem label="Nombres" cols="12" :error="errors.names">
             <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"

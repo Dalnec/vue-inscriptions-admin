@@ -17,7 +17,7 @@ import type { PaymentMethod } from "@/stores/interfaceActivities.ts";
 import { useRoute } from "vue-router";
 import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
 
-type VoucherImageType = { file: File; objectURL: string; };
+export type VoucherImageType = { file: File; objectURL: string; };
 
 const refDrawerMembersSaved = ref();
 const loadingSave = ref(false);

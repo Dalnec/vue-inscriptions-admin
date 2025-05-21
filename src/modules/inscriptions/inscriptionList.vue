@@ -16,6 +16,8 @@ import showVoucherFile from "@/components/showVoucherFile.vue";
 import changeAmount from "@/modules/registers/changeAmount.vue";
 import { storeActivityActive } from "@/stores/generalInfoStore.ts";
 import toastEvent from "@/composables/toastEvent.ts";
+import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
+import changeVoucher from "@/components/changeVoucher.vue";
 
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
@@ -26,7 +28,9 @@ const totalRecords = ref(0);
 const useStoreActivityActive = storeActivityActive();
 const menus = ref<Record<number, any>>({});
 const confirm = useConfirm();
-
+const search = ref("");
+const userDataStore = useUserDataConfigStore();
+const userDataValue = userDataStore.userData.user;
 const onPageChange = async(event: DataTablePageEvent) => {
     currentPage.value = event.page + 1;
     rows.value = event.rows;
@@ -53,11 +57,13 @@ const closeModal = (): boolean => parametersModal.value.visible = false;
 const loadInscriptionsList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
     const { response }: InterfaceResponseInscriptions = await Api.Get({
-        route: "inscription", params: {
-            page: currentPage.value,
+        params: {
             activity: useStoreActivityActive.activityId,
-            page_size: rows.value
-        }
+            page: currentPage.value,
+            page_size: rows.value,
+            search: search.value
+        },
+        route: "inscription"
     });
     if (response && response.status === 200) {
         dataMembers.value = response.data.results;
@@ -96,6 +102,20 @@ const onShowVoucher = (data: InscriptionsMembers): void => {
         component: h(showVoucherFile, {
             closeModal,
             imgFile: data.group.voucherfile
+        }),
+        footer: "",
+        header: `Voucher de: ${ data.person.names }`,
+        visible: true,
+        width: "25vw"
+    };
+};
+
+const onChangeVoucher = (data: InscriptionsMembers): void => {
+    parametersModal.value = {
+        component: h(changeVoucher, {
+            closeModal,
+            formData: data,
+            refreshData: () => loadInscriptionsList()
         }),
         footer: "",
         header: `Voucher de: ${ data.person.names }`,
@@ -152,23 +172,35 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
     }
 };
 
-const optionsActions = (data: InscriptionsMembers) => [
-    {
-        label: "Confirmar", value: 1, command: () => {
-            onChangeStatusMember(data, "C");
-        }, class: IconMaterialSymbolsBookmarkCheck as unknown
-    },
-    {
-        label: "Rechazar", value: 2, command: () => {
-            onChangeStatusMember(data, "R");
-        }, class: IconMaterialSymbolsPersonRemove as unknown
-    },
-    {
-        label: "Eliminar", value: 2, command: () => {
-            onChangeStatusMember(data, "", true);
-        }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
+const optionsActions = (data: InscriptionsMembers) => {
+    const options = [
+        {
+            label: "Confirmar", value: 1, command: () => {
+                onChangeStatusMember(data, "C");
+            }, class: IconMaterialSymbolsBookmarkCheck as unknown
+        },
+        {
+            label: "Rechazar", value: 2, command: () => {
+                onChangeStatusMember(data, "R");
+            }, class: IconMaterialSymbolsPersonRemove as unknown
+        }
+    ];
+    if (userDataValue.profile_description === "ADMINISTRADOR" || userDataValue.is_superuser) {
+        options.unshift({
+            label: "Cambiar Voucher", value: 2, command: () => {
+                onChangeVoucher(data);
+            }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
+        });
     }
-];
+    if (userDataValue.profile_description === "ADMINISTRADOR" || userDataValue.is_superuser) {
+        options.push({
+            label: "Eliminar", value: 2, command: () => {
+                onChangeStatusMember(data, "", true);
+            }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
+        });
+    }
+    return options;
+};
 
 const toggle = (event: MouseEvent, id: number) => {
     if (menus.value[id]) menus.value[id].toggle(event);
@@ -185,7 +217,7 @@ defineExpose({ loadInscriptionsList });
 <template>
     <div class="relative mb-2">
         <i-ri-search-line class="absolute top-2/4 left-3 -mt-2.5 text-surface-400 dark:text-surface-600"/>
-        <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid/>
+        <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid v-model="search" @update:model-value="loadInscriptionsList"/>
     </div>
     <DataTable size="small" :value="dataMembers" scroll-height="65vh" scrollable tableStyle="min-width: 110rem;" lazy :loading dataKey="id"
                :rows-per-page-options="[25, 50, 100]" :totalRecords paginator :rows :first="currentPage * rows - rows" @page="onPageChange">
@@ -206,7 +238,7 @@ defineExpose({ loadInscriptionsList });
         <Column style="width: 10%" field="person.church_description" header="Iglesia">
             <template #body="{data}">
                 <p class="font-bold">{{ data?.person?.church_description }}</p>
-                <!--                <p>{{ data.person.kind }}</p>-->
+                <p>{{ data.person.kind_description }}</p>
             </template>
         </Column>
         <Column style="width: 4%" field="group.vouchergroup" header="# Grupo"/>

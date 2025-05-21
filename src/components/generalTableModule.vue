@@ -199,7 +199,7 @@ defineExpose({ getDataTableGeneric, onchangeStatus });
         <!-- Slot for additional custom columns -->
         <slot/>
         <!-- Column for status, displayed only if showStatus prop is true -->
-        <Column class="w-1/12" field="active" header="Estado" v-if="props.showStatus">
+        <Column style="width: 3%;" field="active" header="Estado" v-if="props.showStatus">
             <template #body="{ data }">
                 <div class="flex items-center">
                     <ToggleSwitch v-model="data.active" @update:modelValue="onchangeStatus(data)"/>

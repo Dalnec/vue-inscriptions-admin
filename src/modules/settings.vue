@@ -10,7 +10,7 @@ import GeneralTableModule from "@/components/generalTableModule.vue";
                 Métodos de pago
             </template>
             <template #content>
-                <general-table-module route="paymentMethod" show-status min-width="40rem"/>
+                <general-table-module route="paymentMethod" show-status min-width="30rem"/>
             </template>
         </Card>
         <Card>
@@ -18,7 +18,7 @@ import GeneralTableModule from "@/components/generalTableModule.vue";
                 Tarifas
             </template>
             <template #content>
-                <general-table-module route="tarifa" show-status min-width="40rem"/>
+                <general-table-module route="tarifa" show-status min-width="30rem"/>
             </template>
         </Card>
         <Card>
@@ -26,7 +26,7 @@ import GeneralTableModule from "@/components/generalTableModule.vue";
                 Iglesias
             </template>
             <template #content>
-                <general-table-module route="church" show-status min-width="40rem"/>
+                <general-table-module route="church" show-status min-width="30rem"/>
             </template>
         </Card>
         <Card>
@@ -34,7 +34,7 @@ import GeneralTableModule from "@/components/generalTableModule.vue";
                 Tipos de miembros
             </template>
             <template #content>
-                <general-table-module route="kind" show-status min-width="40rem"/>
+                <general-table-module route="kind" show-status min-width="30rem"/>
             </template>
         </Card>
         <Card>
@@ -42,7 +42,7 @@ import GeneralTableModule from "@/components/generalTableModule.vue";
                 Tipos de documento
             </template>
             <template #content>
-                <general-table-module route="documentType" show-status min-width="40rem"/>
+                <general-table-module route="documentType" show-status min-width="30rem"/>
             </template>
         </Card>
     </div>

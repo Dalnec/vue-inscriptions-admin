@@ -9,7 +9,7 @@ import toastEvent from "@/composables/toastEvent.ts";
 import FormItem from "@/components/formItem.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
-import { type DataDNI, getDataReniec } from "@/composables/getDataReniec.ts";
+import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import { Api } from "@/api/connection.ts";
 
 const refDrawerMembersSaved = ref();
@@ -17,8 +17,8 @@ const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStore();
 const isClickCard = ref(false);
 const wasDniChecked = ref(false);
-const showMessage = ref(false);
-const infoMessage = ref({ dni: "", names: "" });
+// const showMessage = ref(false);
+// const infoMessage = ref({ dni: "", names: "" });
 
 const props = defineProps({
     closeModal: { default: () => ({}), required: false, type: Function },
@@ -76,8 +76,12 @@ const addDataFromReniec = async(): Promise<void> => {
     const result = dataConsult.data;
 
     if ("doc_num" in result && "names" in result && "lastnames" in result) {
-        showMessage.value = true;
-        infoMessage.value = { dni: result.doc_num, names: `${ result.names } ${ result.lastnames }` };
+        const dataConsultDNI = result as MemberExist;
+        // showMessage.value = true;
+        setValues({
+            names: dataConsultDNI.names, lastnames: `${ dataConsultDNI.lastnames }`
+        }, false);
+        // infoMessage.value = { dni: result.doc_num, names: `${ result.names } ${ result.lastnames }` };
     }
 
     if ("nombre_completo" in result) {
@@ -168,9 +172,9 @@ onMounted(() => {
                 </Button>
             </InputGroup>
         </FormItem>
-        <FormItem cols="12" hide-label hide-error v-if="showMessage">
-            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>
-        </FormItem>
+        <!--        <FormItem cols="12" hide-label hide-error v-if="showMessage">-->
+        <!--            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>-->
+        <!--        </FormItem>-->
         <FormItem label="Nombres" cols="12" :error="errors.names">
             <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>

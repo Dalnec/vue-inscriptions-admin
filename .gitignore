@@ -14,6 +14,8 @@ dist-ssr
 coverage
 *.local
 .env
+auto-imports.d.ts
+components.d.ts
 
 /cypress/videos/
 /cypress/screenshots/

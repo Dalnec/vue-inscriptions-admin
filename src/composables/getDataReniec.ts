@@ -69,7 +69,7 @@ export const getDataReniec = useDebounceFn(async(consult: string): Promise<Inter
         }
 
         if (response.data.message?.includes("encuentra")) {
-            toastEvent({ summary: "Error", message: response.data.message });
+            toastEvent({ summary: "Éxito", message: `Datos encontrados`, severity: "success" });
             return { success: true, message: response.data.message, data: response.data.data };
         }
 

@@ -77,11 +77,10 @@ const addDataFromReniec = async(): Promise<void> => {
 
     if ("doc_num" in result && "names" in result && "lastnames" in result) {
         const dataConsultDNI = result as MemberExist;
-        // showMessage.value = true;
         setValues({
-            names: dataConsultDNI.names, lastnames: `${ dataConsultDNI.lastnames }`
+            names: dataConsultDNI.names, lastnames: `${ dataConsultDNI.lastnames }`, phone: dataConsultDNI.phone, kind: dataConsultDNI.kind,
+            gender: dataConsultDNI.gender, church: dataConsultDNI.church
         }, false);
-        // infoMessage.value = { dni: result.doc_num, names: `${ result.names } ${ result.lastnames }` };
     }
 
     if ("nombre_completo" in result) {

@@ -2,8 +2,6 @@
 
 /**
  *
- * Card is a flexible container component.
- *
  * @module generalTableModule
  *
  */
@@ -23,6 +21,7 @@ import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import LoadingPage from "./loadingPage.vue";
 import EmptyTable from "./emptyTable.vue";
+import { type DataTablePageEvent } from "primevue";
 
 /**
  * Interface for the component's props.
@@ -73,9 +72,9 @@ export interface GeneralData {
      */
     description?: string;
     /**
-     * Indicates whether the item is active.
+     * Indicates whether the item is is_active.
      */
-    active: boolean;
+    is_active: boolean;
     /**
      * Symbol associated with the data item.
      */
@@ -118,6 +117,26 @@ const toast = useToast();
 const loading = ref<boolean>(false);
 
 /**
+ * paginator state indicator for show pagination in the primevue table.
+ */
+const showPaginator = ref(false);
+
+/**
+ * total of content in the endpoint.
+ */
+const totalRecords = ref(0);
+
+/**
+ * initial page in the table
+ */
+const currentPage = ref(1);
+
+/**
+ * total of content by page.
+ */
+const rows = ref(25);
+
+/**
  * Debounced function to fetch table data from the API.
  *
  * Calls the API using the provided route and filters.
@@ -130,6 +149,8 @@ const getDataTableGeneric = useDebounceFn(async() => {
             // Check if data is nested under 'results'
             if (response?.data?.results) {
                 dataGenericTable.value = response.data.results;
+                totalRecords.value = response.data?.count;
+                showPaginator.value = true;
             } else {
                 dataGenericTable.value = response.data;
             }
@@ -138,6 +159,17 @@ const getDataTableGeneric = useDebounceFn(async() => {
         console.error("Error fetching data:", error);
     }
 }, 500);
+
+/**
+ * Function to change into page in table
+ *
+ * @param {DataTablePageEvent} event - The event to change into pages
+ */
+const onPageChange = async(event: DataTablePageEvent) => {
+    currentPage.value = event.page + 1;
+    rows.value = event.rows;
+    await getDataTableGeneric();
+};
 
 /**
  * Debounced function to update the status of a data item.
@@ -150,21 +182,13 @@ const getDataTableGeneric = useDebounceFn(async() => {
 const onchangeStatus = useDebounceFn(async(data: GeneralData) => {
     try {
         loading.value = true;
-        const { response } = await Api.Put({ route: `${ props.route }/${ data.id }`, data: { ...data } });
+        const { response } = await Api.Patch({ route: `${ props.route }/${ data.id }`, data: { is_active: data.is_active } });
         if (response?.status === 200) {
-            toast.add({
-                summary: "Estado cambiado",
-                detail: `Estado cambiado para: ${ data.description }`,
-                life: 5000
-            });
+            toast.add({ summary: "Estado cambiado", detail: `Estado cambiado para: ${ data.description }`, life: 5000 });
             await getDataTableGeneric();
         }
     } catch (error) {
-        toast.add({
-            summary: "Backend Error",
-            detail: error || "",
-            life: 5000
-        });
+        toast.add({ summary: "Server Error", detail: error || "", life: 5000 });
         console.error(error);
     } finally {
         loading.value = false;
@@ -184,7 +208,8 @@ defineExpose({ getDataTableGeneric, onchangeStatus });
 </script>
 
 <template>
-    <DataTable :value="dataGenericTable" size="small" :tableStyle="`min-width: ${props.minWidth}`" lazy :loading>
+    <DataTable :value="dataGenericTable" size="small" :tableStyle="`min-width: ${props.minWidth}`" lazy :loading :paginator="showPaginator"
+               :rows :totalRecords :first="currentPage * rows - rows" @page="onPageChange">
         <!-- Template to show when there is no data -->
         <template #empty>
             <empty-table/>
@@ -195,14 +220,14 @@ defineExpose({ getDataTableGeneric, onchangeStatus });
         </template>
         <!-- Data columns -->
         <Column style="width: 10%" field="id" header="ID" v-if="props.showID"/>
-        <Column style="width: 10%;" field="description" header="Description"/>
+        <Column style="width: 15%" field="description" header="Description"/>
         <!-- Slot for additional custom columns -->
         <slot/>
         <!-- Column for status, displayed only if showStatus prop is true -->
-        <Column style="width: 3%;" field="active" header="Estado" v-if="props.showStatus">
+        <Column style="width: 5%" field="is_active" header="Estado" v-if="props.showStatus">
             <template #body="{ data }">
                 <div class="flex items-center">
-                    <ToggleSwitch v-model="data.active" @update:modelValue="onchangeStatus(data)"/>
+                    <ToggleSwitch v-model="data.is_active" @update:modelValue="onchangeStatus(data)"/>
                 </div>
             </template>
         </Column>

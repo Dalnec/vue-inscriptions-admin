@@ -1,6 +1,5 @@
 import toastEventBus from "primevue/toasteventbus";
 import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
-import { type ErrorResponse } from "@/api/errorResponse";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
 
 let baseURL: string = import.meta.env.VITE_API_APP_URL;

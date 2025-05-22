@@ -134,7 +134,7 @@ const currentPage = ref(1);
 /**
  * total of content by page.
  */
-const rows = ref(25);
+const rows = ref(20);
 
 /**
  * Debounced function to fetch table data from the API.
@@ -144,19 +144,25 @@ const rows = ref(25);
  */
 const getDataTableGeneric = useDebounceFn(async() => {
     try {
-        const { response } = await Api.Get({ route: props.route, params: props.filters });
+        loading.value = true;
+        const { response } = await Api.Get({
+            route: props.route, params: { ...props.filters, page: currentPage.value, page_size: rows.value }
+        });
         if (response && response?.status === 200) {
             // Check if data is nested under 'results'
             if (response?.data?.results) {
                 dataGenericTable.value = response.data.results;
                 totalRecords.value = response.data?.count;
                 showPaginator.value = true;
+                loading.value = false;
             } else {
                 dataGenericTable.value = response.data;
+                loading.value = false;
             }
         }
     } catch (error) {
         console.error("Error fetching data:", error);
+        loading.value = false;
     }
 }, 500);
 

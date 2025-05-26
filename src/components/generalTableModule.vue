@@ -72,9 +72,9 @@ export interface GeneralData {
      */
     description?: string;
     /**
-     * Indicates whether the item is is_active.
+     * Indicates whether the item is active.
      */
-    is_active: boolean;
+    active: boolean;
     /**
      * Symbol associated with the data item.
      */
@@ -188,7 +188,7 @@ const onPageChange = async(event: DataTablePageEvent) => {
 const onchangeStatus = useDebounceFn(async(data: GeneralData) => {
     try {
         loading.value = true;
-        const { response } = await Api.Patch({ route: `${ props.route }/${ data.id }`, data: { is_active: data.is_active } });
+        const { response } = await Api.Patch({ route: `${ props.route }/${ data.id }`, data: { active: data.active } });
         if (response?.status === 200) {
             toast.add({ summary: "Estado cambiado", detail: `Estado cambiado para: ${ data.description }`, life: 5000 });
             await getDataTableGeneric();
@@ -230,10 +230,10 @@ defineExpose({ getDataTableGeneric, onchangeStatus });
         <!-- Slot for additional custom columns -->
         <slot/>
         <!-- Column for status, displayed only if showStatus prop is true -->
-        <Column style="width: 5%" field="is_active" header="Estado" v-if="props.showStatus">
+        <Column style="width: 5%" field="active" header="Estado" v-if="props.showStatus">
             <template #body="{ data }">
                 <div class="flex items-center">
-                    <ToggleSwitch v-model="data.is_active" @update:modelValue="onchangeStatus(data)"/>
+                    <ToggleSwitch v-model="data.active" @update:modelValue="onchangeStatus(data)"/>
                 </div>
             </template>
         </Column>

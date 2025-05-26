@@ -8,6 +8,8 @@ import { Api } from "@/api/connection.ts";
 import { storeActivities } from "@/stores/generalInfoStore.ts";
 import * as yup from "yup";
 import type { AutoCompleteCompleteEvent } from "primevue";
+import { format } from "date-fns";
+import toastEvent from "@/composables/toastEvent.ts";
 
 const useStoreActivities = storeActivities();
 const itemsEmail = ref<string[]>([]);
@@ -43,14 +45,23 @@ const onResetForm = () => {
 };
 
 const onSaveForm = handleSubmit(async(values) => {
-    const { response }: InterfaceActionsActivities = await Api.Put({ route: `activity/${ values?.id }`, data: { ...values } });
+    const { response }: InterfaceActionsActivities = await Api.Put({
+        route: `activity/${ values?.id }`,
+        data: {
+            ...values,
+            end_date: values.end_date ? format(values.end_date, "yyyy-MM-dd hh:mm:ss") : null,
+            start_date: values.start_date ? format(values.start_date, "yyyy-MM-dd hh:mm:ss") : null
+        }
+    });
+
     if (response.status === 200) {
         await useStoreActivities.getActivities();
         resetForm({ values: response.data });
     }
 }, () => {
-
+    toastEvent({ severity: "error", summary: "Campos obligatorios" });
 });
+
 
 onMounted(() => {
     onResetForm();

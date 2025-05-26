@@ -1,14 +1,16 @@
+import type { InterfaceAxiosApiResponse } from "@/composables/InterfaceAxiosApiNoPaginate.ts";
+
 export interface InterfaceActivities {
-    end_date: Date;
-    settings: Settings;
-    is_active: boolean;
-    created: Date;
-    modified: Date;
+    created: null | Date;
     description: string;
+    end_date: null | Date;
+    id?: number | null;
+    is_active: boolean;
     location: string;
-    id: number;
+    modified: null | Date;
+    settings: Settings;
+    start_date: null | Date;
     title: string;
-    start_date: Date;
 }
 
 export interface Settings {
@@ -29,3 +31,5 @@ export interface PaymentMethod {
     icon: string | null,
     id: null | number
 }
+
+export type InterfaceActionsActivities = InterfaceAxiosApiResponse<InterfaceActivities>

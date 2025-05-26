@@ -13,7 +13,7 @@ const router = createRouter({
                     path: "/register", name: "newRegister", component: () => import("@/modules/registers/registersCard.vue"),
                     meta: { label: "Nueva Inscripción", icon: IconSolarClipboardAddBold }
                 },
-                { path: "/settings", name: "settings", component: () => import("@/modules/settings.vue") },
+                { path: "/settings", name: "settings", component: () => import("@/modules/settings/concepts.vue") },
                 {
                     path: "/pay-event", name: "payEvent", component: () => import("@/modules/registers/payEventView.vue"),
                     beforeEnter: async() => {
@@ -37,21 +37,28 @@ const router = createRouter({
                 {
                     path: "/users", name: "users", component: () => import("@/modules/users/users.vue"),
                     meta: {
-                        label: "Usuarios", icon: IconSolarUsersGroupRoundedBold,
-                        superOnly: true,
-                        permissions: [
-                            { name: "XD2" }
-                        ]
+                        label: "Usuarios", icon: IconSolarUsersGroupRoundedBold, superOnly: true
                     }
                 },
                 {
                     path: "/assistance", name: "assistance", component: () => import("../views/AboutView.vue"),
                     meta: {
-                        label: "Asistencia", icon: IconMaterialSymbolsCalendarAppsScript,
-                        permissions: [
-                            { name: "XD3" }
-                        ]
+                        label: "Asistencia", icon: IconMaterialSymbolsCalendarAppsScript
                     }
+                },
+                {
+                    path: "/settings", name: "settings", component: () => import("@/modules/settings/index.vue"),
+                    meta: {
+                        label: "Configuraciones", icon: IconMaterialSymbolsCalendarAppsScript, superOnly: true
+                    }
+                },
+                {
+                    path: "/event", name: "event", component: () => import("@/modules/settings/eventManage.vue"),
+                    meta: { superOnly: true }
+                },
+                {
+                    path: "/concepts", name: "concepts", component: () => import("@/modules/settings/concepts.vue"),
+                    meta: { superOnly: true }
                 }
             ]
         },

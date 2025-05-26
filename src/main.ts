@@ -54,7 +54,7 @@ app.directive("keyFilter", KeyFilter);
 app.use(PrimeVue, {
     locale: {
         choose: "Seleccionar",
-        dateFormat: "mm/dd/yy",
+        dateFormat: "yy-mm-dd",
         dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
         dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
         dayNamesShort: [ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],

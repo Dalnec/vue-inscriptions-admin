@@ -7,13 +7,13 @@ import type { MenuItem } from "primevue/menuitem";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useConfirm } from "primevue";
 import toastEvent from "@/composables/toastEvent.ts";
-import router from "@/router";
+// import router from "@/router";
 
 const route = useRoute();
 const confirm = useConfirm();
 const menu = ref();
 const userDataStore = useUserDataConfigStore();
-const userDataValue = userDataStore.userData.user;
+// const userDataValue = userDataStore.userData.user;
 
 optionsMenuStore.createOptionsMenu();
 
@@ -59,11 +59,11 @@ const items = () => {
             label: "Cerrar Sesión", command: () => confirm1()
         }
     ];
-    if (userDataValue.is_superuser || userDataValue.profile_description === "ADMINISTRADOR") {
-        optionsMenu.push({
-            label: "Configuraciones", command: () => router.push({ name: "settings" })
-        });
-    }
+    // if (userDataValue.is_superuser || userDataValue.profile_description === "ADMINISTRADOR") {
+    //     optionsMenu.push({
+    //         label: "Configuraciones", command: () => router.push({ name: "settings" })
+    //     });
+    // }
     return optionsMenu;
 };
 

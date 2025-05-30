@@ -166,7 +166,6 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
             accept: async() => {
                 const { response }: InterfaceActionsInscriptions = await Api.Destroy({ route: `inscription/${ data.id }` });
                 if (response && response.status === 204) {
-                    console.log(response);
                     await loadInscriptionsList();
                     toastEvent({ severity: "info", summary: "Éxito", message: "Eliminado correctamente", life: 3000 });
                 }
@@ -180,7 +179,6 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
         if (response && response.status === 200) {
             await loadInscriptionsList();
             toastEvent({ message: "Estado actualizado correctamente", severity: "success" });
-            console.log(response);
         }
     }
 };

@@ -2,7 +2,7 @@
 
 import router from "@/router";
 import { onMounted, ref } from "vue";
-import type { InterfaceActionsActivities, InterfaceActivities, Settings } from "@/stores/interfaceActivities.ts";
+import type { InterfaceActionsActivities, InterfaceActivities, Settings } from "@/types/interfaceActivities.ts";
 import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection.ts";
 import { storeActivities } from "@/stores/generalInfoStore.ts";
@@ -17,6 +17,7 @@ const itemsEmail = ref<string[]>([]);
 const search = (event: AutoCompleteCompleteEvent) => {
     itemsEmail.value = [ "@gmail.com", "@hotmail.com", "@outlook.com" ].map((item) => event.query + item);
 };
+
 const initialFields = ref<InterfaceActivities>({
     created: null, description: "", end_date: null, id: null, is_active: true, location: "", modified: null,
     settings: { inscription: { emails: [ "" ], send_email: false, show_tarifas: true } }, start_date: null, title: ""

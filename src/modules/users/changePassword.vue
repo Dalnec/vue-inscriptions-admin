@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection";
 import { useToast } from "primevue";
-import type { UsersActiosMembersActions } from "@/modules/users/interfaceUsers.ts";
+import type { UsersActiosMembersActions } from "@/types/interfaceUsers.ts";
 
 const props = defineProps<{ userID: number | undefined; closeForm: () => void; }>();
 const fields = ref({ password: "", passwordConfirm: "" });

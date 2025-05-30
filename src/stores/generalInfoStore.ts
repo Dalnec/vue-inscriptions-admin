@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { Api } from "@/api/connection.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import type { InterfaceActivities, PaymentMethod } from "@/stores/interfaceActivities.ts";
+import type { InterfaceActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
+import type { InterfaceRates } from "@/types/InterfaceRates.ts";
 
 export const storeChurches = defineStore("storeChurches", {
     state: () => ({
@@ -61,7 +62,7 @@ export const storeActivities = defineStore("storeActivities", {
 
 export const storeRate = defineStore("storeRate", {
     state: () => ({
-        rate: [] as { id: number, created: string, modified: string, description: string, price: string, active: boolean, selected: boolean }[]
+        rate: [] as InterfaceRates[]
     }),
     actions: {
         async getRates() {

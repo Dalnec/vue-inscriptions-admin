@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { InterfaceMembers } from "@/composables/interfaceMembers";
+import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import { storeChurches, storeKind } from "../stores/generalInfoStore.ts";
 

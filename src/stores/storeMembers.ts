@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { InterfaceMembers } from "@/composables/interfaceMembers";
+import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import toastEvent from "@/composables/toastEvent";
 import routes from "@/router/index";
 

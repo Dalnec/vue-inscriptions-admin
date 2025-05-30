@@ -111,7 +111,7 @@ async function Get(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
 
 async function Post(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
     try {
-        const response = await axiosInstance.post<AxiosResponse>(`/api/${ props.route }/`, { ...props.data });
+        const response = await axiosInstance.post<AxiosResponse>(`/api/${ props.route }/`, props.data);
         return { response };
     } catch (error) {
         console.log(error);

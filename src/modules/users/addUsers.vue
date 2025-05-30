@@ -7,7 +7,7 @@ import { useDebounceFn } from "@vueuse/core";
 import { Api } from "@/api/connection";
 import { useToast } from "primevue/usetoast";
 import toastErrorMessageForm from "@/composables/toastEvent.ts";
-import type { InterfaceProfile, UsersActiosProfile, UsersActiosMembersActions, InterfaceUsers } from "@/modules/users/interfaceUsers";
+import type { InterfaceProfile, UsersActionsProfile, UsersActiosMembersActions, InterfaceUsers } from "@/types/interfaceUsers.ts";
 
 /* general variables */
 const profileOptions = ref<InterfaceProfile[]>([]);
@@ -71,7 +71,7 @@ const { value: passwordConfirm, handleBlur: passwordConfirmBlur } = useField<str
  * call the profile api to get all existing profiles
  */
 const getProfilesList = useDebounceFn(async(): Promise<InterfaceProfile[]> => {
-    const { response }: UsersActiosProfile = await Api.Get({ route: "profile" });
+    const { response }: UsersActionsProfile = await Api.Get({ route: "profile" });
     if (response.status === 200) {
         return response.data;
     } else return [];

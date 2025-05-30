@@ -25,15 +25,7 @@ export interface PropsDataGeneric {
     /**
      * Define an object with initial values to add to the form
      */
-    formData?: { description: string, symbol?: string, codSunat?: string, id?: string };
-    /**
-     * Defined if it is for the currency type form to add extra validations.
-     */
-    isCurrency?: boolean;
-    /**
-     * Defined if it is for the code sunat type form to add extra validations.
-     */
-    isCodSunat?: boolean;
+    formData?: { description: string, active: boolean, id: number };
     /**
      * Function to close the form.
      */
@@ -55,7 +47,7 @@ export interface PropsDataGeneric {
 // Define component props using the PropsDataGeneric interface
 const props = defineProps<PropsDataGeneric>();
 // Reactive object containing the initial form values.
-const fields = ref({ description: "", symbol: "", codSunat: "", id: "" });
+const fields = ref({ description: "", active: true });
 //Toast notification instance.
 const toast = useToast();
 
@@ -65,22 +57,7 @@ const toast = useToast();
  * - status: must be a boolean value.
  */
 const schemaValidate = yup.object({
-    codSunat: yup.string().trim().when("$isNew", {
-        is: () => props.isCodSunat,
-        otherwise: (schema) => schema.notRequired(),
-        then: (schema) => schema.required("Ingrese símbolo de moneda").min(1, "Ingresa al menos 1 caracteres").max(4, "Máximo 4 caracteres")
-    }).label("Cod. Sunat"),
-    description: yup.string().trim().required("Ingrese una descripción").label("Desc."),
-    id: yup.string().trim().when("$isNew", {
-        is: () => props.isCurrency,
-        otherwise: (schema) => schema.notRequired(),
-        then: (schema) => schema.required("Ingrese símbolo de moneda").min(1, "Ingresa al menos 1 caracteres").max(4, "Máximo 4 caracteres")
-    }).label("ID"),
-    symbol: yup.string().trim().when("$isNew", {
-        is: () => props.isCurrency,
-        otherwise: (schema) => schema.notRequired(),
-        then: (schema) => schema.required("Ingrese símbolo de moneda").min(1, "Ingresa al menos 1 caracteres").max(3, "Máximo 3 caracteres")
-    }).label("Símbolo")
+    description: yup.string().trim().required("Ingrese una descripción").label("Desc.")
 });
 
 // Create the form instance with initial values and the validation schema.
@@ -88,9 +65,6 @@ const { handleSubmit, errors, setValues } = useForm({ validationSchema: schemaVa
 
 // Define the form fields using vee-validate.
 const { value: description, handleBlur: descriptionHandleBlur } = useField<string>("description");
-const { value: symbol, handleBlur: symbolHandleBlur } = useField<string>("symbol");
-const { value: codSunat, handleBlur: codSunatHandleBlur } = useField<string>("codSunat");
-const { value: id, handleBlur: idHandleBlur } = useField<string>("id");
 
 /**
  * Submits the form to update the user's description.
@@ -99,9 +73,9 @@ const { value: id, handleBlur: idHandleBlur } = useField<string>("id");
  */
 const saveChangesForm = handleSubmit(async(values) => {
         try {
-            if (props.dataID) {
+            if (props.formData?.id) {
                 const { response } = await Api.Put({
-                    route: `${ props.route }/${ props.dataID }${ props.routeUpdate ? props.routeUpdate + "/" : "" }`, data: { ...values }
+                    route: `${ props.route }/${ props.formData?.id }${ props.routeUpdate ? props.routeUpdate + "/" : "" }`, data: { ...values }
                 });
                 if (response && response.status === 200) {
                     toast.add({ severity: "success", life: 5000, summary: "Datos actualizados correctamente" });
@@ -129,35 +103,23 @@ const saveChangesForm = handleSubmit(async(values) => {
 );
 
 onMounted(() => {
-    if (props.dataID) setValues(props.formData || {});
+    if (props.formData?.id) setValues(props.formData || {});
 });
 
 </script>
 
 <template>
     <div class="align-items-form">
-        <form-item mark cols="12" label="ID Moneda" :error="errors.id" v-if="isCurrency">
-            <InputText v-model="id" fluid @blur="idHandleBlur($event, true)" input-id="id"
-                       :invalid="!!errors.id" class="w-full"/>
-        </form-item>
-        <form-item mark cols="12" label="Codigo Sunat" :error="errors.codSunat" v-if="isCodSunat">
-            <InputText v-model="codSunat" fluid @blur="codSunatHandleBlur($event, true)" input-id="codSunat"
-                       :invalid="!!errors.codSunat" class="w-full"/>
-        </form-item>
         <form-item mark cols="12" label="Description" :error="errors.description">
             <InputText v-model="description" fluid @blur="descriptionHandleBlur($event, true)" input-id="description"
                        :invalid="!!errors.description" class="w-full"/>
-        </form-item>
-        <form-item mark cols="12" label="Símbolo" :error="errors.symbol" v-if="isCurrency">
-            <InputText v-model="symbol" fluid @blur="symbolHandleBlur($event, true)" input-id="symbol"
-                       :invalid="!!errors.symbol" class="w-full"/>
         </form-item>
     </div>
     <div class="align-buttons-submit">
         <Button severity="secondary" raised fluid label="Cancelar" @click="props.onCloseForm()"/>
         <Button raised fluid @click="saveChangesForm">
             <template #default>
-                {{ props.dataID ? "Editar" : "Crear" }}
+                {{ props.formData?.id ? "Editar" : "Crear" }}
             </template>
         </Button>
     </div>

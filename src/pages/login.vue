@@ -4,7 +4,7 @@ import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
 import { useToast } from "primevue";
 import { Api } from "@/api/connection.ts";
-import { type InterfaceUserLoginActions } from "@/stores/loginStore/InterfaceLogin";
+import { type InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
 
 interface Fields {

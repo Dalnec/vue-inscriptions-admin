@@ -13,9 +13,9 @@ import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
 import { storeActivities, storeActivityActive, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import router from "@/router/index.ts";
-import type { PaymentMethod } from "@/stores/interfaceActivities.ts";
+import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 import { useRoute } from "vue-router";
-import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
+import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 
 export type VoucherImageType = { file: File; objectURL: string; };
 
@@ -62,7 +62,7 @@ const { handleSubmit, errors, resetForm } =
 
 const { value: voucherfile, setValue: setVoucherImage } = useField<VoucherImageType | {}>("voucherfile");
 const { value: paymentmethod } = useField<number | null>("paymentmethod");
-const { value: tarifa, setValue: setRate } = useField<number | undefined>("tarifa");
+const { value: tarifa, setValue: setRate } = useField<number>("tarifa");
 const { value: voucheramount, setValue: setVoucheramount } = useField<number>("voucheramount");
 
 const setVoucherImageFile = (file: File | null) => {
@@ -145,9 +145,9 @@ const handleClickCard = async(memberData: InterfaceMembers) => {
 
 onMounted(() => {
     const dataRate = storeRate().rate.find(rt => rt.selected);
-    if (dataRate) {
-        setRate(dataRate?.id);
-        onSelected({ idRate: dataRate.id, priceRate: dataRate.price, nameRate: dataRate.description });
+    if (dataRate?.id) {
+        setRate(dataRate.id);
+        onSelected({ idRate: tarifa.value, priceRate: dataRate.price, nameRate: dataRate.description });
     }
 });
 

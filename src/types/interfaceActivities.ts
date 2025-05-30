@@ -1,4 +1,4 @@
-import type { InterfaceAxiosApiResponse } from "@/composables/InterfaceAxiosApiNoPaginate.ts";
+import type { InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApiNoPaginate.ts";
 
 export interface InterfaceActivities {
     created: null | Date;
@@ -24,12 +24,12 @@ export interface Inscription {
 }
 
 export interface PaymentMethod {
-    account: string | null,
-    active: boolean,
-    cci: string | null,
+    account?: string | null,
+    active?: boolean,
+    cci?: string | null,
     description: string,
-    icon: string | null,
-    id: null | number
+    icon?: string | null,
+    id?: null | number
 }
 
 export type InterfaceActionsActivities = InterfaceAxiosApiResponse<InterfaceActivities>

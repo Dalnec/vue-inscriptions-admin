@@ -1,4 +1,4 @@
-import { type InterfaceAxiosApiResponse } from "@/composables/InterfaceAxiosApiNoPaginate";
+import { type InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApiNoPaginate.ts";
 
 export interface InterfaceLogin {
     user: User;

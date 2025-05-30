@@ -40,12 +40,12 @@ const router = createRouter({
                         label: "Usuarios", icon: IconSolarUsersGroupRoundedBold, superOnly: true
                     }
                 },
-                {
-                    path: "/assistance", name: "assistance", component: () => import("../views/AboutView.vue"),
-                    meta: {
-                        label: "Asistencia", icon: IconMaterialSymbolsCalendarAppsScript
-                    }
-                },
+                // {
+                //     path: "/assistance", name: "assistance", component: () => import("@/modules/ /AboutView.vue"),
+                //     meta: {
+                //         label: "Asistencia", icon: IconMaterialSymbolsCalendarAppsScript
+                //     }
+                // },
                 {
                     path: "/settings", name: "settings", component: () => import("@/modules/settings/index.vue"),
                     meta: {

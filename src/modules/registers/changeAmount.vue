@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
+import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import { Api } from "@/api/connection.ts";
 import type { InterfaceActionsInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
 import toastEvent from "@/composables/toastEvent.ts";

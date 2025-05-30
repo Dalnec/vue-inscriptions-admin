@@ -3,7 +3,7 @@
 import UserList from "@/modules/users/userList.vue";
 import type { ModalParameters } from "@/composables/parametersModalType.ts";
 import addUsers from "@/modules/users/addUsers.vue";
-import type { InterfaceUsers } from "@/modules/users/interfaceUsers.ts";
+import type { InterfaceUsers } from "@/types/interfaceUsers.ts";
 import { ref, h } from "vue";
 
 const refUserList = ref();

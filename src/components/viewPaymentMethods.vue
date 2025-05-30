@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
 import toastEvent from "@/composables/toastEvent.ts";
-import type { PaymentMethod } from "@/stores/interfaceActivities.ts";
+import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 
 const props = withDefaults(defineProps<PaymentMethod>(),
     { account: "", active: true, cci: null, description: "", icon: "", id: null }

@@ -6,7 +6,7 @@ import changePassword from "./changePassword.vue";
 import { ref, h, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { Api } from "@/api/connection";
-import type { InterfaceUsers, UsersResponseMembers } from "@/modules/users/interfaceUsers.ts";
+import type { InterfaceUsers, UsersResponseMembers } from "@/types/interfaceUsers.ts";
 import type { ModalParameters } from "@/composables/parametersModalType.ts";
 
 /* Defaults Variables */

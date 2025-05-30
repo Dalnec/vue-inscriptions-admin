@@ -2,7 +2,7 @@
 
 import { computed, onMounted, ref, watch } from "vue";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import type { InterfaceMembers, UsersActiosMembers } from "@/composables/interfaceMembers.ts";
+import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";

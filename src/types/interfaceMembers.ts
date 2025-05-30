@@ -1,4 +1,4 @@
-import type { InterfaceAxiosApiResponse } from "@/composables/InterfaceAxiosApiNoPaginate.ts";
+import type { InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApiNoPaginate.ts";
 
 export interface InterfaceMembers {
     church: number | null;

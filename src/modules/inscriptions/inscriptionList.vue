@@ -11,13 +11,14 @@ import { useDebounceFn } from "@vueuse/core";
 import { Api } from "@/api/connection";
 import { type DataTablePageEvent, useConfirm } from "primevue";
 import type { InscriptionsMembers, InterfaceActionsInscriptions, InterfaceResponseInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
-import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
+import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import showVoucherFile from "@/components/showVoucherFile.vue";
 import changeAmount from "@/modules/registers/changeAmount.vue";
 import { storeActivityActive } from "@/stores/generalInfoStore.ts";
 import toastEvent from "@/composables/toastEvent.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import changeVoucher from "@/components/changeVoucher.vue";
+import notifyMember from "@/components/notifyMember.vue";
 
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
@@ -137,6 +138,18 @@ const onChangeAmount = (data: InscriptionsMembers): void => {
     };
 };
 
+const onNotifyMember = (data: InscriptionsMembers): void => {
+    parametersModal.value = {
+        component: h(notifyMember, {
+            closeModal,
+            member: data
+        }),
+        header: `Enviar correo a: ${ data.person.names }`,
+        visible: true,
+        width: "35vw"
+    };
+};
+
 const onChangeStatusMember = async(data: InscriptionsMembers, status: string, isForDelete?: boolean): Promise<void> => {
     if (isForDelete) {
         confirm.require({
@@ -174,6 +187,11 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
 
 const optionsActions = (data: InscriptionsMembers) => {
     const options = [
+        {
+            label: "Notificar", value: 1, command: () => {
+                onNotifyMember(data);
+            }, class: IconMaterialSymbolsCircleNotifications as unknown
+        },
         {
             label: "Confirmar", value: 1, command: () => {
                 onChangeStatusMember(data, "C");

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { type InterfaceLogin } from "@/stores/loginStore/InterfaceLogin";
+import { type InterfaceLogin } from "@/types/InterfaceLogin.ts";
 import router from "@/router/index";
 
 export const useUserDataConfigStore = defineStore("userDataConfig", {

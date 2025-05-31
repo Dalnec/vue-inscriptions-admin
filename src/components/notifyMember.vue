@@ -8,6 +8,7 @@ import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
 
 const props = defineProps<{ member: InscriptionsMembers, closeModal: () => boolean }>();
+const loading = ref(false);
 // const itemsEmail = ref<string[]>([]);
 
 // const search = (event: AutoCompleteCompleteEvent) => {
@@ -22,9 +23,12 @@ const { handleSubmit, errors } = useForm({ initialValues: { email: "" }, validat
 const { value: email } = useField<string>("email");
 
 const onSendMail = handleSubmit(async(values) => {
+    loading.value = true;
     const { response } = await Api.Post({ route: `inscription/${ props.member.id }/send-email`, data: { email: values.email } });
     if (response && response.status === 200) {
-        console.log(response);
+        toastEvent({ severity: "success", summary: response.data?.message });
+        props.closeModal();
+        loading.value = false;
     }
 }, ({ values }) => {
     console.log(values);
@@ -35,17 +39,17 @@ const onSendMail = handleSubmit(async(values) => {
 
 <template>
     <div class="align-items-form">
-        <FormItem class="12" label="Correo a enviar" :error="errors.email" mark for-label="email">
+        <FormItem cols="12" label="Correo a enviar" :error="errors.email" mark for-label="email">
             <!--            <AutoComplete v-model="email" @complete="search" :suggestions="itemsEmail" :typeahead="true" multiple fluid />-->
             <InputText v-model="email" fluid :invalid="!!errors.email" id="email"/>
         </FormItem>
-        <FormItem class="12" hide-error hide-label>
-            <Button fluid label="Enviar Correo" @click="onSendMail"/>
+        <FormItem cols="12" hide-error hide-label>
+            <Button fluid label="Enviar Correo" @click="onSendMail" :loading :disabled="loading"/>
         </FormItem>
-        <FormItem class="12" label="Numero a enviar" hide-error>
+        <FormItem cols="12" label="Numero a enviar" hide-error>
             <Textarea fluid value="Temporalmente inactivo..." disabled/>
         </FormItem>
-        <FormItem class="12" hide-error hide-label>
+        <FormItem cols="12" hide-error hide-label>
             <Button fluid label="Enviar a WhatsApp" disabled/>
         </FormItem>
     </div>

@@ -12,6 +12,7 @@ export interface InscriptionsMembers {
     checkinat: Date;
     group: Group;
     status: string;
+    status_description: string;
 }
 
 export interface Group {
@@ -52,7 +53,9 @@ export interface Person {
     created: Date;
     doc_num: string;
     kind: number;
+    kind_description: string;
     church: number;
+    church_description: string;
     documenttype: number;
     names: string;
     phone: string;

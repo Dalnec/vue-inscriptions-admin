@@ -19,6 +19,8 @@ import toastEvent from "@/composables/toastEvent.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import changeVoucher from "@/components/changeVoucher.vue";
 import notifyMember from "@/components/notifyMember.vue";
+import { exportInscriptionsToExcel } from "@/composables/generateExcelMembers.ts";
+import addObservations from "@/components/addObservations.vue";
 
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
@@ -150,6 +152,19 @@ const onNotifyMember = (data: InscriptionsMembers): void => {
     };
 };
 
+const onAddObservationMember = (data: InscriptionsMembers): void => {
+    parametersModal.value = {
+        component: h(addObservations, {
+            closeModal,
+            formData: data,
+            refreshData: () => loadInscriptionsList()
+        }),
+        header: `Agregar detalle a: ${ data.person.names }`,
+        visible: true,
+        width: "35vw"
+    };
+};
+
 const onChangeStatusMember = async(data: InscriptionsMembers, status: string, isForDelete?: boolean): Promise<void> => {
     if (isForDelete) {
         confirm.require({
@@ -186,31 +201,36 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
 const optionsActions = (data: InscriptionsMembers) => {
     const options = [
         {
-            label: "Notificar", value: 1, command: () => {
+            label: "Agregar Obs.", value: 1, command: () => {
+                onAddObservationMember(data);
+            }, class: IconMaterialSymbolsCircleNotifications as unknown
+        },
+        {
+            label: "Notificar", value: 2, command: () => {
                 onNotifyMember(data);
             }, class: IconMaterialSymbolsCircleNotifications as unknown
         },
         {
-            label: "Confirmar", value: 1, command: () => {
+            label: "Confirmar", value: 3, command: () => {
                 onChangeStatusMember(data, "C");
             }, class: IconMaterialSymbolsBookmarkCheck as unknown
         },
         {
-            label: "Rechazar", value: 2, command: () => {
+            label: "Rechazar", value: 4, command: () => {
                 onChangeStatusMember(data, "R");
             }, class: IconMaterialSymbolsPersonRemove as unknown
         }
     ];
     if (userDataValue.profile_description === "ADMINISTRADOR" || userDataValue.is_superuser) {
         options.unshift({
-            label: "Cambiar Voucher", value: 2, command: () => {
+            label: "Cambiar Voucher", value: 5, command: () => {
                 onChangeVoucher(data);
             }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
         });
     }
     if (userDataValue.profile_description === "ADMINISTRADOR" || userDataValue.is_superuser) {
         options.push({
-            label: "Eliminar", value: 2, command: () => {
+            label: "Eliminar", value: 6, command: () => {
                 onChangeStatusMember(data, "", true);
             }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
         });
@@ -222,6 +242,23 @@ const toggle = (event: MouseEvent, id: number) => {
     if (menus.value[id]) menus.value[id].toggle(event);
 };
 
+const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
+    loading.value = true;
+    const { response }: InterfaceResponseInscriptions = await Api.Get({
+        params: {
+            activity: useStoreActivityActive.activityId,
+            page: 1,
+            page_size: 120417,
+            search: search.value
+        },
+        route: "inscription"
+    });
+    if (response && response.status === 200) {
+        await exportInscriptionsToExcel(response.data.results);
+        loading.value = false;
+    }
+}, 250);
+
 onMounted(async() => {
     await loadInscriptionsList();
 });
@@ -231,9 +268,19 @@ defineExpose({ loadInscriptionsList });
 </script>
 
 <template>
-    <div class="relative mb-2">
-        <i-ri-search-line class="absolute top-2/4 left-3 -mt-2.5 text-surface-400 dark:text-surface-600"/>
-        <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid v-model="search" @update:model-value="loadInscriptionsList"/>
+    <div class="flex justify-between flex-wrap">
+        <div class="relative mb-2">
+            <i-ri-search-line class="absolute top-2/4 left-3 -mt-2.5 text-surface-400 dark:text-surface-600"/>
+            <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid v-model="search"
+                       @update:model-value="loadInscriptionsList"/>
+        </div>
+        <div>
+            <Button label="Descargar Excel" @click="addDataToGenerateExcel()">
+                <template #icon>
+                    <i-mdi-microsoft-excel/>
+                </template>
+            </Button>
+        </div>
     </div>
     <DataTable size="small" :value="dataMembers" scroll-height="65vh" scrollable tableStyle="min-width: 110rem;" lazy :loading dataKey="id"
                :rows-per-page-options="[25, 50, 100]" :totalRecords paginator :rows :first="currentPage * rows - rows" @page="onPageChange">

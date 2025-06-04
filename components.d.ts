@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddObservations: typeof import('./src/components/addObservations.vue')['default']
     AppConfig: typeof import('./src/components/app/appConfig.vue')['default']
     AutoComplete: typeof import('primevue/autocomplete')['default']
     BasicFormToAddOrEdit: typeof import('./src/components/app/basicFormToAddOrEdit.vue')['default']
@@ -58,6 +59,7 @@ declare module 'vue' {
     IMaterialSymbolsPersonOutlineRounded: typeof import('~icons/material-symbols/person-outline-rounded')['default']
     IMaterialSymbolsSyncSavedLocally: typeof import('~icons/material-symbols/sync-saved-locally')['default']
     IMaterialSymbolsTabClose: typeof import('~icons/material-symbols/tab-close')['default']
+    IMdiMicrosoftExcel: typeof import('~icons/mdi/microsoft-excel')['default']
     INotoTurtle: typeof import('~icons/noto/turtle')['default']
     InputGroup: typeof import('primevue/inputgroup')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']

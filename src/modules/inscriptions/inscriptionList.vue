@@ -283,7 +283,12 @@ defineExpose({ loadInscriptionsList });
         </div>
     </div>
     <DataTable size="small" :value="dataMembers" scroll-height="65vh" scrollable tableStyle="min-width: 110rem;" lazy :loading dataKey="id"
-               :rows-per-page-options="[25, 50, 100]" :totalRecords paginator :rows :first="currentPage * rows - rows" @page="onPageChange">
+               :rows-per-page-options="[25, 50, 100]" :totalRecords paginator :rows :first="currentPage * rows - rows" @page="onPageChange"
+               :paginator-template="{
+                   '640px': 'PrevPageLink PageLinks NextPageLink',
+                   '960px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink',
+                   '1300px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink',
+                   default: 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown'}">
         <template #empty>
             <empty-table/>
         </template>
@@ -323,7 +328,12 @@ defineExpose({ loadInscriptionsList });
                 {{ !!data?.amount ? `S/ ${ data?.amount }` : "-" }}
             </template>
         </Column>
-        <Column style="width: 10%" field="observations" header="Observaciones"/>
+        <Column style="width: 10%" field="observations" header="Observaciones">
+            <template #body="{data}">
+                <p class="font-semibold">F. Registro: {{ data.created }}</p>
+                <p>{{ data.observations }}</p>
+            </template>
+        </Column>
         <Column style="width: 4%" header="Estado" field="active">
             <template #body="{data}">
                 <Message size="small"
@@ -336,17 +346,17 @@ defineExpose({ loadInscriptionsList });
             <template #body="{data}">
                 <div class="flex items-center justify-center space-x-1">
                     <Button size="small" severity="warn" v-tooltip.top="'Editar persona'" @click="addParametersUserModal(data)"
-                            class="h-6 !w-6">
+                            class="!h-8">
                         <template #icon>
                             <i-tabler-user-edit/>
                         </template>
                     </Button>
-                    <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)" class="h-6 !w-6">
+                    <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)" class="!h-8">
                         <template #icon>
                             <i-ic-round-attach-money/>
                         </template>
                     </Button>
-                    <Button @click="toggle($event, data.id)" aria-haspopup="true" :aria-controls="`menu_${data.id}`" class="h-7 w-8">
+                    <Button @click="toggle($event, data.id)" aria-haspopup="true" :aria-controls="`menu_${data.id}`" class="!h-8">
                         <template #icon>
                             <i-material-symbols-action-key-outline/>
                         </template>
@@ -359,6 +369,7 @@ defineExpose({ loadInscriptionsList });
                 </div>
             </template>
         </Column>
+        <template #paginatorstart> Total: {{ totalRecords }}</template>
     </DataTable>
     <modal-component ref="modal" :parameters="parametersModal"/>
 </template>

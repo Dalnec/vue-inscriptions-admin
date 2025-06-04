@@ -16,7 +16,7 @@ export async function exportInscriptionsToExcel(data: InscriptionsMembers[]) {
         "Edad",
         "Tipo de Miembro",
         "Iglesia",
-        "Actividad",
+        "# Grupo",
         "Monto",
         "Método de Pago",
         "Check-in",

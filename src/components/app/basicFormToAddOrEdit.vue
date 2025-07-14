@@ -38,6 +38,7 @@ export interface PropsDataGeneric {
      * Define a route to send data to post or put requests
      */
     route: string;
+    showActive?: boolean;
     /**
      * Define a route to send data to put requests
      */
@@ -65,6 +66,7 @@ const { handleSubmit, errors, setValues } = useForm({ validationSchema: schemaVa
 
 // Define the form fields using vee-validate.
 const { value: description, handleBlur: descriptionHandleBlur } = useField<string>("description");
+const { value: active } = useField<string>("active");
 
 /**
  * Submits the form to update the user's description.
@@ -113,6 +115,9 @@ onMounted(() => {
         <form-item mark cols="12" label="Description" :error="errors.description">
             <InputText v-model="description" fluid @blur="descriptionHandleBlur($event, true)" input-id="description"
                        :invalid="!!errors.description" class="w-full"/>
+        </form-item>
+        <form-item mark cols="3" label="Activo" v-if="props.showActive">
+            <ToggleSwitch v-model="active" fluid input-id="active"/>
         </form-item>
     </div>
     <div class="align-buttons-submit">

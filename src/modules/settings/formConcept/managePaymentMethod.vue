@@ -23,6 +23,7 @@ const { errors, handleSubmit, setValues } = useForm({ validationSchema, initialV
 const { value: account } = useField<string>("account");
 const { value: cci } = useField<string>("cci");
 const { value: description } = useField<string>("description");
+const { value: active } = useField<boolean>("active");
 const { value: icon, setValue: setValueIcon } = useField<string>("icon");
 
 const onSavePayments = handleSubmit(async() => {
@@ -82,6 +83,9 @@ onMounted(async() => {
         </FormItem>
         <FormItem label="CCI" cols="4">
             <InputText v-model="cci" fluid/>
+        </FormItem>
+        <FormItem label="Activo" cols="4">
+            <ToggleSwitch v-model="active" fluid/>
         </FormItem>
         <FormItem label="Icono" cols="7">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"

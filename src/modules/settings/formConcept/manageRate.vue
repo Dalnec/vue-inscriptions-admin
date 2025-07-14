@@ -25,6 +25,8 @@ const { errors, handleSubmit, setValues } = useForm({ validationSchema, initialV
 const { value: description } = useField<string>("description");
 const { value: price } = useField<string>("price");
 const { value: selected } = useField<boolean>("selected");
+const { value: active } = useField<boolean>("active");
+
 const onSavePayments = handleSubmit(async(values) => {
     if (props.formData?.id) {
         const { response } = await Api.Post({
@@ -62,8 +64,11 @@ onMounted(() => {
         <FormItem label="Precio" cols="6" :error="errors.price">
             <InputText fluid v-model="price" v-key-filter.num/>
         </FormItem>
-        <FormItem label="Seleccionable" cols="6" :error="errors.selected">
+        <FormItem label="Seleccionable" cols="3" :error="errors.selected">
             <ToggleSwitch fluid v-model="selected"/>
+        </FormItem>
+        <FormItem label="Activo" cols="3" :error="errors.active">
+            <ToggleSwitch fluid v-model="active"/>
         </FormItem>
         <FormItem hide-label hide-error cols="6">
             <Button label="Cancelar" @click="props.closeModal()" fluid/>

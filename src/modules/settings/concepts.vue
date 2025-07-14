@@ -58,6 +58,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
             onCloseForm: closeModal,
             formData: data || {} as { active: boolean, description: string, id: number, },
             reloadData: () => reloadData(),
+            showActive: true,
             route
         }),
         header: data?.id ? `Editar: ${ data.description }` : "Agregar",
@@ -82,7 +83,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
         </div>
         <div class="align-items-form">
             <list-concepts @onConceptClick="(value)=>conceptSelect = value?.concept || 'paymentMethod'" class="max-cols-3"/>
-            <Card v-if="conceptSelect === 'paymentMethod'" class="max-cols-9">
+            <Card v-if="conceptSelect === 'paymentMethod' || !conceptSelect" class="max-cols-9">
                 <template #title>
                     <div class="align-header">
                         <p> Métodos de pago </p>
@@ -90,7 +91,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTablePaymentMethod" route="paymentMethod" show-status min-width="50rem">
+                    <general-table-module ref="refGeneralTablePaymentMethod" route="paymentMethod" min-width="50rem">
                         <Column style="width: 5%;" field="account" header="Nro de Cuenta"/>
                         <Column style="width: 5%;" field="cci" header="CCI"/>
                         <template #actions>
@@ -111,7 +112,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableTarifa" route="tarifa" show-status min-width="30rem">
+                    <general-table-module ref="refGeneralTableTarifa" route="tarifa" min-width="30rem">
                         <Column header="Precio" field="price" style="width: 5%;"/>
                         <template #actions>
                             <Column style="width: 2%;">
@@ -132,7 +133,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableChurch" route="church" show-status min-width="30rem">
+                    <general-table-module ref="refGeneralTableChurch" route="church" min-width="30rem">
                         <template #actions>
                             <Column style="width: 2%;">
                                 <template #body="{data}">
@@ -153,7 +154,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableKind" route="kind" show-status min-width="30rem">
+                    <general-table-module ref="refGeneralTableKind" route="kind" min-width="30rem">
                         <template #actions>
                             <Column style="width: 2%;">
                                 <template #body="{data}">
@@ -174,7 +175,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableDocumentType" route="documentType" show-status min-width="30rem">
+                    <general-table-module ref="refGeneralTableDocumentType" route="documentType" min-width="30rem">
                         <template #actions>
                             <Column style="width: 2%;">
                                 <template #body="{data}">

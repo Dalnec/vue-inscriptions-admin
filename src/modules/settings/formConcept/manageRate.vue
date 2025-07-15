@@ -8,13 +8,8 @@ import { Api } from "@/api/connection.ts";
 import toastEvent from "@/composables/toastEvent.ts";
 
 const props = defineProps<{ formData?: InterfaceRates, closeModal: () => boolean, refreshData: () => Promise<void> }>();
-
-const fieldInitial = ref<InterfaceRates>({
-    active: true,
-    description: "",
-    price: "",
-    selected: true
-});
+const loading = ref(false);
+const fieldInitial = ref<InterfaceRates>({ active: true, description: "", price: "", selected: true });
 
 const validationSchema = yup.object({
     description: yup.string().required("Agregue un nombre de cuenta")
@@ -28,30 +23,21 @@ const { value: selected } = useField<boolean>("selected");
 const { value: active } = useField<boolean>("active");
 
 const onSavePayments = handleSubmit(async(values) => {
-    if (props.formData?.id) {
-        const { response } = await Api.Post({
-            route: `tarifa /${ values.id }`,
-            data: { ...values }
-        });
-        if (response && response.status === 201) {
-            toastEvent({ severity: "success", summary: "Datos Agregados" });
-            await props.refreshData();
-            props.closeModal();
-        }
-    } else {
-        const { response } = await Api.Post({ route: "tarifa", data: { ...values } });
-        if (response && response.status === 200) {
-            toastEvent({ severity: "success", summary: "Datos editados" });
-            await props.refreshData();
-            props.closeModal();
-        }
+    loading.value = true;
+    const isUpdate = !!props.formData?.id;
+    const route = `tarifa${ isUpdate ? `/${ props.formData.id }` : "" }`;
+    const method = isUpdate ? Api.Put : Api.Post;
+    const { response } = await method({ route, data: { ...values } });
+    if (response && [ 200, 201 ].includes(response.status)) {
+        loading.value = false;
+        toastEvent({ severity: "success", summary: `Datos ${ isUpdate ? "editados" : "agregados" }` });
+        await props.refreshData();
+        props.closeModal();
     }
 });
 
 onMounted(() => {
-    if (props.formData?.id) {
-        setValues({ ...props.formData });
-    }
+    if (props.formData?.id) setValues({ ...props.formData });
 });
 
 </script>
@@ -74,7 +60,7 @@ onMounted(() => {
             <Button label="Cancelar" @click="props.closeModal()" fluid/>
         </FormItem>
         <FormItem hide-label hide-error cols="6">
-            <Button :label="props.formData?.id ? 'Editar' : 'Crear'" @click="onSavePayments" fluid/>
+            <Button :label="props.formData?.id ? 'Editar' : 'Crear'" @click="onSavePayments" :loading fluid/>
         </FormItem>
     </div>
 </template>

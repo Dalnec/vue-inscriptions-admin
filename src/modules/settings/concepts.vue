@@ -13,7 +13,7 @@ import basicFormToAddOrEdit from "@/components/app/basicFormToAddOrEdit.vue";
 
 const conceptSelect = ref("paymentMethod");
 const refGeneralTablePaymentMethod = ref();
-const refGeneralTableTarifa = ref();
+const refGeneralTableRate = ref();
 const refGeneralTableChurch = ref();
 const refGeneralTableKind = ref();
 const refGeneralTableDocumentType = ref();
@@ -42,11 +42,11 @@ const managePaymentForm = (data?: PaymentMethod) => {
 const manageRates = (data?: InterfaceRates) => {
     parameters.value = {
         visible: true,
-        header: data?.id ? `Editar método de pago: ${ data.description }` : "Agregar Nuevo",
+        header: data?.id ? `Editar Tarifa: ${ data.description }` : "Agregar Nuevo",
         width: "50vw",
         component: h(manageRate, {
             closeModal,
-            refreshData: () => refGeneralTablePaymentMethod.value.getDataTableGeneric(),
+            refreshData: () => refGeneralTableRate.value.getDataTableGeneric(),
             formData: data || {} as InterfaceRates
         })
     };
@@ -112,7 +112,7 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableTarifa" route="tarifa" min-width="30rem">
+                    <general-table-module ref="refGeneralTableRate" route="tarifa" min-width="30rem">
                         <Column header="Precio" field="price" style="width: 5%;"/>
                         <template #actions>
                             <Column style="width: 2%;">

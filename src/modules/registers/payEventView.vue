@@ -4,7 +4,7 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { computed, onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
-import type { FileUploadSelectEvent } from "primevue";
+import type { FileUploadSelectEvent, InputNumberInputEvent } from "primevue";
 import FormItem from "@/components/formItem.vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";

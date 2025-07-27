@@ -143,6 +143,12 @@ const handleClickCard = async(memberData: InterfaceMembers) => {
     }
 };
 
+function refocus($event: InputNumberInputEvent) {
+      const target = $event.originalEvent.target as HTMLElement;
+        target.blur();
+        target.focus();
+}
+
 onMounted(() => {
     const dataRate = storeRate().rate.find(rt => rt.selected);
     if (dataRate?.id) {
@@ -179,7 +185,7 @@ onMounted(() => {
                     </div>
                 </FormItem>
                 <FormItem cols="12" :error="errors.voucheramount" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
-a                    <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large" @input="(e) => (voucheramount = e.value as number)"/>
+                    <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large" @input="refocus"/>
                 </FormItem>
                 <FormItem label="Voucher de pago" cols="12" :error="errors.voucherfile"
                           v-if="dataForViewPayment.description !== 'EFECTIVO'">

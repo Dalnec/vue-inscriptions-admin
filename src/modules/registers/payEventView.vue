@@ -76,7 +76,7 @@ function isVoucherImage(obj: unknown): obj is VoucherImageType {
 
 const saveAllMembers = handleSubmit(async() => {
     try {
-
+if( voucheramount.value <=0 ) return
         loadingSave.value = true;
 
         const dataRate = storeRate().rate.find(rt => rt.selected);
@@ -179,7 +179,7 @@ onMounted(() => {
                     </div>
                 </FormItem>
                 <FormItem cols="12" :error="errors.voucheramount" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
-                    <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large"/>
+a                    <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large" @input="(e) => (voucheramount = e.value as number)"/>
                 </FormItem>
                 <FormItem label="Voucher de pago" cols="12" :error="errors.voucherfile"
                           v-if="dataForViewPayment.description !== 'EFECTIVO'">

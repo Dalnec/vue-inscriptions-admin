@@ -19,7 +19,7 @@ const classContent = "h-72 flex flex-col cursor-pointer items-center justify-cen
                     <p class="text-xl font-semibold dark:text-white">Evento</p>
                 </div>
                 <div :class="classContent" @click="router.push({ name: 'concepts', force: true })">
-                    <i-icon-park-outline-concept-sharing class="text-9xl text-surface-900 dark:text-white"/>
+                    <i-material-symbols-contract-edit-outline-rounded class="text-9xl text-surface-900 dark:text-white"/>
                     <p class="text-xl font-semibold text-surface-900 dark:text-white">Conceptos</p>
                 </div>
             </div>

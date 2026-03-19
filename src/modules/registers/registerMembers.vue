@@ -6,7 +6,7 @@ import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMemb
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
-import FormItem from "@/components/formItem.vue";
+import ValidateFormItem from "@/components/ValidateFormItem.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
@@ -154,35 +154,33 @@ onMounted(() => {
 
 <template>
     <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-        <FormItem label="Tipo de Documento" cols="12">
+        <ValidateFormItem label="Tipo de Documento" cols="12">
             <Select fluid v-model="documenttype" @blur="documenttypeHandle($event, true)" :options="optionsDocuments"
                     optionLabel="description" option-value="id" size="large" :disabled="isClickCard"/>
-        </FormItem>
-        <FormItem label="DNI" cols="12" :error="errors.doc_num">
+        </ValidateFormItem>
+        <ValidateFormItem label="DNI" cols="12" :error="errors.doc_num">
             <InputGroup>
                 <InputText fluid v-model="doc_num" @blur="doc_numHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
                            maxlength="8" :invalid="!!errors.doc_num" size="large" @keyup.enter="addDataFromReniec"
                            :disabled="isClickCard && !isClickCard && props.formData?.id !== null"/>
                 <Button label="Buscar" :disabled="loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
-                        :loading="loadingSearch">
-                    <template #icon>
-                        <i-material-symbols-database-search/>
-                    </template>
+                        :loading="loadingSearch" #icon>
+                    <i-material-symbols-person-search-outline-rounded/>
                 </Button>
             </InputGroup>
-        </FormItem>
-        <!--        <FormItem cols="12" hide-label hide-error v-if="showMessage">-->
+        </ValidateFormItem>
+        <!--        <ValidateFormItem cols="12" hide-label hide-error v-if="showMessage">-->
         <!--            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>-->
-        <!--        </FormItem>-->
-        <FormItem label="Nombres" cols="12" :error="errors.names">
+        <!--        </ValidateFormItem>-->
+        <ValidateFormItem label="Nombres" cols="12" :error="errors.names">
             <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
-        </FormItem>
-        <FormItem label="Apellidos" cols="12" :error="errors.lastnames">
+        </ValidateFormItem>
+        <ValidateFormItem label="Apellidos" cols="12" :error="errors.lastnames">
             <InputText fluid v-model="lastnames" @blur="lastnamesHandle($event, true)" :invalid="!!errors.lastnames" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
-        </FormItem>
-        <FormItem label="Género" cols="12" :error="errors.gender">
+        </ValidateFormItem>
+        <ValidateFormItem label="Género" cols="12" :error="errors.gender">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2">
                     <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" @blur="genderHandle($event, true)"
@@ -195,19 +193,19 @@ onMounted(() => {
                     <label for="gender2">Femenino</label>
                 </div>
             </div>
-        </FormItem>
-        <!--        <FormItem label="F. de Nacimiento" cols="12" :error="errors.gender">-->
+        </ValidateFormItem>
+        <!--        <ValidateFormItem label="F. de Nacimiento" cols="12" :error="errors.gender">-->
         <!--            <DatePicker fluid v-model="birthdate" @blur="birthdateHandle(undefined, true)" :invalid="!!errors.birthdate" size="large"-->
         <!--                        date-format="d/m/yy"/>-->
-        <!--        </FormItem>-->
-        <FormItem label="Edad" cols="12">
+        <!--        </ValidateFormItem>-->
+        <ValidateFormItem label="Edad" cols="12">
             <InputNumber fluid v-model="age" size="large"/>
-        </FormItem>
-        <FormItem label="Celular" cols="12" :error="errors.phone">
+        </ValidateFormItem>
+        <ValidateFormItem label="Celular" cols="12" :error="errors.phone">
             <InputText fluid v-model="phone" @blur="phoneHandle($event, true)" maxlength="9" v-key-filter.num :invalid="!!errors.phone"
                        size="large"/>
-        </FormItem>
-        <FormItem label="¿Perteneces a alguna iglesia?" cols="12" :error="errors.kind">
+        </ValidateFormItem>
+        <ValidateFormItem label="¿Perteneces a alguna iglesia?" cols="12" :error="errors.kind">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
                     <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
@@ -216,33 +214,27 @@ onMounted(() => {
                     <label :for="kindData.description">{{ kindData.description }}</label>
                 </div>
             </div>
-        </FormItem>
-        <FormItem label="Iglesia" cols="12" :error="errors.church">
+        </ValidateFormItem>
+        <ValidateFormItem label="Iglesia" cols="12" :error="errors.church">
             <Select :options="optionsChurches" fluid v-model="church" @blur="churchHandle($event, true)" filter show-clear size="large"
                     :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description"
                     option-value="id"/>
-        </FormItem>
+        </ValidateFormItem>
 
         <div class="max-cols-4">
             <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer "
-                    v-if="membersStoreOptions.membersData.length >= 1 && !props.formData?.id" fluid>
-                <template #icon>
-                    <i-material-symbols-list-alt-check/>
-                </template>
+                    v-if="membersStoreOptions.membersData.length >= 1 && !props.formData?.id" fluid #icon>
+                <i-material-symbols-list-alt-check/>
             </Button>
         </div>
         <div class="max-cols-4">
-            <Button label="Limpiar" severity="warn" fluid @click="clearDataForm()">
-                <template #icon>
-                    <i-material-symbols-tab-close/>
-                </template>
+            <Button label="Limpiar" severity="warn" fluid @click="clearDataForm()" #icon>
+                <i-material-symbols-tab-close/>
             </Button>
         </div>
         <div class="max-cols-4">
-            <Button :label=" isClickCard || props.formData?.id ? 'Editar' :'¡Agregar!'" @click="saveNewMember()" fluid>
-                <template #icon>
-                    <i-material-symbols-sync-saved-locally/>
-                </template>
+            <Button :label=" isClickCard || props.formData?.id ? 'Editar' :'¡Agregar!'" @click="saveNewMember()" fluid #icon>
+                <i-material-symbols-sync-saved-locally/>
             </Button>
         </div>
     </div>

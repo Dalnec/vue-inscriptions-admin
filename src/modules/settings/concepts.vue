@@ -73,10 +73,8 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
     <div>
         <div class="mb-2 align-header">
             <div class="flex items-center gap-2">
-                <Button severity="secondary" size="small" rounded @click="router.push({name: 'settings', force: true})">
-                    <template #icon>
-                        <i-material-symbols-arrow-back-rounded/>
-                    </template>
+                <Button severity="secondary" size="small" rounded @click="router.push({name: 'settings', force: true})" #icon>
+                    <i-material-symbols-arrow-back-rounded/>
                 </Button>
                 <p class="p-card-title text-surface-700 dark:text-surface-100/90">Configuración de conceptos</p>
             </div>
@@ -95,10 +93,8 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                         <Column style="width: 5%;" field="account" header="Nro de Cuenta"/>
                         <Column style="width: 5%;" field="cci" header="CCI"/>
                         <template #actions>
-                            <Column style="width: 2%;">
-                                <template #body="{data}">
-                                    <Button label="Editar" @click="managePaymentForm(data)"/>
-                                </template>
+                            <Column style="width: 2%;" #body="{ data }">
+                                <Button label="Editar" @click="managePaymentForm(data)"/>
                             </Column>
                         </template>
                     </general-table-module>
@@ -115,10 +111,8 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     <general-table-module ref="refGeneralTableRate" route="tarifa" min-width="30rem">
                         <Column header="Precio" field="price" style="width: 5%;"/>
                         <template #actions>
-                            <Column style="width: 2%;">
-                                <template #body="{data}">
-                                    <Button label="Editar" @click="manageRates(data)"/>
-                                </template>
+                            <Column style="width: 2%;" #body="{ data }">
+                                <Button label="Editar" @click="manageRates(data)"/>
                             </Column>
                         </template>
                     </general-table-module>
@@ -133,15 +127,11 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableChurch" route="church" min-width="30rem">
-                        <template #actions>
-                            <Column style="width: 2%;">
-                                <template #body="{data}">
-                                    <Button label="Editar"
-                                            @click="addInfoGeneralForm('church', refGeneralTableChurch.getDataTableGeneric, data)"/>
-                                </template>
-                            </Column>
-                        </template>
+                    <general-table-module ref="refGeneralTableChurch" route="church" min-width="30rem" #actions>
+                        <Column style="width: 2%;" #body="{ data }">
+                            <Button label="Editar"
+                                    @click="addInfoGeneralForm('church', refGeneralTableChurch.getDataTableGeneric, data)"/>
+                        </Column>
                     </general-table-module>
                 </template>
             </Card>
@@ -154,15 +144,11 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableKind" route="kind" min-width="30rem">
-                        <template #actions>
-                            <Column style="width: 2%;">
-                                <template #body="{data}">
-                                    <Button label="Editar"
-                                            @click="addInfoGeneralForm('kind', refGeneralTableKind.getDataTableGeneric, data)"/>
-                                </template>
-                            </Column>
-                        </template>
+                    <general-table-module ref="refGeneralTableKind" route="kind" min-width="30rem" #actions>
+                        <Column style="width: 2%;" #body="{ data }">
+                            <Button label="Editar"
+                                    @click="addInfoGeneralForm('kind', refGeneralTableKind.getDataTableGeneric, data)"/>
+                        </Column>
                     </general-table-module>
                 </template>
             </Card>
@@ -175,15 +161,11 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableDocumentType" route="documentType" min-width="30rem">
-                        <template #actions>
-                            <Column style="width: 2%;">
-                                <template #body="{data}">
-                                    <Button label="Editar"
-                                            @click="addInfoGeneralForm('documentType', refGeneralTableDocumentType.getDataTableGeneric, data)"/>
-                                </template>
-                            </Column>
-                        </template>
+                    <general-table-module ref="refGeneralTableDocumentType" route="documentType" min-width="30rem" #actions>
+                        <Column style="width: 2%;" #body="{ data }">
+                            <Button label="Editar"
+                                    @click="addInfoGeneralForm('documentType', refGeneralTableDocumentType.getDataTableGeneric, data)"/>
+                        </Column>
                     </general-table-module>
                 </template>
             </Card>

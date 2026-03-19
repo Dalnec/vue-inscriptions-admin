@@ -122,44 +122,40 @@ onMounted(async() => {
 
 <template>
     <div class="align-items-form">
-        <form-item for-label="names" label="Nombres" mark :error="errors.names" cols="6">
+        <validate-form-item for-label="names" label="Nombres" mark :error="errors.names" cols="6">
             <InputText v-model="names" id="names" :invalid="!!errors.names" fluid @blur="namesBlur($event, true)" autocomplete="off"/>
-        </form-item>
-        <form-item for-label="lastname" label="Apellidos" cols="6">
+        </validate-form-item>
+        <validate-form-item for-label="lastname" label="Apellidos" cols="6">
             <InputText v-model="lastname" id="lastname" fluid autocomplete="off"/>
-        </form-item>
-        <form-item for-label="email" label="Correo" cols="6">
+        </validate-form-item>
+        <validate-form-item for-label="email" label="Correo" cols="6">
             <InputText v-model="email" id="email" fluid autocomplete="off"/>
-        </form-item>
-        <form-item for-label="profile" label="Perfil" cols="4" mark :error="errors.profile">
+        </validate-form-item>
+        <validate-form-item for-label="profile" label="Perfil" cols="4" mark :error="errors.profile">
             <Select v-model="profile" label-id="profile" :invalid="!!errors.profile" :options="profileOptions" name="profile" fluid
-                    optionLabel="description" optionValue="id" autocomplete="off" @blur="profileBlur($event, true)" show-clear/>
-        </form-item>
-        <form-item v-if="!props.formData?.id" for-label="username" label="Usuario" mark :error="errors.username" cols="4">
+                    optionLabel="description" optionValue="id" @blur="profileBlur($event, true)" show-clear/>
+        </validate-form-item>
+        <validate-form-item v-if="!props.formData?.id" for-label="username" label="Usuario" mark :error="errors.username" cols="4">
             <InputText v-model="username" id="username" :invalid="!!errors.username" fluid @blur="usernameBlur($event, true)"
                        max="11" autocomplete="off"/>
-        </form-item>
-        <form-item v-if="!props.formData?.id" for-label="password" label="Contraseña" mark :error="errors.password" cols="4">
+        </validate-form-item>
+        <validate-form-item v-if="!props.formData?.id" for-label="password" label="Contraseña" mark :error="errors.password" cols="4">
             <Password v-model="password" input-id="password" :invalid="!!errors.password" class="w-full" :toggleMask="true"
                       :feedback="false" @blur="passwordBlur($event, true)" input-class="w-full !py-1.5"/>
-        </form-item>
-        <form-item v-if="!props.formData?.id" for-label="confirm" label="Confirmar" mark :error="errors.passwordConfirm" cols="4">
+        </validate-form-item>
+        <validate-form-item v-if="!props.formData?.id" for-label="confirm" label="Confirmar" mark :error="errors.passwordConfirm" cols="4">
             <Password v-model="passwordConfirm" input-id="confirm" :invalid="!!errors.passwordConfirm" class="w-full" :toggleMask="true"
                       :feedback="false" @blur="passwordConfirmBlur($event, true)" input-class="w-full !py-1.5"/>
-        </form-item>
+        </validate-form-item>
         <Divider class="col-span-1 md:col-span-12 !my-2"/>
     </div>
 
     <div class="mt-4 align-buttons-submit space-x-2">
-        <Button label="Cancelar" severity="secondary" raised fluid class="border border-surface-300" @click="reloadData">
-            <template #icon>
-                <i-ri-close-line class="mx-1"/>
-            </template>
+        <Button label="Cancelar" severity="secondary" raised fluid class="border border-surface-300" @click="reloadData" #icon>
+            <i-material-symbols-block-outline class="mx-1"/>
         </Button>
-        <Button :label="`${!props.formData?.id ? 'Crear' : 'Editar'} Usuario`" fluid @click="onSubmit()">
-            <template #icon>
-                <i-ri-user-add-line class="mx-1"/>
-            </template>
+        <Button :label="`${!props.formData?.id ? 'Crear' : 'Editar'} Usuario`" fluid @click="onSubmit()" #icon>
+            <i-material-symbols-person-add-outline-rounded class="mx-1"/>
         </Button>
     </div>
 </template>

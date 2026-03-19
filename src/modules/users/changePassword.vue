@@ -48,14 +48,14 @@ const saveChangePassword = handleSubmit(async(values) => {
 
 <template>
     <div class="align-items-form">
-        <form-item mark cols="6" label="Nueva Contraseña" :error="errors.password">
+        <validate-form-item mark cols="6" label="Nueva Contraseña" :error="errors.password">
             <Password v-model="password" fluid @blur="passwordHandleBlur($event, true)" input-id="password"
                       :invalid="!!errors.password" class="w-full" :toggleMask="true" :feedback="false"/>
-        </form-item>
-        <form-item mark cols="6" label="Confirmar Contraseña" :error="errors.passwordConfirm">
+        </validate-form-item>
+        <validate-form-item mark cols="6" label="Confirmar Contraseña" :error="errors.passwordConfirm">
             <Password v-model="passwordConfirm" fluid :invalid="!!errors.passwordConfirm" @blur="passwordConfirmHandleBlur($event, true)"
                       input-id="password" class="w-full" :toggleMask="true" :feedback="false"/>
-        </form-item>
+        </validate-form-item>
     </div>
     <div class="align-buttons-submit">
         <Button severity="secondary" raised fluid label="Cancelar" @click="props.closeForm()"></Button>

@@ -44,23 +44,23 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <FormItem label="Descripción" cols="12" :error="errors.description">
+        <ValidateFormItem label="Descripción" cols="12" :error="errors.description">
             <InputText fluid v-model="description"/>
-        </FormItem>
-        <FormItem label="Precio" cols="6" :error="errors.price">
+        </ValidateFormItem>
+        <ValidateFormItem label="Precio" cols="6" :error="errors.price">
             <InputText fluid v-model="price" v-key-filter.num/>
-        </FormItem>
-        <FormItem label="Seleccionable" cols="3" :error="errors.selected">
+        </ValidateFormItem>
+        <ValidateFormItem label="Seleccionable" cols="3" :error="errors.selected">
             <ToggleSwitch fluid v-model="selected"/>
-        </FormItem>
-        <FormItem label="Activo" cols="3" :error="errors.active">
+        </ValidateFormItem>
+        <ValidateFormItem label="Activo" cols="3" :error="errors.active">
             <ToggleSwitch fluid v-model="active"/>
-        </FormItem>
-        <FormItem hide-label hide-error cols="6">
+        </ValidateFormItem>
+        <ValidateFormItem hide-label hide-error cols="6">
             <Button label="Cancelar" @click="props.closeModal()" fluid/>
-        </FormItem>
-        <FormItem hide-label hide-error cols="6">
+        </ValidateFormItem>
+        <ValidateFormItem hide-label hide-error cols="6">
             <Button :label="props.formData?.id ? 'Editar' : 'Crear'" @click="onSavePayments" :loading fluid/>
-        </FormItem>
+        </ValidateFormItem>
     </div>
 </template>

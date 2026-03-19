@@ -26,10 +26,8 @@ const copyToClipboard = async() => {
                 <p> {{ props.cci }}</p>
             </div>
         </div>
-        <Button size="large" v-tooltip.bottom="'Añadir al portapapeles'" @click="copyToClipboard" v-if="props.account">
-            <template #icon>
-                <i-material-symbols-content-copy/>
-            </template>
+        <Button size="large" v-tooltip.bottom="'Añadir al portapapeles'" @click="copyToClipboard" v-if="props.account" #icon>
+            <i-material-symbols-content-copy/>
         </Button>
     </div>
 </template>

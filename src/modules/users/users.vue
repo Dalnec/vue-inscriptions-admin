@@ -41,10 +41,8 @@ const addValueParameters = () => {
                     Lista de usuarios
                 </div>
                 <div>
-                    <Button label="Nuevo Usuario" size="small" @click="addValueParameters">
-                        <template #icon>
-                            <i-fluent-people-add-16-filled/>
-                        </template>
+                    <Button label="Nuevo Usuario" size="small" @click="addValueParameters" #icon>
+                        <i-material-symbols-person-add-outline-rounded/>
                     </Button>
                 </div>
             </div>

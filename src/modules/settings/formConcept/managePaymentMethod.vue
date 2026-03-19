@@ -75,29 +75,29 @@ onMounted(async() => {
 
 <template>
     <div class="align-items-form">
-        <FormItem label="Nombre de cuenta" cols="4" :error="errors.description" mark>
+        <ValidateFormItem label="Nombre de cuenta" cols="4" :error="errors.description" mark>
             <InputText v-model="description" fluid/>
-        </FormItem>
-        <FormItem label="Nro de cuenta" cols="4">
+        </ValidateFormItem>
+        <ValidateFormItem label="Nro de cuenta" cols="4">
             <InputText v-model="account" fluid/>
-        </FormItem>
-        <FormItem label="CCI" cols="4">
+        </ValidateFormItem>
+        <ValidateFormItem label="CCI" cols="4">
             <InputText v-model="cci" fluid/>
-        </FormItem>
-        <FormItem label="Activo" cols="4">
+        </ValidateFormItem>
+        <ValidateFormItem label="Activo" cols="4">
             <ToggleSwitch v-model="active" fluid/>
-        </FormItem>
-        <FormItem label="Icono" cols="7">
+        </ValidateFormItem>
+        <ValidateFormItem label="Icono" cols="7">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"
                         ref="refVoucherImage" @select="handleFileSelect" :show-upload-button="false" :show-cancel-button="false"
                         @remove="() => { setValueIcon(''); uploadedFile = null }" invalid-file-size-message="Peso de imagen invalido"
                         v-model="icon" invalid-file-limit-message="1 imagen máximo."/>
-        </FormItem>
-        <FormItem hide-label hide-error cols="6">
+        </ValidateFormItem>
+        <ValidateFormItem hide-label hide-error cols="6">
             <Button label="Cancelar" severity="secondary" fluid @click="props.closeModal()"/>
-        </FormItem>
-        <FormItem hide-label hide-error cols="6">
+        </ValidateFormItem>
+        <ValidateFormItem hide-label hide-error cols="6">
             <Button :label="props.formData?.id ? 'Editar' : 'Crear'" fluid @click="onSavePayments"/>
-        </FormItem>
+        </ValidateFormItem>
     </div>
 </template>

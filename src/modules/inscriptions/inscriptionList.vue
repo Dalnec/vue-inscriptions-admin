@@ -269,16 +269,11 @@ defineExpose({ loadInscriptionsList });
 
 <template>
     <div class="flex justify-between flex-wrap">
-        <div class="relative mb-2">
-            <i-ri-search-line class="absolute top-2/4 left-3 -mt-2.5 text-surface-400 dark:text-surface-600"/>
-            <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid v-model="search"
-                       @update:model-value="loadInscriptionsList"/>
-        </div>
+        <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid v-model="search"
+                   @update:model-value="loadInscriptionsList"/>
         <div>
-            <Button label="Descargar Excel" @click="addDataToGenerateExcel()">
-                <template #icon>
-                    <i-mdi-microsoft-excel/>
-                </template>
+            <Button label="Descargar Excel" @click="addDataToGenerateExcel()" #icon>
+                <i-material-symbols-sheets/>
             </Button>
         </div>
     </div>
@@ -295,79 +290,56 @@ defineExpose({ loadInscriptionsList });
         <template #loading>
             <loading-data/>
         </template>
-        <Column style="width: 15%" field="person.doc_num" header="DNI/Nombres">
-            <template #body="{data}">
-                <p class="font-bold">{{ data.person.doc_num }}</p>
-                <p>{{ data.person.names }}, {{ data.person.lastnames }}</p>
-            </template>
+        <Column style="width: 15%" field="person.doc_num" header="DNI/Nombres" #body="{ data }">
+            <p class="font-bold">{{ data.person.doc_num }}</p>
+            <p>{{ data.person.names }}, {{ data.person.lastnames }}</p>
         </Column>
         <Column style="width: 4%" field="person.phone" header="Teléfono"/>
         <Column style="width: 3%" field="person.gender" header="Género"/>
-        <Column style="width: 10%" field="person.church_description" header="Iglesia">
-            <template #body="{data}">
-                <p class="font-bold">{{ data?.person?.church_description }}</p>
-                <p>{{ data.person.kind_description }}</p>
-            </template>
+        <Column style="width: 10%" field="person.church_description" header="Iglesia" #body="{ data }">
+            <p class="font-bold">{{ data?.person?.church_description }}</p>
+            <p>{{ data.person.kind_description }}</p>
         </Column>
         <Column style="width: 4%" field="group.vouchergroup" header="# Grupo"/>
         <!--        <Column style="width: 10%" field="person.jobStart" header="Cod. Grupo"/>-->
-        <Column style="width: 15%" header="M. Pago">
-            <template #body="{data}">
-                <div class="flex items-center justify-between gap-2">
-                    <p class="font-bold">{{ data.group.paymentmethod.description }}</p>
-                    <Button v-if="data.group.paymentmethod.id !== 1" @click="onShowVoucher(data)">
-                        <template #icon>
-                            <i-lets-icons-ticket-alt/>
-                        </template>
-                    </Button>
-                </div>
-            </template>
+        <Column style="width: 15%" header="M. Pago" #body="{ data }">
+            <div class="flex items-center justify-between gap-2">
+                <p class="font-bold">{{ data.group.paymentmethod.description }}</p>
+                <Button v-if="data.group.paymentmethod.id !== 1" @click="onShowVoucher(data)" #icon>
+                    <i-material-symbols-sticky-note-2-outline-rounded/>
+                </Button>
+            </div>
         </Column>
-        <Column style="width: 4%" header="Monto">
-            <template #body="{data}">
-                {{ !!data?.amount ? `S/ ${ data?.amount }` : "-" }}
-            </template>
+        <Column style="width: 4%" header="Monto" #body="{ data }">
+            {{ !!data?.amount ? `S/ ${ data?.amount }` : "-" }}
         </Column>
-        <Column style="width: 10%" field="observations" header="Observaciones">
-            <template #body="{data}">
-                <p class="font-semibold">F. Registro: {{ data.created }}</p>
-                <p>{{ data.observations }}</p>
-            </template>
+        <Column style="width: 10%" field="observations" header="Observaciones" #body="{ data }">
+            <p class="font-semibold">F. Registro: {{ data.created }}</p>
+            <p>{{ data.observations }}</p>
         </Column>
-        <Column style="width: 4%" header="Estado" field="active">
-            <template #body="{data}">
-                <Message size="small"
-                         :severity="data.status === 'E' || data.status === 'R' ? 'error' : data.status === 'P' ? 'warn' : 'success'">
-                    {{ data.status_description }}
-                </Message>
-            </template>
+        <Column style="width: 4%" header="Estado" field="active" #body="{ data }">
+            <Message size="small"
+                     :severity="data.status === 'E' || data.status === 'R' ? 'error' : data.status === 'P' ? 'warn' : 'success'">
+                {{ data.status_description }}
+            </Message>
         </Column>
-        <Column style="width: 3%" header="Acciones">
-            <template #body="{data}">
-                <div class="flex items-center justify-center space-x-1">
-                    <Button size="small" severity="warn" v-tooltip.top="'Editar persona'" @click="addParametersUserModal(data)"
-                            class="!h-8">
-                        <template #icon>
-                            <i-tabler-user-edit/>
-                        </template>
-                    </Button>
-                    <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)" class="!h-8">
-                        <template #icon>
-                            <i-ic-round-attach-money/>
-                        </template>
-                    </Button>
-                    <Button @click="toggle($event, data.id)" aria-haspopup="true" :aria-controls="`menu_${data.id}`" class="!h-8">
-                        <template #icon>
-                            <i-material-symbols-action-key-outline/>
-                        </template>
-                    </Button>
-                    <Menu :ref="el => menus[data.id] = el" :id="`menu_${data.id}`" :model="optionsActions(data)" :popup="true">
-                        <template #itemicon="{item}">
-                            <component :is="item.class"/>
-                        </template>
-                    </Menu>
-                </div>
-            </template>
+        <Column style="width: 3%" header="Acciones" #body="{ data }">
+            <div class="flex items-center justify-center space-x-1">
+                <Button size="small" severity="warn" v-tooltip.top="'Editar persona'" @click="addParametersUserModal(data)"
+                        class="!h-8" #icon>
+                    <i-material-symbols-person-edit-outline-rounded/>
+                </Button>
+                <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)" class="!h-8" #icon>
+                    <i-ic-round-attach-money/>
+                </Button>
+                <Button @click="toggle($event, data.id)" aria-haspopup="true" :aria-controls="`menu_${data.id}`" class="!h-8" #icon>
+                    <i-material-symbols-action-key-outline/>
+                </Button>
+                <Menu :ref="el => menus[data.id] = el" :id="`menu_${data.id}`" :model="optionsActions(data)" :popup="true"
+                      #itemicon="{ item }">
+                    <component :is="item.class"/>
+                </Menu>
+            </div>
         </Column>
         <template #paginatorstart> Total: {{ totalRecords }}</template>
     </DataTable>

@@ -11,7 +11,7 @@ const router = createRouter({
             children: [
                 {
                     path: "/register", name: "newRegister", component: () => import("@/modules/registers/registersCard.vue"),
-                    meta: { label: "Nueva Inscripción", icon: IconSolarClipboardAddBold }
+                    meta: { label: "Nueva Inscripción", icon: IconMaterialSymbolsAddNotesOutline }
                 },
                 { path: "/settings", name: "settings", component: () => import("@/modules/settings/concepts.vue") },
                 {
@@ -28,7 +28,7 @@ const router = createRouter({
                 {
                     path: "/inscriptions", name: "inscriptions", component: () => import("@/modules/inscriptions/inscriptions.vue"),
                     meta: {
-                        label: "Inscripciones", icon: IconTablerClipboardDataFilled,
+                        label: "Inscripciones", icon: IconMaterialSymbolsFrameInspectRounded,
                         permissions: [
                             { name: "XD" }
                         ]
@@ -37,7 +37,7 @@ const router = createRouter({
                 {
                     path: "/users", name: "users", component: () => import("@/modules/users/users.vue"),
                     meta: {
-                        label: "Usuarios", icon: IconSolarUsersGroupRoundedBold, superOnly: true
+                        label: "Usuarios", icon: IconMaterialSymbolsGroupOutlineRounded, superOnly: true
                     }
                 },
                 // {

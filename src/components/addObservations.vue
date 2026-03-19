@@ -26,11 +26,11 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <FormItem label="Añadir detalles" cols="12">
+        <ValidateFormItem label="Añadir detalles" cols="12">
             <Textarea v-model="observationText" fluid auto-resize/>
-        </FormItem>
-        <FormItem hide-error hide-label cols="12">
+        </ValidateFormItem>
+        <ValidateFormItem hide-error hide-label cols="12">
             <Button label="Agregar observación" @click="onAddObsMember()" fluid/>
-        </FormItem>
+        </ValidateFormItem>
     </div>
 </template>

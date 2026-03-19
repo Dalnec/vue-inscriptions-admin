@@ -21,12 +21,12 @@ onMounted(async() => {
             <the-navbar class="sticky top-0 bottom-2 z-50 mx-2"/>
         </div>
         <!-- Main content area -->
-        <div class="flex-1 w-full overflow-auto p-2">
-            <router-view v-slot="{ Component }">
-                <transition mode="out-in">
+        <RouterView v-slot="{ Component, route }">
+            <Transition mode="out-in">
+                <main :key="route.name" class="mt-4 flex-1 overflow-y-auto min-h-0 w-full px-2 sm:px-4 md:px-8 lg:px-12">
                     <component :is="Component"/>
-                </transition>
-            </router-view>
-        </div>
+                </main>
+            </Transition>
+        </RouterView>
     </div>
 </template>

@@ -9,7 +9,7 @@
  * - closeForm: A function to close the form.
  */
 
-import FormItem from "@/components/formItem.vue";
+import ValidateFormItem from "@/components/ValidateFormItem.vue";
 import { onMounted, ref } from "vue";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
@@ -112,13 +112,13 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <form-item mark cols="12" label="Description" :error="errors.description">
+        <validate-form-item mark cols="12" label="Description" :error="errors.description">
             <InputText v-model="description" fluid @blur="descriptionHandleBlur($event, true)" input-id="description"
                        :invalid="!!errors.description" class="w-full"/>
-        </form-item>
-        <form-item mark cols="3" label="Activo" v-if="props.showActive">
+        </validate-form-item>
+        <validate-form-item mark cols="3" label="Activo" v-if="props.showActive">
             <ToggleSwitch v-model="active" fluid input-id="active"/>
-        </form-item>
+        </validate-form-item>
     </div>
     <div class="align-buttons-submit">
         <Button severity="secondary" raised fluid label="Cancelar" @click="props.onCloseForm()"/>

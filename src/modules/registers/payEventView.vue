@@ -5,7 +5,7 @@ import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { computed, onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
 import type { FileUploadSelectEvent, InputNumberInputEvent } from "primevue";
-import FormItem from "@/components/formItem.vue";
+import ValidateFormItem from "@/components/ValidateFormItem.vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import toastEvent from "@/composables/toastEvent.ts";
@@ -76,7 +76,7 @@ function isVoucherImage(obj: unknown): obj is VoucherImageType {
 
 const saveAllMembers = handleSubmit(async() => {
     try {
-if( voucheramount.value <=0 ) return
+        if (voucheramount.value <= 0) return;
         loadingSave.value = true;
 
         const dataRate = storeRate().rate.find(rt => rt.selected);
@@ -144,9 +144,9 @@ const handleClickCard = async(memberData: InterfaceMembers) => {
 };
 
 function refocus($event: InputNumberInputEvent) {
-      const target = $event.originalEvent.target as HTMLElement;
-        target.blur();
-        target.focus();
+    const target = $event.originalEvent.target as HTMLElement;
+    target.blur();
+    target.focus();
 }
 
 onMounted(() => {
@@ -169,32 +169,32 @@ onMounted(() => {
         </template>
         <template #content>
             <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-                <FormItem label="Método de pago" cols="12" :error="errors.paymentmethod">
+                <ValidateFormItem label="Método de pago" cols="12" :error="errors.paymentmethod">
                     <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
                             size="large" @value-change="(value) => onValueSelectPayment(value)"/>
-                </FormItem>
-                <FormItem cols="12" hide-error hide-label v-if="paymentmethod">
+                </ValidateFormItem>
+                <ValidateFormItem cols="12" hide-error hide-label v-if="paymentmethod">
                     <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
                                           :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
                                           :active="dataForViewPayment.active"/>
-                </FormItem>
-                <FormItem cols="12" hide-label :error="errors.tarifa" v-if="useStoreActivityActive.showRatesActivity">
+                </ValidateFormItem>
+                <ValidateFormItem cols="12" hide-label :error="errors.tarifa" v-if="useStoreActivityActive.showRatesActivity">
                     <div class="grid grid-cols-4 gap-3">
                         <rate-data v-for="act in filterRates" :key="act.id" :name-rate="act.description" :id-rate="act.id"
                                    :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>
                     </div>
-                </FormItem>
-                <FormItem cols="12" :error="errors.voucheramount" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
+                </ValidateFormItem>
+                <ValidateFormItem cols="12" :error="errors.voucheramount" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
                     <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large" @input="refocus"/>
-                </FormItem>
-                <FormItem label="Voucher de pago" cols="12" :error="errors.voucherfile"
-                          v-if="dataForViewPayment.description !== 'EFECTIVO'">
+                </ValidateFormItem>
+                <ValidateFormItem label="Voucher de pago" cols="12" :error="errors.voucherfile"
+                                  v-if="dataForViewPayment.description !== 'EFECTIVO'">
                     <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full"
                                 ref="refVoucherImage" @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])"
                                 :show-cancel-button="false" @remove="setVoucherImage({})" :show-upload-button="false" input-id="voucherfile"
                                 invalid-file-size-message="Peso de imagen invalido" invalid-file-limit-message="1 imagen máximo.">
                     </FileUpload>
-                </FormItem>
+                </ValidateFormItem>
                 <div class="max-cols-12">
                     <p class="text-2xl">
                         Hay {{ storeDataMembers.membersData.length }} persona(s) agregadas
@@ -205,18 +205,14 @@ onMounted(() => {
                 </div>
                 <div class="max-cols-4">
                     <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"
-                            v-if="storeDataMembers.membersData.length >= 1" fluid>
-                        <template #icon>
-                            <i-material-symbols-list-alt-check/>
-                        </template>
+                            v-if="storeDataMembers.membersData.length >= 1" fluid #icon>
+                        <i-material-symbols-list-alt-check/>
                     </Button>
                 </div>
 
                 <div class="max-cols-8">
-                    <Button label="Enviar y Pagar" @click="saveAllMembers()" fluid :disabled="loadingSave" :loading="loadingSave">
-                        <template #icon>
-                            <i-material-symbols-sync-saved-locally/>
-                        </template>
+                    <Button label="Enviar y Pagar" @click="saveAllMembers()" fluid :disabled="loadingSave" :loading="loadingSave" #icon>
+                        <i-material-symbols-sync-saved-locally/>
                     </Button>
                 </div>
             </div>

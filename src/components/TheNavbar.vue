@@ -99,16 +99,14 @@ const onShowOptions = (event: MouseEvent) => {
         </template>
 
         <template #submenuicon>
-            <i-solar-hamburger-menu-broken/>
+            <i-material-symbols-menu-rounded/>
         </template>
 
         <template #end>
             <div class="flex space-x-1">
                 <Button size="small" severity="secondary" class="!w-8 !h-8" @click="onShowOptions" aria-haspopup="true"
-                        aria-controls="overlayMenu">
-                    <template #icon>
-                        <i-material-symbols-person-outline-rounded/>
-                    </template>
+                        aria-controls="overlayMenu" #icon>
+                    <i-material-symbols-person-outline-rounded/>
                 </Button>
                 <TieredMenu ref="menu" id="overlayMenu" :model="items()" popup/>
                 <app-config/>

@@ -88,10 +88,6 @@ defineExpose({ loadUserList });
 </script>
 
 <template>
-    <div class="relative mb-2">
-        <i-ri-search-line class="absolute top-2/4 left-3 -mt-2.5 text-surface-400 dark:text-surface-600"/>
-        <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid/>
-    </div>
     <DataTable size="small" :value="dataUsers" scroll-height="65vh" scrollable tableStyle="min-width: 80rem;" lazy :loading="loading"
                dataKey="id">
         <template #empty>
@@ -104,36 +100,26 @@ defineExpose({ loadUserList });
         <Column style="width: 10%" field="names" header="Nombres"/>
         <Column style="width: 10%" field="email" header="Correo"/>
         <Column style="width: 10%" field="profile_description" header="Perfil"/>
-        <Column style="width: 5%" header="Estado" field="is_active">
-            <template #body="{data}">
-                <Message size="small" :severity="data.is_active? 'success' : 'error'">
-                    {{ data.is_active ? "Activo" : "Inactivo" }}
-                </Message>
-            </template>
+        <Column style="width: 5%" header="Estado" field="is_active" #body="{ data }">
+            <Message size="small" :severity="data.is_active? 'success' : 'error'">
+                {{ data.is_active ? "Activo" : "Inactivo" }}
+            </Message>
         </Column>
-        <Column style="width: 5%" header="Acciones">
-            <template #body="{data}">
-                <div class="flex items-center justify-center space-x-1">
-                    <Button size="small" severity="warn" v-tooltip.top="'Editar Usuario'" @click="addParametersUserModal(data)"
-                            class="h-6 !w-6">
-                        <template #icon>
-                            <i-tabler-user-edit/>
-                        </template>
-                    </Button>
-                    <Button size="small" severity="info" v-tooltip.top="'Cambiar Contraseña'" @click="addParametersChangePassword(data)"
-                            class="h-6 !w-6">
-                        <template #icon>
-                            <i-material-symbols-lock/>
-                        </template>
-                    </Button>
-                    <Button size="small" severity="danger" v-tooltip.top="'Bloquear usuario'" @click="addParametersUserModal(data)"
-                            class="h-6 !w-6">
-                        <template #icon>
-                            <i-solar-user-block-outline/>
-                        </template>
-                    </Button>
-                </div>
-            </template>
+        <Column style="width: 5%" header="Acciones" #body="{ data }">
+            <div class="flex items-center justify-center space-x-1">
+                <Button size="small" severity="warn" v-tooltip="'Editar Usuario'" @click="addParametersUserModal(data)"
+                        class="h-6 !w-6" #icon>
+                    <i-material-symbols-person-edit-rounded/>
+                </Button>
+                <Button size="small" severity="info" v-tooltip="'Cambiar Contraseña'" @click="addParametersChangePassword(data)"
+                        class="h-6 !w-6" #icon>
+                    <i-material-symbols-lock/>
+                </Button>
+                <Button size="small" severity="danger" v-tooltip="'Bloquear usuario'" @click="addParametersUserModal(data)"
+                        class="h-6 !w-6" #icon>
+                    <i-material-symbols-block-outline/>
+                </Button>
+            </div>
         </Column>
     </DataTable>
     <modal-component ref="modal" :parameters="parametersModal"/>

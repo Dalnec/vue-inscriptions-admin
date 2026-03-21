@@ -1,23 +1,18 @@
 <script setup lang="ts">
 
 /* Imports */
-import addUsers from "./addUsers.vue";
-import changePassword from "./changePassword.vue";
+import { Api } from "@/api/connection";
 import { ref, h, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
-import { Api } from "@/api/connection";
+import { useModal } from "@/composables/useModal.ts";
 import type { InterfaceUsers, UsersResponseMembers } from "@/types/interfaceUsers.ts";
-import type { ModalParameters } from "@/composables/parametersModalType.ts";
+import addUsers from "./addUsers.vue";
+import changePassword from "./changePassword.vue";
 
 /* Defaults Variables */
 const dataUsers = ref<InterfaceUsers[]>([]);
 const loading = ref<boolean>(false);
-
-/**
- * @params {Function} closeModal - Function that returns visible of the modal.
- * @returns {void} - Change the visibility of the modal
- */
-const closeModal = (): boolean => parametersModal.value.visible = false;
+const { openModal, closeModal } = useModal();
 
 /**
  * Carga datos de la API de usuarios.
@@ -33,25 +28,14 @@ const closeModal = (): boolean => parametersModal.value.visible = false;
 const loadUserList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
     const { response }: UsersResponseMembers = await Api.Get({ route: "user" });
-    if (response.status === 200) {
+    if (response && response.status === 200) {
         dataUsers.value = response.data.results;
         loading.value = false;
     }
 }, 250);
 
-/**
- * Initial values that are passed to the modal
- */
-const parametersModal = ref<ModalParameters>({
-    component: {},
-    footer: null,
-    header: "",
-    visible: false,
-    width: "30vw"
-});
-
 const addParametersUserModal = (data: InterfaceUsers): void => {
-    parametersModal.value = {
+    openModal({
         component: h(addUsers, {
             closeModal,
             refreshData: () => loadUserList(),
@@ -59,24 +43,20 @@ const addParametersUserModal = (data: InterfaceUsers): void => {
                 ...data
             }
         }),
-        footer: "",
         header: "Editar usuario",
-        visible: true,
         width: "55vw"
-    };
+    });
 };
 
 const addParametersChangePassword = (data: InterfaceUsers): void => {
-    parametersModal.value = {
+    openModal({
         component: h(changePassword, {
             closeForm: closeModal,
             userID: data.id
         }),
-        footer: "",
         header: `Cambiar contraseña de ${ data.username }`,
-        visible: true,
         width: "35vw"
-    };
+    });
 };
 
 onMounted(async() => {
@@ -122,5 +102,4 @@ defineExpose({ loadUserList });
             </div>
         </Column>
     </DataTable>
-    <modal-component ref="modal" :parameters="parametersModal"/>
 </template>

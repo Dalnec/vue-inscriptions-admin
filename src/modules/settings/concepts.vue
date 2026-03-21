@@ -1,14 +1,14 @@
 <script setup lang="ts">
 
-import GeneralTableModule from "@/components/generalTableModule.vue";
 import router from "@/router";
-import ListConcepts from "@/modules/settings/listConcepts.vue";
 import { h, ref } from "vue";
-import type { ModalParameters } from "@/composables/parametersModalType.ts";
+import { useModal } from "@/composables/useModal.ts";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
+import type { InterfaceRates } from "@/types/InterfaceRates.ts";
+import GeneralTableModule from "@/components/generalTableModule.vue";
+import ListConcepts from "@/modules/settings/listConcepts.vue";
 import managePaymentMethod from "@/modules/settings/formConcept/managePaymentMethod.vue";
 import manageRate from "@/modules/settings/formConcept/manageRate.vue";
-import type { InterfaceRates } from "@/types/InterfaceRates.ts";
 import basicFormToAddOrEdit from "@/components/app/basicFormToAddOrEdit.vue";
 
 const conceptSelect = ref("paymentMethod");
@@ -17,54 +17,45 @@ const refGeneralTableRate = ref();
 const refGeneralTableChurch = ref();
 const refGeneralTableKind = ref();
 const refGeneralTableDocumentType = ref();
+const { closeModal, openModal } = useModal();
 
-const parameters = ref<ModalParameters>({
-    visible: false,
-    header: "",
-    width: "30vw",
-    component: {}
-});
-const closeModal = (): boolean => parameters.value.visible = false;
 
 const managePaymentForm = (data?: PaymentMethod) => {
-    parameters.value = {
-        visible: true,
-        header: data?.id ? `Editar método de pago: ${ data.description }` : "Agregar Nuevo",
-        width: "50vw",
+    openModal({
         component: h(managePaymentMethod, {
             closeModal,
             refreshData: () => refGeneralTablePaymentMethod.value.getDataTableGeneric(),
             formData: data || {} as PaymentMethod
-        })
-    };
+        }),
+        header: data?.id ? `Editar método de pago: ${ data.description }` : "Agregar Nuevo",
+        width: "50vw"
+    });
 };
 
 const manageRates = (data?: InterfaceRates) => {
-    parameters.value = {
-        visible: true,
-        header: data?.id ? `Editar Tarifa: ${ data.description }` : "Agregar Nuevo",
-        width: "50vw",
+    openModal({
         component: h(manageRate, {
             closeModal,
-            refreshData: () => refGeneralTableRate.value.getDataTableGeneric(),
-            formData: data || {} as InterfaceRates
-        })
-    };
+            formData: data || {} as InterfaceRates,
+            refreshData: () => refGeneralTableRate.value.getDataTableGeneric()
+        }),
+        header: data?.id ? `Editar Tarifa: ${ data.description }` : "Agregar Nuevo",
+        width: "50vw"
+    });
 };
 
 const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data?: { active: boolean, description: string, id: number }) => {
-    parameters.value = {
+    openModal({
         component: h(basicFormToAddOrEdit, {
-            onCloseForm: closeModal,
             formData: data || {} as { active: boolean, description: string, id: number, },
+            onCloseForm: closeModal,
             reloadData: () => reloadData(),
-            showActive: true,
-            route
+            route,
+            showActive: true
         }),
         header: data?.id ? `Editar: ${ data.description }` : "Agregar",
-        visible: true,
         width: "30vw"
-    };
+    });
 };
 
 </script>
@@ -170,6 +161,5 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                 </template>
             </Card>
         </div>
-        <modal-component :parameters/>
     </div>
 </template>

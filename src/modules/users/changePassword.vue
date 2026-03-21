@@ -4,58 +4,53 @@ import { ref } from "vue";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection";
-import { useToast } from "primevue";
 import type { UsersActiosMembersActions } from "@/types/interfaceUsers.ts";
+import useGlobalToast from "@/composables/toastEvent.ts";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
 
 const props = defineProps<{ userID: number | undefined; closeForm: () => void; }>();
-const fields = ref({ password: "", passwordConfirm: "" });
-const toast = useToast();
+const fields = ref({ password: "", confirm: "" });
 
 const schemaValidate = ref(yup.object({
     password: yup.string().trim().when("$isNew", {
         is: () => props.userID,
-        then: (schema) => schema.required("Ingrese su contraseña").min(4, "Ingresa al menos 4 caracteres"),
-        otherwise: (schema) => schema.notRequired()
+        otherwise: (schema) => schema.notRequired(),
+        then: (schema) => schema.required("Ingrese su contraseña").min(4, "Ingresa al menos 4 caracteres")
     }).label("Contraseña"),
-    passwordConfirm: yup.string().trim().when("$isNew", {
+    confirm: yup.string().trim().when("$isNew", {
         is: () => props.userID,
-        then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(4, "Ingresa al menos 4 caracteres"),
-        otherwise: (schema) => schema.notRequired()
+        otherwise: (schema) => schema.notRequired(),
+        then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(4, "Ingresa al menos 4 caracteres")
     }).label("Confirm. Contraseña")
 }));
 
-const { handleSubmit, errors } = useForm({ validationSchema: schemaValidate, initialValues: fields.value });
+const { handleSubmit } = useForm({ validationSchema: schemaValidate, initialValues: fields.value });
 
-const { value: password, handleBlur: passwordHandleBlur } = useField<string>("password");
-const { value: passwordConfirm, handleBlur: passwordConfirmHandleBlur } = useField<string>("passwordConfirm");
+const { value: password } = useField<string>("password");
+const { value: confirm } = useField<string>("confirm");
 
 const saveChangePassword = handleSubmit(async(values) => {
     const { response }: UsersActiosMembersActions = await Api.Put({
-        route: `user/${ props.userID }/change_password`, data: { password: values.password, password2: values.passwordConfirm }
+        route: `user/${ props.userID }/change_password`, data: { password: values.password, password2: values.confirm }
     });
     if (response && response.status === 200) {
-        toast.add({ severity: "success", life: 5000, summary: "Contraseña actualizada correctamente" });
+        useGlobalToast({ severity: "success", life: 5000, summary: "Contraseña actualizada correctamente" });
         props.closeForm();
     } else {
-        toast.add({ severity: "error", life: 5000, summary: "Error al cambiar contraseña" });
+        useGlobalToast({ severity: "error", life: 5000, summary: "Error al cambiar contraseña" });
     }
-}, ({ errors }) => {
-    const errorMessages: string = Object?.["entries"](errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", ");
-    toast.add({ severity: "error", summary: "Error", detail: `Complete los siguientes campos:\n ${ errorMessages }`, life: 10000 });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 </script>
 
 <template>
     <div class="align-items-form">
-        <validate-form-item mark cols="6" label="Nueva Contraseña" :error="errors.password">
-            <Password v-model="password" fluid @blur="passwordHandleBlur($event, true)" input-id="password"
-                      :invalid="!!errors.password" class="w-full" :toggleMask="true" :feedback="false"/>
-        </validate-form-item>
-        <validate-form-item mark cols="6" label="Confirmar Contraseña" :error="errors.passwordConfirm">
-            <Password v-model="passwordConfirm" fluid :invalid="!!errors.passwordConfirm" @blur="passwordConfirmHandleBlur($event, true)"
-                      input-id="password" class="w-full" :toggleMask="true" :feedback="false"/>
-        </validate-form-item>
+        <ValidateFormItem mark cols="6" label="Nueva Contraseña" name="password" v-slot="{ error }">
+            <Password v-model="password" fluid input-id="password" :invalid="!!error" class="w-full" :toggleMask="true" :feedback="false"/>
+        </ValidateFormItem>
+        <ValidateFormItem mark cols="6" label="Confirmar Contraseña" name="confirm" v-slot="{ error }">
+            <Password v-model="confirm" fluid :invalid="!!error" input-id="password" class="w-full" :toggleMask="true" :feedback="false"/>
+        </ValidateFormItem>
     </div>
     <div class="align-buttons-submit">
         <Button severity="secondary" raised fluid label="Cancelar" @click="props.closeForm()"></Button>

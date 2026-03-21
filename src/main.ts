@@ -3,19 +3,14 @@ import "./style.css";
 import App from "./App.vue";
 import router from "./router/index";
 import { createPinia, type Pinia } from "pinia";
-import PrimeVue from "primevue/config";
-import AnimateOnScroll from "primevue/animateonscroll";
-import BadgeDirective from "primevue/badgedirective";
-import ConfirmationService from "primevue/confirmationservice";
-import DialogService from "primevue/dialogservice";
-import FocusTrap from "primevue/focustrap";
-import Ripple from "primevue/ripple";
-import StyleClass from "primevue/styleclass";
-import ToastService from "primevue/toastservice";
-import Tooltip from "primevue/tooltip";
-import KeyFilter from "primevue/keyfilter";
-import CryptoJS from "crypto-js";
 import { createPersistedState } from "pinia-plugin-persistedstate";
+import PrimeVue from "primevue/config";
+import { Tooltip, BadgeDirective, ConfirmationService, DialogService, FocusTrap, Ripple, ToastService, KeyFilter, StyleClass, AnimateOnScroll } from "primevue";
+
+import CryptoJS from "crypto-js";
+import ValidateFormItem from "@/components/ValidateFormItem.vue";
+import EmptyTable from "@/components/emptyTable.vue";
+import LoadingPage from "@/components/loadingPage.vue";
 
 const SECRET_KEY = "AmoLasTetas";
 const app = createApp(App);
@@ -25,9 +20,6 @@ pinia.use(
     createPersistedState({
         auto: true,
         serializer: {
-            serialize: (value) => {
-                return CryptoJS.AES.encrypt(JSON.stringify(value), SECRET_KEY).toString();
-            },
             deserialize: (value) => {
                 try {
                     const bytes = CryptoJS.AES.decrypt(value, SECRET_KEY);
@@ -37,11 +29,18 @@ pinia.use(
                     console.error("Error al desencriptar los datos:", err);
                     return {};
                 }
+            },
+            serialize: (value) => {
+                return CryptoJS.AES.encrypt(JSON.stringify(value), SECRET_KEY).toString();
             }
         },
         storage: sessionStorage
     })
 );
+
+app.component("LoadingPage", LoadingPage);
+app.component("EmptyTable", EmptyTable);
+app.component("ValidateFormItem", ValidateFormItem);
 
 app.directive("tooltip", Tooltip);
 app.directive("badge", BadgeDirective);

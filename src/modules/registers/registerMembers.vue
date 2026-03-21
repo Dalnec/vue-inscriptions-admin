@@ -5,7 +5,7 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
-import toastEvent from "@/composables/toastEvent.ts";
+import useGlobalToast from "@/composables/toastEvent";
 import ValidateFormItem from "@/components/ValidateFormItem.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
@@ -42,17 +42,17 @@ const validationSchema = ref(yup.object({
     phone: yup.string().required("Añada un teléfono valido")
 }));
 
-const { handleReset, handleSubmit, errors, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
+const { handleReset, handleSubmit, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
 
 // const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | null>("birthdate");
-const { value: church, handleBlur: churchHandle } = useField<string>("church");
-const { value: doc_num, handleBlur: doc_numHandle } = useField<string>("doc_num");
-const { value: documenttype, handleBlur: documenttypeHandle } = useField<number>("documenttype");
-const { value: gender, handleBlur: genderHandle } = useField<string>("gender");
-const { value: kind, handleBlur: kindHandle } = useField<number>("kind");
-const { value: lastnames, handleBlur: lastnamesHandle } = useField<string>("lastnames");
-const { value: names, handleBlur: namesHandle } = useField<string>("names");
-const { value: phone, handleBlur: phoneHandle } = useField<string>("phone");
+const { value: church } = useField<string>("church");
+const { value: doc_num } = useField<string>("doc_num");
+const { value: documenttype } = useField<number>("documenttype");
+const { value: gender } = useField<string>("gender");
+const { value: kind } = useField<number>("kind");
+const { value: lastnames } = useField<string>("lastnames");
+const { value: names } = useField<string>("names");
+const { value: phone } = useField<string>("phone");
 const { value: age } = useField<number | null>("age");
 
 const optionsDocuments = computed(() => storeDocumentType().documentType);
@@ -68,8 +68,8 @@ const addDataFromReniec = async(): Promise<void> => {
     if ( !dataConsult || !dataConsult.success) {
         loadingSearch.value = false;
         wasDniChecked.value = true;
-        toastEvent({
-            severity: "warn", summary: "DNI no encontrado", message: dataConsult?.message || "No se encontró información con ese DNI."
+        useGlobalToast({
+            severity: "warn", summary: "DNI no encontrado", detail: dataConsult?.message || "No se encontró información con ese DNI."
         });
         return;
     }
@@ -105,11 +105,13 @@ const saveNewMember = handleSubmit(async(values): Promise<void> => {
         if (response.status && response.status === 200) {
             props.closeModal();
             await props.refreshData();
-            toastEvent({ severity: "success", summary: `Miembro ${ response.data.names } ${ response.data.lastnames } editado.` });
+            useGlobalToast({ severity: "success", summary: `Miembro ${ response.data.names } ${ response.data.lastnames } editado.` });
         }
     } else {
         if (documenttype.value === 1 && !wasDniChecked.value && !isClickCard.value) {
-            toastEvent({ severity: "warn", summary: "Consulta pendiente", message: "Debes hacer la búsqueda por DNI antes de continuar." });
+            useGlobalToast({
+                severity: "warn", summary: "Consulta pendiente", detail: "Debes hacer la búsqueda por DNI antes de continuar."
+            });
             return;
         }
 
@@ -121,7 +123,7 @@ const saveNewMember = handleSubmit(async(values): Promise<void> => {
         isClickCard.value = false;
     }
 }, () => {
-    toastEvent({ severity: "error", summary: "Error al guardar", message: "Por favor, llene el formulario." });
+    useGlobalToast({ severity: "error", summary: "Error al guardar", detail: "Por favor, llene el formulario." });
 });
 
 const onClickCardMember = (data: InterfaceMembers) => {
@@ -154,14 +156,14 @@ onMounted(() => {
 
 <template>
     <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-        <ValidateFormItem label="Tipo de Documento" cols="12">
-            <Select fluid v-model="documenttype" @blur="documenttypeHandle($event, true)" :options="optionsDocuments"
-                    optionLabel="description" option-value="id" size="large" :disabled="isClickCard"/>
+        <ValidateFormItem label="Tipo de Documento" cols="12" name="documenttype">
+            <Select fluid v-model="documenttype" :options="optionsDocuments" optionLabel="description" option-value="id" size="large"
+                    :disabled="isClickCard"/>
         </ValidateFormItem>
-        <ValidateFormItem label="DNI" cols="12" :error="errors.doc_num">
-            <InputGroup>
-                <InputText fluid v-model="doc_num" @blur="doc_numHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
-                           maxlength="8" :invalid="!!errors.doc_num" size="large" @keyup.enter="addDataFromReniec"
+        <ValidateFormItem label="DNI" cols="12" name="doc_num" v-slot="{ error }">
+            <InputGroup name="doc_num">
+                <InputText fluid v-model="doc_num" placeholder="Ingrese nro de DNI" v-key-filter.num maxlength="8"
+                           :invalid="!!error" size="large" @keyup.enter="addDataFromReniec"
                            :disabled="isClickCard && !isClickCard && props.formData?.id !== null"/>
                 <Button label="Buscar" :disabled="loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
                         :loading="loadingSearch" #icon>
@@ -172,53 +174,44 @@ onMounted(() => {
         <!--        <ValidateFormItem cols="12" hide-label hide-error v-if="showMessage">-->
         <!--            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>-->
         <!--        </ValidateFormItem>-->
-        <ValidateFormItem label="Nombres" cols="12" :error="errors.names">
-            <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"
+        <ValidateFormItem label="Nombres" cols="12" name="names" v-slot="{ error }">
+            <InputText fluid v-model="names" :invalid="!!error" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Apellidos" cols="12" :error="errors.lastnames">
-            <InputText fluid v-model="lastnames" @blur="lastnamesHandle($event, true)" :invalid="!!errors.lastnames" size="large"
+        <ValidateFormItem label="Apellidos" cols="12" name="lastnames" v-slot="{ error }">
+            <InputText fluid v-model="lastnames" :invalid="!!error" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Género" cols="12" :error="errors.gender">
+        <ValidateFormItem label="Género" cols="12" name="gender" v-slot="{ error }">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2">
-                    <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" @blur="genderHandle($event, true)"
-                                 :invalid="!!errors.gender"/>
+                    <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" :invalid="!!error"/>
                     <label for="gender1">Masculino</label>
                 </div>
                 <div class="flex items-center gap-2">
-                    <RadioButton v-model="gender" inputId="gender2" name="gender" value="F" @blur="genderHandle($event, true)"
-                                 :invalid="!!errors.gender"/>
+                    <RadioButton v-model="gender" inputId="gender2" name="gender" value="F" :invalid="!!error"/>
                     <label for="gender2">Femenino</label>
                 </div>
             </div>
         </ValidateFormItem>
-        <!--        <ValidateFormItem label="F. de Nacimiento" cols="12" :error="errors.gender">-->
-        <!--            <DatePicker fluid v-model="birthdate" @blur="birthdateHandle(undefined, true)" :invalid="!!errors.birthdate" size="large"-->
-        <!--                        date-format="d/m/yy"/>-->
-        <!--        </ValidateFormItem>-->
-        <ValidateFormItem label="Edad" cols="12">
+        <ValidateFormItem label="Edad" cols="12" name="gender">
             <InputNumber fluid v-model="age" size="large"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Celular" cols="12" :error="errors.phone">
-            <InputText fluid v-model="phone" @blur="phoneHandle($event, true)" maxlength="9" v-key-filter.num :invalid="!!errors.phone"
-                       size="large"/>
+        <ValidateFormItem label="Celular" cols="12" name="gender" v-slot="{ error }">
+            <InputText fluid v-model="phone" maxlength="9" v-key-filter.num :invalid="!!error" size="large"/>
         </ValidateFormItem>
-        <ValidateFormItem label="¿Perteneces a alguna iglesia?" cols="12" :error="errors.kind">
+        <ValidateFormItem label="¿Perteneces a alguna iglesia?" cols="12" name="kind" v-slot="{ error }">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
                     <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
-                                 :invalid="!!errors.kind"
-                                 size="large" @blur="kindHandle($event, true)"/>
+                                 :invalid="!!error" size="large"/>
                     <label :for="kindData.description">{{ kindData.description }}</label>
                 </div>
             </div>
         </ValidateFormItem>
-        <ValidateFormItem label="Iglesia" cols="12" :error="errors.church">
-            <Select :options="optionsChurches" fluid v-model="church" @blur="churchHandle($event, true)" filter show-clear size="large"
-                    :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description"
-                    option-value="id"/>
+        <ValidateFormItem label="Iglesia" cols="12" name="age" v-slot="{ error }">
+            <Select :options="optionsChurches" fluid v-model="church" filter show-clear size="large" :invalid="!!error"
+                    reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description" option-value="id"/>
         </ValidateFormItem>
 
         <div class="max-cols-4">

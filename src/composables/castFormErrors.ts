@@ -1,8 +1,18 @@
 import toastEventBus from "primevue/toasteventbus";
 
 export const castFormErrors = (errors: any) => {
-    const errorMessages: string = Object?.["entries"](errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", \n");
+    const messages = Object.entries(errors).map(([ field, message ]) => {
+        const indexMatch = field.match(/\[(\d+)]/);
+        if (indexMatch) {
+            return `Detalle ${ Number(indexMatch[1]) + 1 }: ${ message }.`;
+        }
+        return message;
+    });
+
     toastEventBus.emit("add", {
-        severity: "warn", summary: "Formulario requerido", detail: `Complete los siguientes campos:\n ${ errorMessages }`, life: 10000
+        detail: `Complete los siguientes campos:\n\n${ messages.join("\n") }`,
+        life: 10000,
+        severity: "warn",
+        summary: "Formulario requerido"
     });
 };

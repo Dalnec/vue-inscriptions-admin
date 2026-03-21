@@ -33,5 +33,6 @@ watch(isDark, (newVal) => {
         <router-view/>
         <Toast position="top-left"/>
         <ConfirmDialog/>
+        <DialogComponent/>
     </div>
 </template>

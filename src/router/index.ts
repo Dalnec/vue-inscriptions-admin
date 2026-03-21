@@ -19,7 +19,7 @@ const router = createRouter({
                     beforeEnter: async() => {
                         const membersStoreOptions = useMembersStore();
                         if (membersStoreOptions.membersData.length === 0) {
-                            toastEvent({ severity: "error", summary: "Error al pagar", message: "Agregue una persona al menos" });
+                            toastEvent({ severity: "error", summary: "Error al pagar", detail: "Agregue una persona al menos" });
                             await router.push({ name: "newRegister" });
                             return;
                         }

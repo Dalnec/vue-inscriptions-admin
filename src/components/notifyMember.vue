@@ -6,8 +6,9 @@ import { ref } from "vue";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
 
-const props = defineProps<{ member: InscriptionsMembers, closeModal: () => boolean }>();
+const props = defineProps<{ member: InscriptionsMembers, closeModal: () => void }>();
 const loading = ref(false);
 // const itemsEmail = ref<string[]>([]);
 
@@ -19,7 +20,7 @@ const schemaValidate = yup.object({
     email: yup.string().email("Agregue un correo valido").required("Ingrese un correo").label("email")
 });
 
-const { handleSubmit, errors } = useForm({ initialValues: { email: "" }, validationSchema: schemaValidate });
+const { handleSubmit } = useForm({ initialValues: { email: "" }, validationSchema: schemaValidate });
 const { value: email } = useField<string>("email");
 
 const onSendMail = handleSubmit(async(values) => {
@@ -30,18 +31,15 @@ const onSendMail = handleSubmit(async(values) => {
         props.closeModal();
         loading.value = false;
     }
-}, ({ values }) => {
-    console.log(values);
-    toastEvent({ summary: "Agregue el correo" });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 </script>
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem cols="12" label="Correo a enviar" :error="errors.email" mark for-label="email">
+        <ValidateFormItem cols="12" label="Correo a enviar" mark name="email" v-slot="{ error }">
             <!--            <AutoComplete v-model="email" @complete="search" :suggestions="itemsEmail" :typeahead="true" multiple fluid />-->
-            <InputText v-model="email" fluid :invalid="!!errors.email" id="email"/>
+            <InputText v-model="email" fluid :invalid="!!error" id="email"/>
         </ValidateFormItem>
         <ValidateFormItem cols="12" hide-error hide-label>
             <Button fluid label="Enviar Correo" @click="onSendMail" :loading :disabled="loading"/>

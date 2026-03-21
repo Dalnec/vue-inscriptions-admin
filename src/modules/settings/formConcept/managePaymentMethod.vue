@@ -7,7 +7,7 @@ import { Api } from "@/api/connection.ts";
 import toastEvent from "@/composables/toastEvent.ts";
 import { setDefaultImages } from "@/composables/convertImageToUpload.ts";
 
-const props = defineProps<{ formData?: PaymentMethod, closeModal: () => boolean, refreshData: () => Promise<void> }>();
+const props = defineProps<{ formData?: PaymentMethod, closeModal: () => void, refreshData: () => Promise<void> }>();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
 const uploadedFile = ref<File | null>(null);
@@ -18,7 +18,7 @@ const validationSchema = yup.object({
     description: yup.string().required("Agregue un nombre de cuenta")
 });
 
-const { errors, handleSubmit, setValues } = useForm({ validationSchema, initialValues: fieldInitial.value });
+const { handleSubmit, setValues } = useForm({ validationSchema, initialValues: fieldInitial.value });
 
 const { value: account } = useField<string>("account");
 const { value: cci } = useField<string>("cci");
@@ -75,7 +75,7 @@ onMounted(async() => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem label="Nombre de cuenta" cols="4" :error="errors.description" mark>
+        <ValidateFormItem label="Nombre de cuenta" cols="4" mark name="description">
             <InputText v-model="description" fluid/>
         </ValidateFormItem>
         <ValidateFormItem label="Nro de cuenta" cols="4">

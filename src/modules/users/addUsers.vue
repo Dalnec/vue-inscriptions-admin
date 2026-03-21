@@ -1,18 +1,17 @@
 <script setup lang="ts">
 /* general imports */
+import { Api } from "@/api/connection";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
 import { onMounted, ref } from "vue";
-import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { useDebounceFn } from "@vueuse/core";
-import { Api } from "@/api/connection";
-import { useToast } from "primevue/usetoast";
-import toastErrorMessageForm from "@/composables/toastEvent.ts";
+import useGlobalToast from "@/composables/toastEvent.ts";
 import type { InterfaceProfile, UsersActionsProfile, UsersActiosMembersActions, InterfaceUsers } from "@/types/interfaceUsers.ts";
+import * as yup from "yup";
 
 /* general variables */
 const profileOptions = ref<InterfaceProfile[]>([]);
 const props = defineProps<{ closeModal: () => void; refreshData: () => Promise<void>; formData?: InterfaceUsers }>();
-const toast = useToast();
 
 /**
  * Scheme of rules to be evaluated
@@ -40,21 +39,16 @@ const schemaValidate = ref(yup.object({
 );
 
 /* initial values of model schema */
-const fields = ref<InterfaceUsers>({
-    is_active: true,
-    email: "",
-    names: "",
-    password: "",
-    passwordConfirm: "",
-    profile: null,
-    username: "",
-    lastname: ""
+const fields = ref<Partial<InterfaceUsers>>({
+    is_active: true
 });
 
 /**
  * add initial values to form, get methods to validate form
  */
-const { handleSubmit, resetForm, errors, setValues } = useForm({ validationSchema: schemaValidate, initialValues: fields.value });
+const { handleSubmit, resetForm, setValues } = useForm<InterfaceUsers>({
+    validationSchema: schemaValidate, initialValues: fields.value
+});
 
 /**
  * destructuring of values and methods for handling the form
@@ -72,32 +66,26 @@ const { value: passwordConfirm, handleBlur: passwordConfirmBlur } = useField<str
  */
 const getProfilesList = useDebounceFn(async(): Promise<InterfaceProfile[]> => {
     const { response }: UsersActionsProfile = await Api.Get({ route: "profile" });
-    if (response.status === 200) {
+    if (response && response.status === 200) {
         return response.data;
     } else return [];
 }, 250);
 
 const onSubmit = handleSubmit(async(values) => {
-    if (props.formData?.id) {
 
-        delete values.password;
-        delete values.passwordConfirm;
-        const { response }: UsersActiosMembersActions = await Api.Put({ route: `user/${ props.formData?.id }`, data: { ...values } });
-        if (response.status === 201) {
-            toast.add({ life: 5000, closable: true, summary: `${ response.data.names } actualizado`, severity: "success" });
-            reloadData();
-        }
-    } else {
-        const { response }: UsersActiosMembersActions = await Api.Post({ route: `user`, data: { ...values } });
-        if (response.status === 201) {
-            reloadData();
-            toast.add({ life: 5000, closable: true, summary: "xxx", severity: "success" });
-        }
+
+    delete values.password;
+    delete values.passwordConfirm;
+    const isUpdate = !!props.formData?.id;
+    const url = isUpdate ? `user/${ props.formData?.id }` : "user";
+    const method = isUpdate ? Api.Put : Api.Post;
+
+    const { response }: UsersActiosMembersActions = await method({ route: url, data: { ...values } });
+    if (response && [ 200, 201 ].includes(response.status)) {
+        useGlobalToast({ life: 5000, summary: `${ response.data.names } actualizado`, severity: "success" });
+        reloadData();
     }
-}, ({ errors }) => {
-    const errorMessages = Object.entries(errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", ");
-    toastErrorMessageForm({ summary: "Campos requeridos: ", message: errorMessages, life: 5000 });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 /**
  * function Restart form, reload table data, and close modal
@@ -122,31 +110,31 @@ onMounted(async() => {
 
 <template>
     <div class="align-items-form">
-        <validate-form-item for-label="names" label="Nombres" mark :error="errors.names" cols="6">
-            <InputText v-model="names" id="names" :invalid="!!errors.names" fluid @blur="namesBlur($event, true)" autocomplete="off"/>
-        </validate-form-item>
-        <validate-form-item for-label="lastname" label="Apellidos" cols="6">
+        <ValidateFormItem label="Nombres" mark cols="6" name="names" v-slot="{ error }">
+            <InputText v-model="names" id="names" :invalid="!!error" fluid @blur="namesBlur($event, true)" autocomplete="off"/>
+        </ValidateFormItem>
+        <ValidateFormItem label="Apellidos" cols="6">
             <InputText v-model="lastname" id="lastname" fluid autocomplete="off"/>
-        </validate-form-item>
-        <validate-form-item for-label="email" label="Correo" cols="6">
+        </ValidateFormItem>
+        <ValidateFormItem label="Correo" cols="6">
             <InputText v-model="email" id="email" fluid autocomplete="off"/>
-        </validate-form-item>
-        <validate-form-item for-label="profile" label="Perfil" cols="4" mark :error="errors.profile">
-            <Select v-model="profile" label-id="profile" :invalid="!!errors.profile" :options="profileOptions" name="profile" fluid
+        </ValidateFormItem>
+        <ValidateFormItem label="Perfil" cols="4" mark name="profile" v-slot="{ error }">
+            <Select v-model="profile" label-id="profile" :invalid="!!error" :options="profileOptions" name="profile" fluid
                     optionLabel="description" optionValue="id" @blur="profileBlur($event, true)" show-clear/>
-        </validate-form-item>
-        <validate-form-item v-if="!props.formData?.id" for-label="username" label="Usuario" mark :error="errors.username" cols="4">
-            <InputText v-model="username" id="username" :invalid="!!errors.username" fluid @blur="usernameBlur($event, true)"
+        </ValidateFormItem>
+        <ValidateFormItem v-if="!props.formData?.id" label="Usuario" mark cols="4" name="username" v-slot="{ error }">
+            <InputText v-model="username" id="username" :invalid="!!error" fluid @blur="usernameBlur($event, true)"
                        max="11" autocomplete="off"/>
-        </validate-form-item>
-        <validate-form-item v-if="!props.formData?.id" for-label="password" label="Contraseña" mark :error="errors.password" cols="4">
-            <Password v-model="password" input-id="password" :invalid="!!errors.password" class="w-full" :toggleMask="true"
+        </ValidateFormItem>
+        <ValidateFormItem v-if="!props.formData?.id" label="Contraseña" mark cols="4" name="password" v-slot="{ error }">
+            <Password v-model="password" input-id="password" :invalid="!!error" class="w-full" :toggleMask="true"
                       :feedback="false" @blur="passwordBlur($event, true)" input-class="w-full !py-1.5"/>
-        </validate-form-item>
-        <validate-form-item v-if="!props.formData?.id" for-label="confirm" label="Confirmar" mark :error="errors.passwordConfirm" cols="4">
-            <Password v-model="passwordConfirm" input-id="confirm" :invalid="!!errors.passwordConfirm" class="w-full" :toggleMask="true"
+        </ValidateFormItem>
+        <ValidateFormItem v-if="!props.formData?.id" label="Confirmar" mark cols="4" name="passwordConfirm" v-slot="{ error }">
+            <Password v-model="passwordConfirm" input-id="confirm" :invalid="!!error" class="w-full" :toggleMask="true"
                       :feedback="false" @blur="passwordConfirmBlur($event, true)" input-class="w-full !py-1.5"/>
-        </validate-form-item>
+        </ValidateFormItem>
         <Divider class="col-span-1 md:col-span-12 !my-2"/>
     </div>
 

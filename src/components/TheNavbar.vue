@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import { computed, ref } from "vue";
-import AppConfig from "@/components/app/appConfig.vue";
 import { optionsMenuStore } from "@/stores/optionsMenu";
-import type { MenuItem } from "primevue/menuitem";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useConfirm } from "primevue";
-import toastEvent from "@/composables/toastEvent.ts";
-// import router from "@/router";
+import useGlobalToast from "@/composables/toastEvent.ts";
+import AppConfig from "@/components/app/appConfig.vue";
+import type { MenuItem } from "primevue/menuitem";
 
 const route = useRoute();
 const confirm = useConfirm();
 const menu = ref();
 const userDataStore = useUserDataConfigStore();
-// const userDataValue = userDataStore.userData.user;
 
 optionsMenuStore.createOptionsMenu();
 
@@ -45,10 +43,10 @@ const confirm1 = () => {
         },
         accept: () => {
             userDataStore.logout();
-            toastEvent({ severity: "info", summary: "Sesión expirada", message: "Vuelva a iniciar sesión", life: 3000 });
+            useGlobalToast({ severity: "info", summary: "Sesión expirada", detail: "Vuelva a iniciar sesión", life: 3000 });
         },
         reject: () => {
-            toastEvent({ severity: "error", summary: "Cancelado", message: "No se cerro la sesión", life: 3000 });
+            useGlobalToast({ severity: "error", summary: "Cancelado", detail: "No se cerro la sesión", life: 3000 });
         }
     });
 };
@@ -99,16 +97,14 @@ const onShowOptions = (event: MouseEvent) => {
         </template>
 
         <template #submenuicon>
-            <i-solar-hamburger-menu-broken/>
+            <i-material-symbols-menu-rounded/>
         </template>
 
         <template #end>
             <div class="flex space-x-1">
                 <Button size="small" severity="secondary" class="!w-8 !h-8" @click="onShowOptions" aria-haspopup="true"
-                        aria-controls="overlayMenu">
-                    <template #icon>
-                        <i-material-symbols-person-outline-rounded/>
-                    </template>
+                        aria-controls="overlayMenu" #icon>
+                    <i-material-symbols-person-outline-rounded/>
                 </Button>
                 <TieredMenu ref="menu" id="overlayMenu" :model="items()" popup/>
                 <app-config/>

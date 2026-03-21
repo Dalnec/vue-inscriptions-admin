@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import * as yup from "yup";
+import { Api } from "@/api/connection.ts";
+import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
 import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
-import { useToast } from "primevue";
-import { Api } from "@/api/connection.ts";
-import { type InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
-import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
-
-interface Fields {
-    password: string;
-    username: string;
-}
+import type { InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
+import * as yup from "yup";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
 
 const { loginUserData } = useUserDataConfigStore();
-const fields = ref<Fields>({ username: "", password: "" });
-const toast = useToast();
 const refPassword = ref();
 const loading = ref(false);
 
@@ -23,11 +16,11 @@ const schemaValidate = yup.object({
     username: yup.string().required("Ingrese su usuario").label("username").min(5, "Ingresa al menos 5 caracteres")
 });
 
-const { handleSubmit, errors } = useForm<Fields>({ initialValues: fields.value, validationSchema: schemaValidate });
-const { value: username, errorMessage: usernameError, handleBlur: usernameBlur } = useField<string>("username");
-const { value: password, errorMessage: passwordError, handleBlur: passwordBlur } = useField<string>("password");
+const { handleSubmit } = useForm<{ password: string; username: string; }>({ validationSchema: schemaValidate });
+const { value: username, handleBlur: usernameBlur } = useField<string>("username");
+const { value: password, handleBlur: passwordBlur } = useField<string>("password");
 
-const onSubmit = handleSubmit(async(values: Fields) => {
+const onSubmit = handleSubmit(async(values) => {
     try {
         loading.value = true;
         const { response }: InterfaceUserLoginActions = await Api.Post({ route: "login", data: { ...values } });
@@ -39,10 +32,7 @@ const onSubmit = handleSubmit(async(values: Fields) => {
         console.log(e);
         loading.value = false;
     }
-}, ({ errors }) => {
-    const errorMessages: string = Object?.["entries"](errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", ");
-    toast.add({ severity: "error", summary: "Error", detail: `Complete los siguientes campos: ${ errorMessages }`, life: 10000 });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 const focusPassword = () => refPassword.value.$el.querySelector("input").focus();
 
@@ -60,21 +50,21 @@ const focusPassword = () => refPassword.value.$el.querySelector("input").focus()
 
             <div class="mt-6 space-y-2" v-focustrap>
 
-                <form-item for-label="username" label="Usuario" mark :error="usernameError">
+                <ValidateFormItem name="username" label="Usuario" mark v-slot="{ error }">
                     <InputText v-model="username" fluid placeholder="Ingrese su usuario" id="username" autofocus
                                @update:model-value="(value: string | undefined) => username = value?.toUpperCase() || ''"
-                               @blur="usernameBlur($event, true)" :invalid="!!errors.username" @keyup.enter="focusPassword"/>
-                </form-item>
+                               @blur="usernameBlur($event, true)" :invalid="!!error" @keyup.enter="focusPassword"/>
+                </ValidateFormItem>
 
-                <form-item for-label="password" label="Contraseña" mark :error="passwordError">
+                <ValidateFormItem name="password" label="Contraseña" mark v-slot="{ error }">
                     <Password inputClass="w-full" :feedback="false" v-model="password" id="password" class="w-full" ref="refPassword"
-                              :invalid="!!errors.password" @blur="passwordBlur($event,true)" toggleMask @keyup.enter="onSubmit()"
+                              :invalid="!!error" @blur="passwordBlur($event,true)" toggleMask @keyup.enter="onSubmit()"
                               placeholder="********"/>
-                </form-item>
+                </ValidateFormItem>
 
-                <Button label="Ingresar" @click="onSubmit()" class="mt-4 w-full" :disabled="loading" :loading>
-                    <span>Iniciar Sesión </span>
-                    <i-noto-turtle class="absolute right-2 order-1 h-7 w-7"/>
+                <Button label="Iniciar Sesión xxx" fluid :loading @click="onSubmit"
+                        :pt="{ loadingIcon: { class: 'absolute right-2 order-1 h-7 w-7' } }" #icon>
+                    <i-material-symbols-login-rounded class="absolute right-2 order-1 h-7 w-7"/>
                 </Button>
 
             </div>

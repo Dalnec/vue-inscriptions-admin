@@ -1,6 +1,4 @@
-
-import type { InterfaceAxiosApiPaginate } from "@/types/InterfaceAxiosApiPaginate.ts";
-import type { InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApiNoPaginate.ts";
+import type { InterfaceAxiosApiPaginate, InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApi.ts";
 
 export interface InscriptionsMembers {
     amount: string;

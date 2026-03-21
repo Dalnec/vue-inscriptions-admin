@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { InscriptionsMembers, InterfaceActionsInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
 import { Api } from "@/api/connection.ts";
-import toastEvent from "@/composables/toastEvent.ts";
 import { onMounted, ref } from "vue";
+import useGlobalToast from "@/composables/toastEvent.ts";
+import type { InscriptionsMembers, InterfaceActionsInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
 
 const props = defineProps<{ closeModal: () => void; refreshData: () => Promise<void>; formData: InscriptionsMembers }>();
 const observationText = ref("");
@@ -14,7 +14,7 @@ const onAddObsMember = async(): Promise<void> => {
     if (response && response.status === 200) {
         await props.refreshData();
         props.closeModal();
-        toastEvent({ message: "Detalle añadido...", severity: "success" });
+        useGlobalToast({ detail: "Detalle añadido...", severity: "success" });
     }
 };
 
@@ -26,11 +26,11 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <FormItem label="Añadir detalles" cols="12">
+        <ValidateFormItem label="Añadir detalles" cols="12">
             <Textarea v-model="observationText" fluid auto-resize/>
-        </FormItem>
-        <FormItem hide-error hide-label cols="12">
+        </ValidateFormItem>
+        <ValidateFormItem hide-error hide-label cols="12">
             <Button label="Agregar observación" @click="onAddObsMember()" fluid/>
-        </FormItem>
+        </ValidateFormItem>
     </div>
 </template>

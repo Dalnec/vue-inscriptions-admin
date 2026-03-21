@@ -6,11 +6,14 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const IconMaterialSymbolsAutoDeleteOutlineRounded: typeof import('~icons/material-symbols/auto-delete-outline-rounded')['default']
-  const IconMaterialSymbolsBookmarkCheck: typeof import('~icons/material-symbols/bookmark-check')['default']
-  const IconMaterialSymbolsCalendarAppsScript: typeof import('~icons/material-symbols/calendar-apps-script')['default']
-  const IconMaterialSymbolsCircleNotifications: typeof import('~icons/material-symbols/circle-notifications')['default']
-  const IconMaterialSymbolsPersonRemove: typeof import('~icons/material-symbols/person-remove')['default']
+  const IconMaterialSymbolsAddNotesOutline: typeof import('~icons/material-symbols/add-notes-outline').default
+  const IconMaterialSymbolsAutoDeleteOutlineRounded: typeof import('~icons/material-symbols/auto-delete-outline-rounded').default
+  const IconMaterialSymbolsBookmarkCheck: typeof import('~icons/material-symbols/bookmark-check').default
+  const IconMaterialSymbolsCalendarAppsScript: typeof import('~icons/material-symbols/calendar-apps-script').default
+  const IconMaterialSymbolsCircleNotifications: typeof import('~icons/material-symbols/circle-notifications').default
+  const IconMaterialSymbolsFrameInspectRounded: typeof import('~icons/material-symbols/frame-inspect-rounded').default
+  const IconMaterialSymbolsGroupOutlineRounded: typeof import('~icons/material-symbols/group-outline-rounded').default
+  const IconMaterialSymbolsPersonRemove: typeof import('~icons/material-symbols/person-remove').default
   const IconMaterialSymbolsTableEdit: typeof import('~icons/material-symbols/table-edit')['default']
   const IconMdiPencilBoxMultiple: typeof import('~icons/mdi/pencil-box-multiple')['default']
   const IconSolarClipboardAddBold: typeof import('~icons/solar/clipboard-add-bold')['default']

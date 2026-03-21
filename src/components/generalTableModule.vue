@@ -15,12 +15,10 @@
  * It also exposes functions to refresh the data and update an item's status.
  */
 
-import { useDebounceFn } from "@vueuse/core";
 import { Api } from "@/api/connection";
 import { onMounted, ref } from "vue";
-import { useToast } from "primevue/usetoast";
-import LoadingPage from "./loadingPage.vue";
-import EmptyTable from "./emptyTable.vue";
+import { useDebounceFn } from "@vueuse/core";
+import useGlobalToast from "@/composables/toastEvent.ts";
 import { type DataTablePageEvent } from "primevue";
 
 /**
@@ -107,11 +105,6 @@ export interface GeneralData {
 const dataGenericTable = ref<GeneralData[]>([]);
 
 /**
- * Toast notification service instance.
- */
-const toast = useToast();
-
-/**
  * Loading state indicator for API calls.
  */
 const loading = ref<boolean>(false);
@@ -190,11 +183,11 @@ const onchangeStatus = useDebounceFn(async(data: GeneralData) => {
         loading.value = true;
         const { response } = await Api.Patch({ route: `${ props.route }/${ data.id }`, data: { active: data.active } });
         if (response?.status === 200) {
-            toast.add({ summary: "Estado cambiado", detail: `Estado cambiado para: ${ data.description }`, life: 5000 });
+            useGlobalToast({ detail: `Estado cambiado para: ${ data.description }`, life: 5000, summary: "Estado cambiado" });
             await getDataTableGeneric();
         }
     } catch (error) {
-        toast.add({ summary: "Server Error", detail: error || "", life: 5000 });
+        useGlobalToast({ life: 5000, summary: "Server Error" });
         console.error(error);
     } finally {
         loading.value = false;
@@ -230,12 +223,10 @@ defineExpose({ getDataTableGeneric, onchangeStatus });
         <!-- Slot for additional custom columns -->
         <slot/>
         <!-- Column for status, displayed only if showStatus prop is true -->
-        <Column style="width: 5%" field="active" header="Estado" v-if="props.showStatus">
-            <template #body="{ data }">
-                <div class="flex items-center">
-                    <ToggleSwitch v-model="data.active" @update:modelValue="onchangeStatus(data)"/>
-                </div>
-            </template>
+        <Column style="width: 5%" field="active" header="Estado" v-if="props.showStatus" #body="{ data }">
+            <div class="flex items-center">
+                <ToggleSwitch v-model="data.active" @update:modelValue="onchangeStatus(data)"/>
+            </div>
         </Column>
         <slot name="actions"/>
     </DataTable>

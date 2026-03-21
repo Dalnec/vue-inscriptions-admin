@@ -27,10 +27,8 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
                 <span>{{ props.doc_num }}</span>
             </div>
             <Button v-tooltip.left="'Eliminar de la lista'" size="small" severity="danger"
-                    @click.stop.prevent="membersStoreOptions.removeMembers(props)">
-                <template #icon>
-                    <i-material-symbols-delete-outline-rounded class="text-lg"/>
-                </template>
+                    @click.stop.prevent="membersStoreOptions.removeMembers(props)" #icon>
+                <i-material-symbols-delete-outline-rounded class="text-lg"/>
             </Button>
         </div>
 

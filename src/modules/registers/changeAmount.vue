@@ -27,9 +27,9 @@ const onChangeAmount = async() => {
 
 <template>
     <div>
-        <FormItem label="Nuevo Monto">
+        <ValidateFormItem label="Nuevo Monto">
             <InputNumber v-model="newAmount" fluid/>
-        </FormItem>
+        </ValidateFormItem>
         <Button label="Guardar" fluid @click="onChangeAmount"/>
     </div>
 </template>

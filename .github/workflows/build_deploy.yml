@@ -1,21 +1,26 @@
-name: Build and Deploy
-on: [push]
+name: Deploy Demo Admin Web
+
+on:
+  push:
+    branches:
+      - codexdeploy
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-demo-admin-web
+  cancel-in-progress: true
+
 jobs:
-  build-and-deploy:
-    name: Build and Deploy
+  deploy-demo-admin-web:
+    name: Deploy Demo Admin Web
     runs-on: ubuntu-latest
     steps:
-      - name: download changes and build
+      - name: Deploy admin frontend demo via SSH
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd /var/www/inscriptions/demoinscriptions/vue-inscriptions-admin/
-            git pull
-            export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh
-            npm install
-            rm -rf dist
-            npm run build
+            set -e
+            sudo -n /usr/local/bin/deploy_jni_demo_admin_web.sh codexdeploy

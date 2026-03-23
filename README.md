@@ -31,3 +31,17 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## CI Demo Deploy (root script)
+
+This repository includes `deploy/deploy_jni_demo_admin_web.sh` for GitHub Actions demo deploy.
+
+Server setup (one time):
+
+```bash
+cd /home/tsi/dl/jni-inscriptions-demo/vue-inscriptions-admin
+sudo install -o root -g root -m 750 deploy/deploy_jni_demo_admin_web.sh /usr/local/bin/deploy_jni_demo_admin_web.sh
+echo 'tsi ALL=(root) NOPASSWD: /usr/local/bin/deploy_jni_demo_admin_web.sh' | sudo tee /etc/sudoers.d/jni-demo-admin
+sudo visudo -cf /etc/sudoers.d/jni-demo-admin
+sudo -n /usr/local/bin/deploy_jni_demo_admin_web.sh codexdeploy
+```

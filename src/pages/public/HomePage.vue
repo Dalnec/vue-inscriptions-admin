@@ -5,6 +5,7 @@ import HeroSection from "@/pages/public/HeroSection.vue";
 import AboutEvent from "@/pages/public/AboutEvent.vue";
 import LocationEvent from "@/pages/public/LocationEvent.vue";
 import TeamMembersEvent from "@/pages/public/TeamMembersEvent.vue";
+import FooterPage from "@/pages/public/FooterPage.vue";
 
 </script>
 
@@ -28,5 +29,6 @@ import TeamMembersEvent from "@/pages/public/TeamMembersEvent.vue";
             </p>
         </div>
         <TeamMembersEvent v-reveal/>
+        <FooterPage/>
     </main>
 </template>

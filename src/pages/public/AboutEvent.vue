@@ -3,9 +3,9 @@
 </script>
 
 <template>
-    <div class="mx-auto max-w-6xl my-32">
+    <div class="mx-auto max-w-6xl my-20 px-4 md:px-0">
         <!-- HEADER -->
-        <div class="text-center max-w-3xl mx-auto">
+        <div class="text-center md:text-left px-2 md:px-0">
             <h2 class="text-3xl md:text-5xl font-info text-white leading-tight">
                 ¿Estás listo para una experiencia que
                 <span class="text-amber-400">transformará tu vida</span>?
@@ -18,7 +18,7 @@
         </div>
 
         <!-- CONTENT -->
-        <div class="mt-16 grid md:grid-cols-2 gap-10 items-center">
+        <div class="mt-16 grid md:grid-cols-2 gap-8 md:gap-10 items-center">
 
             <!-- VIDEO -->
             <div class="relative">

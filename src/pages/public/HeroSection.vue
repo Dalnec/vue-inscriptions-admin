@@ -8,14 +8,14 @@ const currentIndex = ref(0);
 let interval: ReturnType<typeof setInterval> | null = null;
 
 const nextImage = () => {
-    const next = (currentIndex.value + 1) % images.value.length;
-    changeImage(next);
+    if ( !images.value.length) return;
+    currentIndex.value = (currentIndex.value + 1) % images.value.length;
 };
 
 const prevImage = () => {
-    const prev =
+    if ( !images.value.length) return;
+    currentIndex.value =
         (currentIndex.value - 1 + images.value.length) % images.value.length;
-    changeImage(prev);
 };
 
 const startAutoplay = () => {
@@ -30,88 +30,111 @@ const stopAutoplay = () => {
     }
 };
 
-const preloadImages = async(src: string[]) => {
-    await Promise.all(src.map((src) => new Promise<void>((resolve) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
-    })));
-};
-
-const changeImage = (newIndex: number) => {
-    if ( !images.value.length) return;
-    currentIndex.value = newIndex;
-};
-
 onMounted(async() => {
     const modules = import.meta.glob("@/assets/images/*.{png,jpg,jpeg,webp}", { eager: true });
 
-    const loaded = Object.values(modules).map((mod: any) => mod.default);
-    await preloadImages(loaded);
-    images.value = loaded;
+    images.value = Object.values(modules).map((mod: any) => mod.default);
+
     startAutoplay();
 });
 
 onUnmounted(() => stopAutoplay());
-
 </script>
 
 <template>
     <section class="section-hero" @mouseenter="stopAutoplay" @mouseleave="startAutoplay">
-        <div class="hero-bg">
-            <div class="relative w-full h-full overflow-hidden">
-                <img v-for="(img, index) in images" :key="index" :src="img" :class="index === currentIndex ? 'opacity-100' : 'opacity-0'"
-                     alt="" class="hero-image absolute inset-0 transition-opacity duration-700 ease-in-out"/>
+        <!-- SLIDER -->
+        <div class="hero-container">
+            <div v-for="(img, index) in images" :key="img" :class="['hero-layer', index === currentIndex ? 'is-active' : 'is-hidden']">
+                <img :src="img" class="hero-bg" alt=""/>
+                <img :src="img" class="hero-main" alt=""/>
             </div>
-
-            <div class="hero-overlay"></div>
         </div>
-        <Button @click="prevImage" rounded class="!absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12" #icon>
-            <i-material-symbols-arrow-back-ios-new-rounded class="text-lg"/>
+
+        <!-- CONTROLES -->
+        <Button @click="prevImage" rounded class="nav-btn left" #icon>
+            <i-material-symbols-arrow-back-ios-new-rounded/>
         </Button>
 
-        <Button @click="nextImage" rounded class="!absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12" #icon>
-            <i-material-symbols-arrow-forward-ios-rounded class="text-lg"/>
+        <Button @click="nextImage" rounded class="nav-btn right" #icon>
+            <i-material-symbols-arrow-forward-ios-rounded/>
         </Button>
-        <div class="absolute bottom-0 left-0 w-full translate-y-1/2 z-20 px-4">
-            <TimerEventPage />
+
+        <!-- TIMER -->
+        <div class="timer-wrapper">
+            <TimerEventPage/>
         </div>
     </section>
 </template>
 
 <style>
 
+
 .section-hero {
-    @apply relative flex min-h-[90vh] items-center justify-center overflow-visible;
+    @apply relative flex flex-col items-center justify-center;
+    padding-bottom: 80px;
+}
+
+.hero-container {
+    @apply relative w-full overflow-hidden;
+    aspect-ratio: 16 / 9;
+    max-height: 65vh;
+}
+
+@media (max-width: 768px) {
+    .hero-container {
+        aspect-ratio: 3 / 4;
+        max-height: 55vh;
+    }
+}
+
+.hero-layer {
+    @apply absolute inset-0;
+    transition: opacity 700ms ease-in-out;
+}
+
+.hero-layer.is-active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.hero-layer.is-hidden {
+    opacity: 0;
+    z-index: 1;
 }
 
 .hero-bg {
-    @apply absolute inset-0 z-0;
+    @apply absolute inset-0 w-full h-full object-cover;
+    filter: blur(40px) brightness(0.4);
+    transform: scale(1.1);
 }
 
-.hero-image {
-    @apply h-full w-full object-cover;
-    backface-visibility: hidden;
-    transform: translateZ(0);
+
+.hero-main {
+    @apply absolute inset-0 w-full h-full object-contain;
 }
 
-.dark .hero-image {
-    filter: brightness(0.9);
+@media (max-width: 768px) {
+    .hero-main {
+        padding: 12px;
+    }
 }
 
-.hero-overlay {
-    @apply absolute inset-0;
-    background: linear-gradient(
-        to bottom,
-        rgba(2, 6, 23, 0.3) 0%,
-        rgba(2, 6, 23, 0.7) 60%,
-        rgba(2, 6, 23, 0.95) 100%
-    );
+.nav-btn {
+    @apply !absolute top-1/2 -translate-y-1/2 z-20 w-12 h-12;
 }
 
-.dark .hero-overlay {
-    background: linear-gradient(to top, var(--color-hero-overlay-dark), transparent);
+.nav-btn.left {
+    @apply !left-4;
+}
+
+.nav-btn.right {
+    @apply !right-4;
+}
+
+.timer-wrapper {
+    @apply absolute left-0 w-full px-4 z-30;
+    bottom: -15px;
 }
 
 </style>

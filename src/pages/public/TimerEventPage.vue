@@ -4,10 +4,10 @@ import CountDownEvent from "@/pages/public/CountDownEvent.vue";
 </script>
 
 <template>
-    <div class="relative z-30 px-4">
+    <div class="relative z-30">
         <div class="countdown-timer">
-            <div class="flex flex-col gap-6 text-white">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <div class="flex flex-col gap-4 text-white">
+                <div class="flex flex-row flex-wrap justify-between items-center gap-4 text-center md:text-left">
 
                     <div class="flex items-center gap-3">
                         <i-material-symbols-calendar-month class="text-amber-400 text-xl"/>

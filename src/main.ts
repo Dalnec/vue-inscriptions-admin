@@ -11,6 +11,7 @@ import CryptoJS from "crypto-js";
 import ValidateFormItem from "@/components/ValidateFormItem.vue";
 import EmptyTable from "@/components/emptyTable.vue";
 import LoadingPage from "@/components/loadingPage.vue";
+import reveal from "@/composables/reveal.ts";
 
 const SECRET_KEY = "AmoLasTetas";
 const app = createApp(App);
@@ -49,6 +50,7 @@ app.directive("styleclass", StyleClass);
 app.directive("focustrap", FocusTrap);
 app.directive("animateonscroll", AnimateOnScroll);
 app.directive("keyFilter", KeyFilter);
+app.directive("reveal", reveal)
 
 app.use(PrimeVue, {
     locale: {

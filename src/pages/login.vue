@@ -16,11 +16,11 @@ const schemaValidate = yup.object({
     username: yup.string().required("Ingrese su usuario").label("username").min(5, "Ingresa al menos 5 caracteres")
 });
 
-const { handleSubmit } = useForm<{ password: string; username: string; }>({ validationSchema: schemaValidate });
-const { value: username, handleBlur: usernameBlur } = useField<string>("username");
-const { value: password, handleBlur: passwordBlur } = useField<string>("password");
+const { handleSubmit, values } = useForm<{ password: string; username: string; }>({ validationSchema: schemaValidate });
+const { value: username } = useField<string>("username");
+const { value: password } = useField<string>("password");
 
-const onSubmit = handleSubmit(async(values) => {
+const onLogin = handleSubmit(async(values) => {
     try {
         loading.value = true;
         const { response }: InterfaceUserLoginActions = await Api.Post({ route: "login", data: { ...values } });
@@ -34,7 +34,10 @@ const onSubmit = handleSubmit(async(values) => {
     }
 }, ({ errors }) => castFormErrors(errors));
 
-const focusPassword = () => refPassword.value.$el.querySelector("input").focus();
+const focusPassword = () => {
+    if (values.password.trim()) onLogin();
+    else refPassword.value.$el.querySelector("input").focus();
+};
 
 </script>
 
@@ -49,24 +52,20 @@ const focusPassword = () => refPassword.value.$el.querySelector("input").focus()
             <p class="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">Ingresa tus credenciales</p>
 
             <div class="mt-6 space-y-2" v-focustrap>
-
                 <ValidateFormItem name="username" label="Usuario" mark v-slot="{ error }">
                     <InputText v-model="username" fluid placeholder="Ingrese su usuario" id="username" autofocus
                                @update:model-value="(value: string | undefined) => username = value?.toUpperCase() || ''"
-                               @blur="usernameBlur($event, true)" :invalid="!!error" @keyup.enter="focusPassword"/>
+                               :invalid="!!error" @keyup.enter="focusPassword"/>
                 </ValidateFormItem>
 
                 <ValidateFormItem name="password" label="Contraseña" mark v-slot="{ error }">
                     <Password inputClass="w-full" :feedback="false" v-model="password" id="password" class="w-full" ref="refPassword"
-                              :invalid="!!error" @blur="passwordBlur($event,true)" toggleMask @keyup.enter="onSubmit()"
-                              placeholder="********"/>
+                              :invalid="!!error" toggleMask @keyup.enter="onLogin()" placeholder="********"/>
                 </ValidateFormItem>
-
-                <Button label="Iniciar Sesión xxx" fluid :loading @click="onSubmit"
+                <Button label="Iniciar Sesión" fluid :loading @click="onLogin"
                         :pt="{ loadingIcon: { class: 'absolute right-2 order-1 h-7 w-7' } }" #icon>
                     <i-material-symbols-login-rounded class="absolute right-2 order-1 h-7 w-7"/>
                 </Button>
-
             </div>
         </div>
     </div>

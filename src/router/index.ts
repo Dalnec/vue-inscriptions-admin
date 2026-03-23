@@ -7,7 +7,7 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: "/", name: "home", redirect: { name: "newRegister" }, component: () => import("@/layout.vue"),
+            path: "/home", name: "home", redirect: { name: "newRegister" }, component: () => import("@/layout.vue"),
             children: [
                 {
                     path: "/register", name: "newRegister", component: () => import("@/modules/registers/registersCard.vue"),
@@ -62,42 +62,45 @@ const router = createRouter({
                 }
             ]
         },
-        { path: "/login", name: "login", component: () => import("@/pages/login.vue") },
+        { path: "/", name: "webPage", component: () => import("@/pages/public/HomePage.vue"), meta: { public: true } },
+        { path: "/login", name: "login", component: () => import("@/pages/login.vue"), meta: { public: true } },
+        { path: "/pay-event", name: "payEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
+        { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
         { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
     ]
 });
 
-router.beforeEach(async(to, _, next) => {
-    const useAuthStore = useUserDataConfigStore();
+router.beforeEach((to) => {
+    const authStore = useUserDataConfigStore();
+    const isAuth = Boolean(authStore.userData?.token);
 
-    // Usuario NO autenticado
-    if ( !useAuthStore.userData?.token) {
-        if (to.name !== "login") {
-            return next({ name: "login" });
+    const isHomeRoute = to.path.startsWith("/home");
+
+    if ( !isHomeRoute) {
+        // Si está logueado y va a login → redirigir
+        if (isAuth && to.name === "login") {
+            return { name: "home" };
         }
-        return next();
+        return true;
     }
 
-    // Usuario autenticado y va al login → redirigir a home
-    if (to.name === "login") {
-        return next({ name: "home" });
+    if ( !isAuth) {
+        return { name: "login" };
     }
 
-    // Usuario superusuario → acceso total
-    const dataUser = useAuthStore.userData?.user;
+    const user = authStore.userData?.user;
 
-    if (dataUser?.profile_description === "ADMINISTRADOR" || dataUser?.is_superuser) {
-        return next();
+    if (user?.is_superuser || user?.profile_description === "ADMINISTRADOR") {
+        return true;
     }
 
-    // Usuario no superusuario → permitir solo rutas específicas
     const allowedRoutes = [ "newRegister", "payEvent" ];
+
     if (allowedRoutes.includes(to.name as string)) {
-        return next();
+        return true;
     }
 
-    // Redirigir a home si no tiene permiso
-    return next({ name: "home" });
+    return { name: "home" };
 });
 
 export default router;

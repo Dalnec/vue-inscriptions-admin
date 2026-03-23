@@ -3,44 +3,44 @@ import useGlobalToast from "@/composables/toastEvent";
 import { Api } from "@/api/connection";
 
 export interface InterfaceResponseDNI<T> {
-    success: boolean;
-    message: string;
     data: T;
+    message: string;
+    success: boolean;
 }
 
 export interface DataDNI {
-    numero: string;
-    nombre_completo: string;
-    nombres: string;
-    apellido_paterno: string;
     apellido_materno: string;
+    apellido_paterno: string;
     codigo_verificacion: number;
     departamento: string;
-    provincia: string;
-    distrito: string;
     direccion: string;
     direccion_completa: string;
+    distrito: string;
+    nombre_completo: string;
+    nombres: string;
+    numero: string;
+    provincia: string;
+    ubigeo: string[];
     ubigeo_reniec: string;
     ubigeo_sunat: string;
-    ubigeo: string[];
 }
 
 export interface MemberExist {
-    created: string;
-    code: string;
-    doc_num: string;
-    names: string;
-    lastnames: string;
-    gender: string;
     birthdate: any;
-    phone: string;
-    email: any;
-    status: boolean;
-    kind: number;
-    documenttype: number;
-    documenttype_description: string;
     church: number;
     church_description: string;
+    code: string;
+    created: string;
+    doc_num: string;
+    documenttype: number;
+    documenttype_description: string;
+    email: any;
+    gender: string;
+    kind: number;
+    lastnames: string;
+    names: string;
+    phone: string;
+    status: boolean;
     user: any;
 }
 

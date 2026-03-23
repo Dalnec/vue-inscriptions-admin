@@ -27,17 +27,17 @@ body {
 }
 
 :root {
-    --p-primary-50: #ecfdf5;
-    --p-primary-100: #d1fae5;
-    --p-primary-200: #a7f3d0;
-    --p-primary-300: #6ee7b7;
-    --p-primary-400: #34d399;
-    --p-primary-500: #10b981;
-    --p-primary-600: #059669;
-    --p-primary-700: #047857;
-    --p-primary-800: #065f46;
-    --p-primary-900: #064e3b;
-    --p-primary-950: #022c22;
+    --p-primary-50: #FFFBEB;
+    --p-primary-100: #FEF3C7;
+    --p-primary-200: #FDE68A;
+    --p-primary-300: #FCD34D;
+    --p-primary-400: #FBBF24;
+    --p-primary-500: #F59E0B;
+    --p-primary-600: #D97706;
+    --p-primary-700: #B45309;
+    --p-primary-800: #92400E;
+    --p-primary-900: #78350F;
+    --p-primary-950: #451A03;
     --p-surface-0: #ffffff;
     --p-surface-50: #fafafa;
     --p-surface-100: #f4f4f5;
@@ -51,6 +51,28 @@ body {
     --p-surface-900: #18181b;
     --p-surface-950: #09090b;
     --p-content-border-radius: 6px;
+
+    /* Brand */
+    --color-primary: oklch(0.6 0.15 250);
+
+    /* Backgrounds */
+    --color-bg-section: oklch(0.97 0.01 250);
+    --color-bg-section-dark: oklch(0.2 0.02 250);
+
+    /* Text */
+    --color-text-title: oklch(0.2 0.02 250);
+    --color-text-body: oklch(0.5 0.02 250);
+    --color-text-muted: oklch(0.65 0.02 250);
+
+    /* Card */
+    --color-card: oklch(1 0 0);
+    --color-card-dark: oklch(0.25 0.02 250);
+
+    --color-hero-overlay: oklch(0.2 0.02 250 / 0.7);
+    --color-hero-overlay-dark: oklch(0.1 0.02 250 / 0.8);
+
+    --color-text-hero: oklch(0.98 0 0);
+    --color-text-hero-muted: oklch(0.85 0.02 250);
 }
 
 /* Light */
@@ -98,6 +120,17 @@ body {
         --p-text-muted-color: var(--p-surface-400);
         --p-text-hover-muted-color: var(--p-surface-300);
     }
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.reveal-active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .error-required {
@@ -247,5 +280,16 @@ input {
 
 .v-enter-from,
 .v-leave-to {
+    opacity: 0;
+}
+
+/* transición suave */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
     opacity: 0;
 }

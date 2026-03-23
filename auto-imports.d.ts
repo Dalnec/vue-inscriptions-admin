@@ -16,7 +16,7 @@ declare global {
   const IconMaterialSymbolsPersonRemove: typeof import('~icons/material-symbols/person-remove').default
   const IconMaterialSymbolsTableEdit: typeof import('~icons/material-symbols/table-edit')['default']
   const IconMdiPencilBoxMultiple: typeof import('~icons/mdi/pencil-box-multiple')['default']
-  const IconSolarClipboardAddBold: typeof import('~icons/solar/clipboard-add-bold')['default']
-  const IconSolarUsersGroupRoundedBold: typeof import('~icons/solar/users-group-rounded-bold')['default']
-  const IconTablerClipboardDataFilled: typeof import('~icons/tabler/clipboard-data-filled')['default']
+  const IconSolarClipboardAddBold: typeof import('~icons/solar/clipboard-add-bold').default
+  const IconSolarUsersGroupRoundedBold: typeof import('~icons/solar/users-group-rounded-bold').default
+  const IconTablerClipboardDataFilled: typeof import('~icons/tabler/clipboard-data-filled').default
 }

@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import useGlobalToast from "@/composables/toastEvent";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
-import toastEvent from "@/composables/toastEvent";
 import routes from "@/router/index";
 
 export const useMembersStore = defineStore("membersStore", () => {
@@ -13,27 +13,18 @@ export const useMembersStore = defineStore("membersStore", () => {
     };
 
     const addNewMembers = (members: InterfaceMembers, resetFilters: () => void, isClickCard: boolean) => {
+        const fullName = `${ members.names } ${ members.lastnames }`;
         const index = membersData.value.findIndex(dt => dt.doc_num === members.doc_num);
 
         if (index !== -1 && !isClickCard) {
-            toastEvent({
-                closable: true, severity: "error", summary: "Error al guardar.",
-                message: `La persona ${ members.names } ${ members.lastnames } ya fue agregada.`
-            });
+            useGlobalToast({ severity: "error", summary: "Error al guardar.", detail: `La persona ${ fullName } ya fue agregada.` });
             return;
         } else if (isClickCard && index !== -1) {
             membersData.value[index] = { ...members };
-
-            toastEvent({
-                severity: "info", summary: "Actualizado",
-                message: `${ members.names } ${ members.lastnames } fue actualizado correctamente.`
-            });
-
+            useGlobalToast({ summary: "Actualizado", detail: `${ fullName } fue actualizado correctamente.` });
             resetFilters();
         } else {
-            toastEvent({
-                severity: "success", summary: "¡Éxito!", message: `${ members.names } ${ members.lastnames } se agregó correctamente.`
-            });
+            useGlobalToast({ severity: "success", summary: "¡Éxito!", detail: `${ fullName } se agregó correctamente.` });
 
             membersData.value.push(members);
             resetFilters();
@@ -41,12 +32,11 @@ export const useMembersStore = defineStore("membersStore", () => {
     };
 
     const removeMembers = async(members: InterfaceMembers): Promise<void> => {
+        const fullName = `${ members.names } ${ members.lastnames }`;
         membersData.value = membersData.value.filter(dt => dt.doc_num !== members.doc_num);
-        toastEvent({
-            severity: "success", summary: "!Eliminado¡", message: `${ members.names } ${ members.lastnames } se eliminó de la lista`
-        });
+        useGlobalToast({ severity: "success", summary: "!Eliminado¡", detail: `${ fullName } se eliminó de la lista` });
         if (membersData.value.length === 0) {
-            toastEvent({ severity: "warn", summary: "!Error¡", message: `La lista esta vacía, agregue nuevos datos` });
+            useGlobalToast({ severity: "warn", summary: "!Error¡", detail: `La lista esta vacía, agregue nuevos datos` });
             await routes.push({ name: "suscribe" });
         }
     };

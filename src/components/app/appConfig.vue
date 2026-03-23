@@ -206,37 +206,28 @@ const applyTheme = (type: string, colors?: string[]): void => {
 </script>
 
 <template>
-    <Button size="small" @click="toggleDrawer" class="!w-8 h-8">
-        <template #icon>
-            <i-carbon-color-palette/>
-        </template>
+    <Button size="small" @click="toggleDrawer" class="!w-8 h-8" #icon>
+        <i-material-symbols-palette-outline/>
     </Button>
     <Drawer v-model:visible="visible" position="right" header="Configuración de estilos" modal>
         <div class="align-item-config">
             <span class="app-label-config">Escala</span>
             <div class="inline-flex items-center gap-2 rounded-2xl p-1 border-1 surface-border">
-                <Button @click="adjustTextSize(-1)" text rounded :disabled="textSize === scales[0]">
-                    <template #icon>
-                        <i-ic-twotone-text-decrease/>
-                    </template>
+                <Button @click="adjustTextSize(-1)" text rounded :disabled="textSize === scales[0]" #icon>
+                    <i-ic-twotone-text-decrease/>
                 </Button>
                 <i v-for="s in scales" :key="s" :class="['text-sm text-200', { 'text-lg text-primary': s === textSize }]">
                     <i-material-symbols-circle/>
                 </i>
-                <Button @click="adjustTextSize(1)" text rounded :disabled="textSize === scales[scales.length - 1]">
-                    <template #icon>
-                        <i-ic-baseline-text-increase/>
-                    </template>
+                <Button @click="adjustTextSize(1)" text rounded :disabled="textSize === scales[scales.length - 1]" #icon>
+                    <i-ic-baseline-text-increase/>
                 </Button>
             </div>
         </div>
         <div class="align-item-config">
             <span class="app-label-config">Elige tu modo</span>
-            <ToggleButton v-model="isDark" id="estado" size="small" onLabel="Claro" offLabel="Oscuro" class="w-full">
-                <template #icon>
-                    <i-ic-round-light-mode v-if="isDark"/>
-                    <i-ic-round-dark-mode v-else/>
-                </template>
+            <ToggleButton v-model="isDark" id="estado" size="small" onLabel="Claro" offLabel="Oscuro" class="w-full" #icon>
+                <i-ic-round-light-mode v-if="isDark"/>
             </ToggleButton>
         </div>
         <div class="align-item-config">

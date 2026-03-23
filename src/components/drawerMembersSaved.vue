@@ -40,15 +40,11 @@ defineExpose({ visibleDrawer });
         </div>
         <template #footer>
             <div class="align-buttons-card-footer">
-                <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid>
-                    <template #icon>
-                        <i-material-symbols-list-alt-add/>
-                    </template>
+                <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid #icon>
+                    <i-material-symbols-list-alt-add/>
                 </Button>
-                <Button label="Pagar" @click="routes.push({name:'payEvent'})" fluid v-if="useRoute().name !== 'payEvent'">
-                    <template #icon>
-                        <i-ic-baseline-payments/>
-                    </template>
+                <Button label="Pagar" @click="routes.push({name:'payEvent'})" fluid v-if="useRoute().name !== 'payEvent'" #icon>
+                    <i-ic-baseline-payments/>
                 </Button>
             </div>
         </template>

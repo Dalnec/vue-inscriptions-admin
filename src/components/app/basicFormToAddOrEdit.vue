@@ -9,12 +9,12 @@
  * - closeForm: A function to close the form.
  */
 
-import FormItem from "@/components/formItem.vue";
-import { onMounted, ref } from "vue";
-import * as yup from "yup";
-import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection";
-import { useToast } from "primevue";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
+import { useField, useForm } from "vee-validate";
+import { onMounted, ref } from "vue";
+import useGlobalToast from "@/composables/toastEvent.ts";
+import * as yup from "yup";
 
 // Define the interface for the component props
 export interface PropsDataGeneric {
@@ -49,23 +49,21 @@ export interface PropsDataGeneric {
 const props = defineProps<PropsDataGeneric>();
 // Reactive object containing the initial form values.
 const fields = ref({ description: "", active: true });
-//Toast notification instance.
-const toast = useToast();
 
 /**
  * Validation schema using Yup.
  * - description: must be a non-empty trimmed string.
- * - status: must be a boolean value.
+ * - status: there must be a boolean value.
  */
 const schemaValidate = yup.object({
     description: yup.string().trim().required("Ingrese una descripción").label("Desc.")
 });
 
 // Create the form instance with initial values and the validation schema.
-const { handleSubmit, errors, setValues } = useForm({ validationSchema: schemaValidate, initialValues: fields.value });
+const { handleSubmit, setValues } = useForm({ validationSchema: schemaValidate, initialValues: fields.value });
 
 // Define the form fields using vee-validate.
-const { value: description, handleBlur: descriptionHandleBlur } = useField<string>("description");
+const { value: description } = useField<string>("description");
 const { value: active } = useField<string>("active");
 
 /**
@@ -74,35 +72,22 @@ const { value: active } = useField<string>("active");
  * on failure, displays an error toast.
  */
 const saveChangesForm = handleSubmit(async(values) => {
-        try {
-            if (props.formData?.id) {
-                const { response } = await Api.Put({
-                    route: `${ props.route }/${ props.formData?.id }${ props.routeUpdate ? props.routeUpdate + "/" : "" }`, data: { ...values }
-                });
-                if (response && response.status === 200) {
-                    toast.add({ severity: "success", life: 5000, summary: "Datos actualizados correctamente" });
-                    props.onCloseForm();
-                    await props.reloadData();
-                }
-            } else {
-                const { response } = await Api.Post({ route: `${ props.route }`, data: { ...values } });
-                if (response && response.status === 201) {
-                    toast.add({ severity: "success", life: 5000, summary: "Datos agregados correctamente" });
-                    props.onCloseForm();
-                    await props.reloadData();
-                }
-            }
-        } catch (error) {
-            toast.add({ severity: "error", life: 7000, summary: `Error: ${ error }` });
-            console.log(error);
+    try {
+        const isUpdate = props.formData?.id;
+        const route = isUpdate ? `${ props.route }/${ props.formData?.id }${ props.routeUpdate ? props.routeUpdate + "/" : "" }` : `${ props.route }`;
+        const method = isUpdate ? Api.Put : Api.Post;
+
+        const { response } = await method({ route, data: { ...values } });
+        if (response && [ 200, 201 ].includes(response.status)) {
+            useGlobalToast({ life: 5000, severity: "success", summary: "Datos actualizados correctamente" });
+            props.onCloseForm();
+            await props.reloadData();
         }
-    },
-    // Error handler for validation failures
-    ({ errors }) => {
-        const errorMessages: string = Object.entries(errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", ");
-        toast.add({ severity: "error", summary: "Error", detail: `Complete los siguientes campos:\n ${ errorMessages }`, life: 10000 });
+    } catch (error) {
+        useGlobalToast({ life: 7000, severity: "error", summary: `Error: ${ error }` });
+        console.log(error);
     }
-);
+}, ({ errors }) => castFormErrors(errors));
 
 onMounted(() => {
     if (props.formData?.id) setValues(props.formData || {});
@@ -112,20 +97,15 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <form-item mark cols="12" label="Description" :error="errors.description">
-            <InputText v-model="description" fluid @blur="descriptionHandleBlur($event, true)" input-id="description"
-                       :invalid="!!errors.description" class="w-full"/>
-        </form-item>
-        <form-item mark cols="3" label="Activo" v-if="props.showActive">
+        <ValidateFormItem mark cols="12" label="Description" v-slot="{ error }" for-label="description">
+            <InputText v-model="description" fluid input-id="description" :invalid="!!error"/>
+        </ValidateFormItem>
+        <ValidateFormItem mark cols="3" label="Activo" name="active" v-if="props.showActive">
             <ToggleSwitch v-model="active" fluid input-id="active"/>
-        </form-item>
+        </ValidateFormItem>
     </div>
     <div class="align-buttons-submit">
         <Button severity="secondary" raised fluid label="Cancelar" @click="props.onCloseForm()"/>
-        <Button raised fluid @click="saveChangesForm">
-            <template #default>
-                {{ props.formData?.id ? "Editar" : "Crear" }}
-            </template>
-        </Button>
+        <Button :label="props.formData?.id ? 'Editar' : 'Crear'" raised fluid @click="saveChangesForm"/>
     </div>
 </template>

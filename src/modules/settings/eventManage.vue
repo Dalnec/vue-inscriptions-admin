@@ -75,10 +75,8 @@ onMounted(() => {
         <template #title>
             <div class="align-header">
                 <div class="flex items-center gap-2">
-                    <Button severity="secondary" size="small" rounded @click="router.push({name: 'settings', force: true})">
-                        <template #icon>
-                            <i-material-symbols-arrow-back-rounded/>
-                        </template>
+                    <Button severity="secondary" size="small" rounded @click="router.push({name: 'settings', force: true})" #icon>
+                        <i-material-symbols-arrow-back-rounded/>
                     </Button>
                     <p>Configuración de Evento</p>
                 </div>
@@ -87,31 +85,31 @@ onMounted(() => {
         </template>
         <template #content>
             <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-                <FormItem label="Titulo" cols="12">
+                <ValidateFormItem label="Titulo" cols="12">
                     <InputText v-model="title" fluid/>
-                </FormItem>
-                <FormItem label="Descripción" cols="12">
+                </ValidateFormItem>
+                <ValidateFormItem label="Descripción" cols="12">
                     <Textarea v-model="description" fluid/>
-                </FormItem>
-                <FormItem label="Ubicación" cols="12">
+                </ValidateFormItem>
+                <ValidateFormItem label="Ubicación" cols="12">
                     <InputText v-model="location" fluid/>
-                </FormItem>
-                <FormItem label="Fecha de inicio" cols="12">
+                </ValidateFormItem>
+                <ValidateFormItem label="Fecha de inicio" cols="12">
                     <DatePicker showTime hourFormat="24" v-model="start_date" fluid/>
-                </FormItem>
-                <FormItem label="Fecha de Termino" cols="12">
+                </ValidateFormItem>
+                <ValidateFormItem label="Fecha de Termino" cols="12">
                     <DatePicker showTime hourFormat="24" v-model="end_date" fluid/>
-                </FormItem>
-                <FormItem label="Correos" cols="12">
+                </ValidateFormItem>
+                <ValidateFormItem label="Correos" cols="12">
                     <AutoComplete v-model="settings.inscription.emails" fluid @complete="search" :suggestions="itemsEmail" :typeahead="true"
                                   multiple/>
-                </FormItem>
-                <FormItem label="Mostrar Tarifas" cols="6">
+                </ValidateFormItem>
+                <ValidateFormItem label="Mostrar Tarifas" cols="6">
                     <ToggleSwitch v-model="settings.inscription.show_tarifas" fluid/>
-                </FormItem>
-                <FormItem label="Enviar Correos" cols="6">
+                </ValidateFormItem>
+                <ValidateFormItem label="Enviar Correos" cols="6">
                     <ToggleSwitch v-model="settings.inscription.send_email" fluid/>
-                </FormItem>
+                </ValidateFormItem>
                 <div class="align-buttons-card-footer max-cols-12">
                     <Button label="Cancelar" severity="secondary" @click="onResetForm"/>
                     <Button label="Guardar cambios" @click="onSaveForm"/>

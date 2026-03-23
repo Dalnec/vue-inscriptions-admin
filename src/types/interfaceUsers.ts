@@ -1,5 +1,4 @@
-import type { InterfaceAxiosApiNoPaginate, InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApiNoPaginate.ts";
-import type { InterfaceAxiosApiPaginate } from "@/types/InterfaceAxiosApiPaginate.ts";
+import type { InterfaceAxiosApi, InterfaceAxiosApiPaginate, InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApi.ts";
 
 export interface InterfaceUsers {
     names: string;
@@ -22,5 +21,5 @@ export interface InterfaceProfile {
 export type UsersResponseMembers = InterfaceAxiosApiPaginate<InterfaceUsers>
 export type UsersActiosMembersActions = InterfaceAxiosApiResponse<InterfaceUsers>
 
-export type UsersActionsProfile = InterfaceAxiosApiNoPaginate<InterfaceProfile>
+export type UsersActionsProfile = InterfaceAxiosApi<InterfaceProfile>
 // export type UsersActiosProfileActions = InterfaceAxiosApiResponse<InterfaceProfile>

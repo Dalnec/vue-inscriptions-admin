@@ -62,9 +62,14 @@ const router = createRouter({
                 }
             ]
         },
-        { path: "/", name: "webPage", component: () => import("@/pages/public/HomePage.vue"), meta: { public: true } },
+        { path: "/", name: "webPage", component: () => import("@/pages/public/webEvent/HomePage.vue"), meta: { public: true } },
         { path: "/login", name: "login", component: () => import("@/pages/login.vue"), meta: { public: true } },
-        { path: "/pay-event", name: "payEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
+        {
+            component: () => import("@/pages/public/registerMembers/RegisterMember.vue"),
+            meta: { public: true },
+            name: "payEvent",
+            path: "/pay-event"
+        },
         { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
         { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
     ]

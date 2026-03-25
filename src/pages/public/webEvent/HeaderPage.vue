@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
-import { useToast } from "primevue";
+import router from "@/router";
 
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
 const w = globalThis as unknown as Window;
-const toast = useToast();
 
 const handleScroll = () => isScrolled.value = w.scrollY > 50;
 const toggleMobileMenu = () => isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -20,11 +19,8 @@ const menuItems = [
 const specialItem = { label: "Inscríbete" };
 
 const onInscriptions = () => {
-    toast.add({
-        severity: "warn",
-        life: 10000,
-        summary: "Las Inscripciones por este medio están inactivas"
-    });
+    // useGlobalToast({ life: 10000, severity: "warn", summary: "Las Inscripciones por este medio están inactivas" });
+    router.push({ name: "payEvent" });
 };
 
 watch(isMobileMenuOpen, (val) => {
@@ -49,7 +45,7 @@ onUnmounted(() => {
 
             <!-- Logo -->
             <router-link to="/" class="flex items-center gap-3">
-                <img src="@/assets/images/kadosh.png" class="h-12" alt=""/>
+                <img src="../../../assets/images/kadosh.png" class="h-12" alt=""/>
                 <div class="hidden sm:flex flex-col">
                     <span class="text-white font-semibold text-lg">Kadosh</span>
                     <span class="text-xs text-slate-400">Evento Cristiano</span>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
+import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
 // import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
@@ -123,6 +123,18 @@ const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer =
 
 watch(doc_num, () => {
     wasDniChecked.value = false;
+});
+
+onMounted(async() => {
+    await Promise.all([
+        await storeChurches().getDataChurches(),
+        await storeDocumentType().getDocumentType(),
+        await storePaymentMethod().getPaymentMethod(),
+        await storeActivities().getActivities(),
+        await storeRate().getRates(),
+        await storeKind().getKinds(),
+        await storeActivityActive().getActiveActivity()
+    ]);
 });
 
 </script>

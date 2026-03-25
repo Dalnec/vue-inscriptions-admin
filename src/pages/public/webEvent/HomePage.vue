@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-import HeaderPage from "@/pages/public/HeaderPage.vue";
-import HeroSection from "@/pages/public/HeroSection.vue";
-import AboutEvent from "@/pages/public/AboutEvent.vue";
-import LocationEvent from "@/pages/public/LocationEvent.vue";
-import TeamMembersEvent from "@/pages/public/TeamMembersEvent.vue";
-import FooterPage from "@/pages/public/FooterPage.vue";
+import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
+import HeroSection from "@/pages/public/webEvent/HeroSection.vue";
+import AboutEvent from "@/pages/public/webEvent/AboutEvent.vue";
+import LocationEvent from "@/pages/public/webEvent/LocationEvent.vue";
+import TeamMembersEvent from "@/pages/public/webEvent/TeamMembersEvent.vue";
+import FooterPage from "@/pages/public/webEvent/FooterPage.vue";
 
 </script>
 

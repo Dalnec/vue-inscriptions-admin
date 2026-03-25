@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import TimerEventPage from "@/pages/public/TimerEventPage.vue";
+import TimerEventPage from "@/pages/public/webEvent/TimerEventPage.vue";
 
 const images = ref<string[]>([]);
 const currentIndex = ref(0);
@@ -69,7 +69,6 @@ onUnmounted(() => stopAutoplay());
 
 <style>
 
-
 .section-hero {
     @apply relative flex flex-col items-center justify-center;
     padding-bottom: 80px;
@@ -83,8 +82,12 @@ onUnmounted(() => stopAutoplay());
 
 @media (max-width: 768px) {
     .hero-container {
-        aspect-ratio: 3 / 4;
+        aspect-ratio: 4 / 5;
         max-height: 55vh;
+    }
+
+    .hero-main {
+        padding: 8px;
     }
 }
 
@@ -109,9 +112,9 @@ onUnmounted(() => stopAutoplay());
     transform: scale(1.1);
 }
 
-
 .hero-main {
     @apply absolute inset-0 w-full h-full object-contain;
+    object-position: center;
 }
 
 @media (max-width: 768px) {

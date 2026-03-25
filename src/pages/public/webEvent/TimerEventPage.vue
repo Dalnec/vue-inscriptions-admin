@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import CountDownEvent from "@/pages/public/CountDownEvent.vue";
+import CountDownEvent from "@/pages/public/webEvent/CountDownEvent.vue";
 </script>
 
 <template>

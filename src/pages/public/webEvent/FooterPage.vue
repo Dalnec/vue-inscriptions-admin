@@ -16,8 +16,8 @@ const menuItems = [
 
                 <!-- LOGOS -->
                 <div class="flex items-center gap-8">
-                    <img src="@/assets/images/jni.jpg" class="h-16 object-contain opacity-90" alt=""/>
-                    <img src="@/assets/images/kadosh.png" class="h-14 object-contain opacity-90" alt=""/>
+                    <img src="../../../assets/images/jni.jpg" class="h-16 object-contain opacity-90" alt=""/>
+                    <img src="../../../assets/images/kadosh.png" class="h-14 object-contain opacity-90" alt=""/>
                 </div>
 
                 <!-- REDES -->

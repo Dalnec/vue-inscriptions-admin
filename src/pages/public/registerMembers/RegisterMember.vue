@@ -5,8 +5,8 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
-// import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
+import type { SelectFilterEvent } from "primevue";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import * as yup from "yup";
@@ -16,6 +16,8 @@ const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStore();
 const isClickCard = ref(false);
 const wasDniChecked = ref(false);
+const filteredOptions = ref<{ id: number, description: string, active: boolean }[]>([]);
+const selectRef = ref();
 
 const props = defineProps({
     closeModal: { default: () => ({}), required: false, type: Function },
@@ -23,15 +25,11 @@ const props = defineProps({
     refreshData: { default: () => ({}), required: false, type: Function }
 });
 
-const formMembers = ref<InterfaceMembers>({
-    church: null, doc_num: "", documenttype: 1, gender: "", kind: null, lastnames: "", names: "", phone: "", status: true, age: null
-});
-
 const validationSchema = ref(yup.object({
     // birthdate: yup.string().required("Agrega una fecha valida"),
     church: yup.string().required("Seleccione una iglesia"),
-    documenttype: yup.string().required("Seleccione un tipo de identificación"),
     doc_num: yup.string().required("Agregue un DNI"),
+    documenttype: yup.string().required("Seleccione un tipo de identificación"),
     gender: yup.string().required("Seleccione un género"),
     kind: yup.string().required("Seleccione a donde pertenece"),
     lastnames: yup.string().required("Agregue sus apellidos"),
@@ -39,9 +37,9 @@ const validationSchema = ref(yup.object({
     phone: yup.string().required("Añada un teléfono valido")
 }));
 
-const { handleReset, handleSubmit, errors, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
+const { handleReset, handleSubmit, setValues } = useForm<InterfaceMembers>({ initialValues: { documenttype: 1 }, validationSchema });
 
-const { value: church } = useField<string>("church");
+const { value: church } = useField<number>("church");
 const { value: doc_num } = useField<string>("doc_num");
 const { value: documenttype } = useField<number>("documenttype");
 const { value: gender } = useField<string>("gender");
@@ -121,6 +119,21 @@ const clearDataForm = () => {
 
 const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer = true;
 
+const onFilter = (event: SelectFilterEvent) => {
+    const query = (event.value || "").toString().toLowerCase().trim();
+
+    filteredOptions.value = optionsChurches.value.filter((dt) => dt.description.toLowerCase().includes(query));
+};
+
+const onEnter = () => {
+    if ( !filteredOptions.value.length) return;
+
+    const first = filteredOptions.value[0];
+
+    church.value = first.id;
+    selectRef.value?.hide();
+};
+
 watch(doc_num, () => {
     wasDniChecked.value = false;
 });
@@ -156,14 +169,15 @@ onMounted(async() => {
                 <div class="form-grid">
                     <ValidateFormItem label="Tipo de Documento">
                         <Select v-model="documenttype" :options="optionsDocuments" optionLabel="description" optionValue="id" size="large"
-                                placeholder="Seleccione" fluid/>
+                                placeholder="Seleccione" fluid :disabled="isClickCard"/>
                     </ValidateFormItem>
 
                     <ValidateFormItem label="DNI">
                         <InputGroup>
                             <InputText v-model="doc_num" placeholder="Ej: 12345678" size="large" maxlength="8"
-                                       @keyup.enter="addDataFromReniec()"/>
-                            <Button label="Buscar" @click="addDataFromReniec" :loading="loadingSearch"/>
+                                       @keyup.enter="addDataFromReniec()" :disabled="isClickCard && !isClickCard"/>
+                            <Button label="Buscar" @click="addDataFromReniec" :loading="loadingSearch" :disabled="isClickCard"
+                                    v-if="documenttype === 1"/>
                         </InputGroup>
                     </ValidateFormItem>
                 </div>
@@ -175,11 +189,12 @@ onMounted(async() => {
 
                 <div class="form-grid">
                     <ValidateFormItem label="Nombres">
-                        <InputText v-model="names" fluid size="large" placeholder="Juan"/>
+                        <InputText v-model="names" fluid size="large" placeholder="Juan" :disabled="!wasDniChecked && documenttype === 1"/>
                     </ValidateFormItem>
 
                     <ValidateFormItem label="Apellidos">
-                        <InputText v-model="lastnames" fluid size="large" placeholder="Picasso"/>
+                        <InputText v-model="lastnames" fluid size="large" placeholder="Picasso"
+                                   :disabled="!wasDniChecked && documenttype === 1"/>
                     </ValidateFormItem>
 
                     <ValidateFormItem label="Edad">
@@ -219,9 +234,11 @@ onMounted(async() => {
                     </div>
                 </ValidateFormItem>
 
-                <ValidateFormItem label="Iglesia">
-                    <Select v-model="church" :options="optionsChurches" optionLabel="description" option-value="id" size="large" fluid
-                            filter autoFilterFocus resetFilterOnHide resetFilterOnClear/>
+                <ValidateFormItem label="Iglesia" name="church">
+                    <Select v-model="church" :options="optionsChurches" optionLabel="description" optionValue="id" labelId="church"
+                            size="large" placeholder="Seleccione su iglesia" fluid filter autoFilterFocus resetFilterOnHide
+                            resetFilterOnClear highlightOnSelect checkmark focusOnHover @filter="onFilter"
+                            @keyup.enter="onEnter"/>
                 </ValidateFormItem>
             </div>
 
@@ -231,8 +248,7 @@ onMounted(async() => {
                 <Button label="Guardar inscripción" @click="saveNewMember" fluid/>
             </div>
         </div>
-        <drawer-members-saved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember"/>
-
+        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember"/>
     </main>
 </template>
 

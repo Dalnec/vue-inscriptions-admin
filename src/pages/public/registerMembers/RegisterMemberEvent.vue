@@ -19,11 +19,7 @@ const wasDniChecked = ref(false);
 const filteredOptions = ref<{ id: number, description: string, active: boolean }[]>([]);
 const selectRef = ref();
 
-const props = defineProps({
-    closeModal: { default: () => ({}), required: false, type: Function },
-    formData: { default: {} as InterfaceMembers, required: false, type: Object },
-    refreshData: { default: () => ({}), required: false, type: Function }
-});
+const props = defineProps<{ closeModal?: () => void, formData?: InterfaceMembers, refreshData?: () => Promise<void> }>();
 
 const validationSchema = ref(yup.object({
     // birthdate: yup.string().required("Agrega una fecha valida"),
@@ -138,18 +134,6 @@ watch(doc_num, () => {
     wasDniChecked.value = false;
 });
 
-onMounted(async() => {
-    await Promise.all([
-        await storeChurches().getDataChurches(),
-        await storeDocumentType().getDocumentType(),
-        await storePaymentMethod().getPaymentMethod(),
-        await storeActivities().getActivities(),
-        await storeRate().getRates(),
-        await storeKind().getKinds(),
-        await storeActivityActive().getActiveActivity()
-    ]);
-});
-
 </script>
 
 <template>
@@ -203,10 +187,10 @@ onMounted(async() => {
 
                     <ValidateFormItem label="Género">
                         <div class="radio-group">
-                            <RadioButton v-model="gender" value="M" size="large"/>
-                            Masculino
-                            <RadioButton v-model="gender" value="F" size="large"/>
-                            Femenino
+                            <RadioButton v-model="gender" value="M" size="large" inputId="Masculino"/>
+                            <label for="Masculino" class="cursor-pointer"> Masculino</label>
+                            <RadioButton v-model="gender" value="F" size="large" inputId="Femenino"/>
+                            <label for="Femenino" class="cursor-pointer"> Femenino</label>
                         </div>
                     </ValidateFormItem>
                 </div>
@@ -220,16 +204,15 @@ onMounted(async() => {
                     <InputText v-model="phone" size="large"/>
                 </ValidateFormItem>
             </div>
-
             <!-- BLOQUE 4 -->
             <div class="form-card">
                 <h3 class="form-section-title">Información adicional</h3>
 
                 <ValidateFormItem label="¿Perteneces a una iglesia?">
                     <div class="radio-group">
-                        <div v-for="kindData in optionsKinds" :key="kindData.id">
-                            <RadioButton v-model="kind" :value="kindData.id" size="large"/>
-                            {{ kindData.description }}
+                        <div v-for="kindData in optionsKinds" :key="kindData.id" class="flex items-center gap-2">
+                            <RadioButton v-model="kind" :value="kindData.id" :inputId="kindData.description" size="large"/>
+                            <label class="cursor-pointer" :for="kindData.description">{{ kindData.description }}</label>
                         </div>
                     </div>
                 </ValidateFormItem>

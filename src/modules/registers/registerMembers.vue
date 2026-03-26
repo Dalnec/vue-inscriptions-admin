@@ -145,11 +145,12 @@ watch(() => membersStoreOptions.selectedMember, (member) => {
     }
 }, { immediate: true });
 
-onMounted(() => {
+onMounted(async() => {
     if (props.formData?.id) {
         setValues({ ...props.formData }, false);
         isClickCard.value = true;
     }
+    await storeKind().getKinds();
 });
 
 </script>

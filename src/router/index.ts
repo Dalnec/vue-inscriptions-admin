@@ -65,7 +65,7 @@ const router = createRouter({
         { path: "/", name: "webPage", component: () => import("@/pages/public/webEvent/HomePage.vue"), meta: { public: true } },
         { path: "/login", name: "login", component: () => import("@/pages/login.vue"), meta: { public: true } },
         {
-            component: () => import("@/pages/public/registerMembers/RegisterMember.vue"),
+            component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
             meta: { public: true },
             name: "payEvent",
             path: "/pay-event"

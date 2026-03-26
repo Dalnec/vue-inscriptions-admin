@@ -35,7 +35,7 @@ pinia.use(
                 return CryptoJS.AES.encrypt(JSON.stringify(value), SECRET_KEY).toString();
             }
         },
-        storage: sessionStorage
+        storage: localStorage
     })
 );
 

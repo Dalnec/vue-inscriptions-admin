@@ -81,7 +81,7 @@ const saveAllMembers = handleSubmit(async() => {
         const dataActivity = useStoreActivities.activities.find(act => act.is_active);
 
         const payload: Record<string, any> = {
-            voucheramount: useStoreTotalRate.calculateRate(voucheramount.value),
+            voucheramount: useStoreTotalRate.calculateRate(),
             tarifa: useStoreActivityActive.showRatesActivity ? tarifa.value : dataRate?.id,
             activity: null,
             paymentmethod: paymentmethod.value,
@@ -199,7 +199,7 @@ onMounted(() => {
                     </p>
                 </div>
                 <div class="mb-4 rounded-md bg-slate-400 p-4 text-center text-2xl font-bold max-cols-12">
-                    Total S/ {{ useStoreTotalRate.calculateRate(voucheramount) }}
+                    Total S/ {{ useStoreTotalRate.calculateRate() }}
                 </div>
                 <div class="max-cols-4">
                     <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"

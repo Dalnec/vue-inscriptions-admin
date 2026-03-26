@@ -6,6 +6,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const IconMaterialSymbolsAccountBalanceWalletOutline: typeof import('~icons/material-symbols/account-balance-wallet-outline').default
   const IconMaterialSymbolsAddNotesOutline: typeof import('~icons/material-symbols/add-notes-outline').default
   const IconMaterialSymbolsAutoDeleteOutlineRounded: typeof import('~icons/material-symbols/auto-delete-outline-rounded').default
   const IconMaterialSymbolsBookmarkCheck: typeof import('~icons/material-symbols/bookmark-check').default

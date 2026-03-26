@@ -45,10 +45,10 @@ const saveChangePassword = handleSubmit(async(values) => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem mark cols="6" label="Nueva Contraseña" name="password" v-slot="{ error }">
+        <ValidateFormItem mark span="6" label="Nueva Contraseña" name="password" v-slot="{ error }">
             <Password v-model="password" fluid input-id="password" :invalid="!!error" class="w-full" :toggleMask="true" :feedback="false"/>
         </ValidateFormItem>
-        <ValidateFormItem mark cols="6" label="Confirmar Contraseña" name="confirm" v-slot="{ error }">
+        <ValidateFormItem mark span="6" label="Confirmar Contraseña" name="confirm" v-slot="{ error }">
             <Password v-model="confirm" fluid :invalid="!!error" input-id="password" class="w-full" :toggleMask="true" :feedback="false"/>
         </ValidateFormItem>
     </div>

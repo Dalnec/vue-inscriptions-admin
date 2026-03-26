@@ -20,7 +20,7 @@ const specialItem = { label: "Inscríbete" };
 
 const onInscriptions = () => {
     // useGlobalToast({ life: 10000, severity: "warn", summary: "Las Inscripciones por este medio están inactivas" });
-    router.push({ name: "payEvent" });
+    router.push({ name: "inscription-members" });
 };
 
 watch(isMobileMenuOpen, (val) => {

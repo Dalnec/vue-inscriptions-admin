@@ -59,6 +59,12 @@ const router = createRouter({
                 {
                     path: "/concepts", name: "concepts", component: () => import("@/modules/settings/concepts.vue"),
                     meta: { superOnly: true }
+                },
+                {
+                    path: "/caja", name: "caja", component: () => import("@/modules/caja/caja.vue"),
+                    meta: {
+                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
+                    }
                 }
             ]
         },
@@ -67,8 +73,14 @@ const router = createRouter({
         {
             component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
             meta: { public: true },
-            name: "payEvent",
-            path: "/pay-event"
+            name: "inscription-members",
+            path: "/inscribete"
+        },
+        {
+            component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
+            meta: { public: true },
+            name: "pay-inscription-members",
+            path: "/pagar"
         },
         { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
         { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }

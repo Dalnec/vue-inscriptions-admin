@@ -75,28 +75,28 @@ onMounted(async() => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem label="Nombre de cuenta" cols="4" mark name="description">
+        <ValidateFormItem label="Nombre de cuenta" span="4" mark name="description">
             <InputText v-model="description" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Nro de cuenta" cols="4">
+        <ValidateFormItem label="Nro de cuenta" span="4">
             <InputText v-model="account" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="CCI" cols="4">
+        <ValidateFormItem label="CCI" span="4">
             <InputText v-model="cci" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Activo" cols="4">
+        <ValidateFormItem label="Activo" span="4">
             <ToggleSwitch v-model="active" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Icono" cols="7">
+        <ValidateFormItem label="Icono" span="7">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"
                         ref="refVoucherImage" @select="handleFileSelect" :show-upload-button="false" :show-cancel-button="false"
                         @remove="() => { setValueIcon(''); uploadedFile = null }" invalid-file-size-message="Peso de imagen invalido"
                         v-model="icon" invalid-file-limit-message="1 imagen máximo."/>
         </ValidateFormItem>
-        <ValidateFormItem hide-label hide-error cols="6">
+        <ValidateFormItem hide-label hide-error span="6">
             <Button label="Cancelar" severity="secondary" fluid @click="props.closeModal()"/>
         </ValidateFormItem>
-        <ValidateFormItem hide-label hide-error cols="6">
+        <ValidateFormItem hide-label hide-error span="6">
             <Button :label="props.formData?.id ? 'Editar' : 'Crear'" fluid @click="onSavePayments"/>
         </ValidateFormItem>
     </div>

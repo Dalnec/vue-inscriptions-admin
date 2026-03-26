@@ -45,22 +45,22 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem label="Descripción" cols="12">
+        <ValidateFormItem label="Descripción" span="12">
             <InputText fluid v-model="description"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Precio" cols="6">
+        <ValidateFormItem label="Precio" span="6">
             <InputText fluid v-model="price" v-key-filter.num/>
         </ValidateFormItem>
-        <ValidateFormItem label="Seleccionable" cols="3">
+        <ValidateFormItem label="Seleccionable" span="3">
             <ToggleSwitch fluid v-model="selected"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Activo" cols="3">
+        <ValidateFormItem label="Activo" span="3">
             <ToggleSwitch fluid v-model="active"/>
         </ValidateFormItem>
-        <ValidateFormItem hide-label hide-error cols="6">
+        <ValidateFormItem hide-label hide-error span="6">
             <Button label="Cancelar" @click="props.closeModal()" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem hide-label hide-error cols="6">
+        <ValidateFormItem hide-label hide-error span="6">
             <Button :label="props.formData?.id ? 'Editar' : 'Crear'" @click="onSavePayments" :loading fluid/>
         </ValidateFormItem>
     </div>

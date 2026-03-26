@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
+import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
 import { useField, useForm } from "vee-validate";
 import toastEvent from "@/composables/toastEvent.ts";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
@@ -227,6 +227,10 @@ watch(doc_num, () => {
 
             <!-- ACCIONES -->
             <div class="form-actions">
+                <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"
+                        v-if="membersStoreOptions.membersData.length >= 1" fluid #icon>
+                    <i-material-symbols-list-alt-check/>
+                </Button>
                 <Button label="Cancelar" severity="secondary" @click="clearDataForm" fluid/>
                 <Button label="Guardar inscripción" @click="saveNewMember" fluid/>
             </div>

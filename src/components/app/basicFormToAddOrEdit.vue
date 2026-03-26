@@ -97,10 +97,10 @@ onMounted(() => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem mark cols="12" label="Description" v-slot="{ error }" for-label="description">
+        <ValidateFormItem mark span="12" label="Description" v-slot="{ error }" for-label="description">
             <InputText v-model="description" fluid input-id="description" :invalid="!!error"/>
         </ValidateFormItem>
-        <ValidateFormItem mark cols="3" label="Activo" name="active" v-if="props.showActive">
+        <ValidateFormItem mark span="3" label="Activo" name="active" v-if="props.showActive">
             <ToggleSwitch v-model="active" fluid input-id="active"/>
         </ValidateFormItem>
     </div>

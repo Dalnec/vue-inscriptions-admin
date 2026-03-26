@@ -157,11 +157,11 @@ onMounted(async() => {
 
 <template>
     <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-        <ValidateFormItem label="Tipo de Documento" cols="12" name="documenttype">
+        <ValidateFormItem label="Tipo de Documento" span="12" name="documenttype">
             <Select fluid v-model="documenttype" :options="optionsDocuments" optionLabel="description" option-value="id" size="large"
                     :disabled="isClickCard"/>
         </ValidateFormItem>
-        <ValidateFormItem label="DNI" cols="12" name="doc_num" v-slot="{ error }">
+        <ValidateFormItem label="DNI" span="12" name="doc_num" v-slot="{ error }">
             <InputGroup name="doc_num">
                 <InputText fluid v-model="doc_num" placeholder="Ingrese nro de DNI" v-key-filter.num maxlength="8"
                            :invalid="!!error" size="large" @keyup.enter="addDataFromReniec"
@@ -172,18 +172,18 @@ onMounted(async() => {
                 </Button>
             </InputGroup>
         </ValidateFormItem>
-        <!--        <ValidateFormItem cols="12" hide-label hide-error v-if="showMessage">-->
+        <!--        <ValidateFormItem span="12" hide-label hide-error v-if="showMessage">-->
         <!--            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>-->
         <!--        </ValidateFormItem>-->
-        <ValidateFormItem label="Nombres" cols="12" name="names" v-slot="{ error }">
+        <ValidateFormItem label="Nombres" span="12" name="names" v-slot="{ error }">
             <InputText fluid v-model="names" :invalid="!!error" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Apellidos" cols="12" name="lastnames" v-slot="{ error }">
+        <ValidateFormItem label="Apellidos" span="12" name="lastnames" v-slot="{ error }">
             <InputText fluid v-model="lastnames" :invalid="!!error" size="large"
                        :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Género" cols="12" name="gender" v-slot="{ error }">
+        <ValidateFormItem label="Género" span="12" name="gender" v-slot="{ error }">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2">
                     <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" :invalid="!!error"/>
@@ -195,13 +195,13 @@ onMounted(async() => {
                 </div>
             </div>
         </ValidateFormItem>
-        <ValidateFormItem label="Edad" cols="12" name="gender">
+        <ValidateFormItem label="Edad" span="12" name="gender">
             <InputNumber fluid v-model="age" size="large"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Celular" cols="12" name="gender" v-slot="{ error }">
+        <ValidateFormItem label="Celular" span="12" name="gender" v-slot="{ error }">
             <InputText fluid v-model="phone" maxlength="9" v-key-filter.num :invalid="!!error" size="large"/>
         </ValidateFormItem>
-        <ValidateFormItem label="¿Perteneces a alguna iglesia?" cols="12" name="kind" v-slot="{ error }">
+        <ValidateFormItem label="¿Perteneces a alguna iglesia?" span="12" name="kind" v-slot="{ error }">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
                     <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
@@ -210,7 +210,7 @@ onMounted(async() => {
                 </div>
             </div>
         </ValidateFormItem>
-        <ValidateFormItem label="Iglesia" cols="12" name="age" v-slot="{ error }">
+        <ValidateFormItem label="Iglesia" span="12" name="age" v-slot="{ error }">
             <Select :options="optionsChurches" fluid v-model="church" filter show-clear size="large" :invalid="!!error"
                     reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description" option-value="id"/>
         </ValidateFormItem>

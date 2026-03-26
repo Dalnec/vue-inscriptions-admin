@@ -37,17 +37,17 @@ const onSendMail = handleSubmit(async(values) => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem cols="12" label="Correo a enviar" mark name="email" v-slot="{ error }">
+        <ValidateFormItem span="12" label="Correo a enviar" mark name="email" v-slot="{ error }">
             <!--            <AutoComplete v-model="email" @complete="search" :suggestions="itemsEmail" :typeahead="true" multiple fluid />-->
             <InputText v-model="email" fluid :invalid="!!error" id="email"/>
         </ValidateFormItem>
-        <ValidateFormItem cols="12" hide-error hide-label>
+        <ValidateFormItem span="12" hide-error hide-label>
             <Button fluid label="Enviar Correo" @click="onSendMail" :loading :disabled="loading"/>
         </ValidateFormItem>
-        <ValidateFormItem cols="12" label="Numero a enviar" hide-error>
+        <ValidateFormItem span="12" label="Numero a enviar" hide-error>
             <Textarea fluid value="Temporalmente inactivo..." disabled/>
         </ValidateFormItem>
-        <ValidateFormItem cols="12" hide-error hide-label>
+        <ValidateFormItem span="12" hide-error hide-label>
             <Button fluid label="Enviar a WhatsApp" disabled/>
         </ValidateFormItem>
     </div>

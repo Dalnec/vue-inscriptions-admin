@@ -2,6 +2,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "@/assets/primevue/tailwind.css";
+@import "./stylesTill.css";
 @import "tailwindcss/utilities";
 
 @font-face {
@@ -213,6 +214,42 @@ body {
     @apply col-span-1 md:col-span-12;
 }
 
+.form-wrapper {
+    @apply max-w-3xl mx-auto px-4 md:px-6;
+}
+
+.form-header {
+    @apply text-center mb-10;
+}
+
+.form-header h2 {
+    @apply text-3xl md:text-4xl text-white font-semibold;
+}
+
+.form-header p {
+    @apply text-slate-400 mt-2;
+}
+
+.form-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10
+    rounded-2xl p-5 md:p-6 mb-6;
+}
+
+.form-section-title {
+    @apply text-white text-lg font-semibold mb-4;
+}
+
+.form-grid {
+    @apply grid md:grid-cols-2 gap-4;
+}
+
+.radio-group {
+    @apply flex flex-wrap gap-4;
+}
+
+.form-actions {
+    @apply flex flex-col md:flex-row gap-3 my-6;
+}
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
     @apply h-2 w-2;

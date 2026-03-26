@@ -79,10 +79,11 @@ export const storePriceRate = defineStore("storePriceRate", {
         totalPrice: 0
     }),
     actions: {
-        calculateRate(priceActivity: number): number {
+        calculateRate(): number {
+            const dataRate = storeRate().rate.find(rt => rt.selected);
             const totalMembers = useMembersStore().membersData.length;
-            if ( !priceActivity) return 0;
-            return this.totalPrice = priceActivity * totalMembers;
+            if ( !dataRate) return 0;
+            return this.totalPrice = parseFloat(dataRate.price) * totalMembers;
         }
     }
 });
@@ -115,6 +116,20 @@ export const storeActivityActive = defineStore("storeActivityActive", {
 
             this.showRatesActivity = useStoreActivities?.settings.inscription?.show_tarifas || false;
             this.activityId = useStoreActivities?.id || null;
+        }
+    }
+});
+
+export const storeUsers = defineStore("storeUsers", {
+    state: () => ({
+        users: [] as { id: number, username: string, first_name: string, last_name: string }[]
+    }),
+    actions: {
+        async getUsers() {
+            const { response } = await Api.Get({ route: "user", params: { page_size: 1000 } });
+            if (response && response.status === 200) {
+                this.users = response.data.results;
+            }
         }
     }
 });

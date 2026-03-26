@@ -167,25 +167,25 @@ onMounted(() => {
         </template>
         <template #content>
             <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-                <ValidateFormItem label="Método de pago" cols="12">
+                <ValidateFormItem label="Método de pago" span="12">
                     <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
                             size="large" @value-change="(value) => onValueSelectPayment(value)"/>
                 </ValidateFormItem>
-                <ValidateFormItem cols="12" hide-error hide-label v-if="paymentmethod">
+                <ValidateFormItem span="12" hide-error hide-label v-if="paymentmethod">
                     <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
                                           :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
                                           :active="dataForViewPayment.active"/>
                 </ValidateFormItem>
-                <ValidateFormItem cols="12" hide-label v-if="useStoreActivityActive.showRatesActivity">
+                <ValidateFormItem span="12" hide-label v-if="useStoreActivityActive.showRatesActivity">
                     <div class="grid grid-cols-4 gap-3">
                         <rate-data v-for="act in filterRates" :key="act.id" :name-rate="act.description" :id-rate="act.id"
                                    :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>
                     </div>
                 </ValidateFormItem>
-                <ValidateFormItem cols="12" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
+                <ValidateFormItem span="12" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
                     <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large" @input="refocus"/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Voucher de pago" cols="12"
+                <ValidateFormItem label="Voucher de pago" span="12"
                                   v-if="dataForViewPayment.description !== 'EFECTIVO'">
                     <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full"
                                 ref="refVoucherImage" @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])"

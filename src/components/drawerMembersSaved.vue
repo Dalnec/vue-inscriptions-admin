@@ -9,10 +9,11 @@ import { useRoute } from "vue-router";
 
 const visibleDrawer = ref(false);
 const membersStoreOptions = useMembersStore();
+const route = useRoute();
 
 const addMoreMembers = async() => {
     visibleDrawer.value = false;
-    await routes.push({ name: "newRegister" });
+    await routes.push({ name: "inscription-members" });
 };
 
 defineEmits([ "onClickCard" ]);
@@ -33,9 +34,9 @@ defineExpose({ visibleDrawer });
             </div>
         </template>
         <div class="grid space-y-2">
-            <cards-info-member v-for="data in  membersStoreOptions.membersData" :key="data.doc_num"
-                               :doc_num="data.doc_num" :church="data.church" :doc-type="data.documenttype" :gender="data.gender"
-                               :kind="data.kind" :names="data.names" :lastnames="data.lastnames" :phone="data.phone" :age="data.age"
+            <cards-info-member v-for="data in  membersStoreOptions.membersData" :key="data.doc_num" :doc_num="data.doc_num"
+                               :church="data.church" :doc-type="data.documenttype" :gender="data.gender" :kind="data.kind"
+                               :names="data.names" :lastnames="data.lastnames" :phone="data.phone" :age="data.age"
                                @click="$emit('onClickCard', (data))" :status="data.status"/>
         </div>
         <template #footer>
@@ -43,7 +44,8 @@ defineExpose({ visibleDrawer });
                 <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid #icon>
                     <i-material-symbols-list-alt-add/>
                 </Button>
-                <Button label="Pagar" @click="routes.push({name:'payEvent'})" fluid v-if="useRoute().name !== 'payEvent'" #icon>
+                <Button label="Pagar" @click="routes.push({name:'pay-inscription-members'})" fluid
+                        v-if="route.name !== 'pay-inscription-members'" #icon>
                     <i-ic-baseline-payments/>
                 </Button>
             </div>

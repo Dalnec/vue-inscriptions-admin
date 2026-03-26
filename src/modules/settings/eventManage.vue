@@ -85,29 +85,29 @@ onMounted(() => {
         </template>
         <template #content>
             <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-                <ValidateFormItem label="Titulo" cols="12">
+                <ValidateFormItem label="Titulo" span="12">
                     <InputText v-model="title" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Descripción" cols="12">
+                <ValidateFormItem label="Descripción" span="12">
                     <Textarea v-model="description" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Ubicación" cols="12">
+                <ValidateFormItem label="Ubicación" span="12">
                     <InputText v-model="location" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Fecha de inicio" cols="12">
+                <ValidateFormItem label="Fecha de inicio" span="12">
                     <DatePicker showTime hourFormat="24" v-model="start_date" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Fecha de Termino" cols="12">
+                <ValidateFormItem label="Fecha de Termino" span="12">
                     <DatePicker showTime hourFormat="24" v-model="end_date" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Correos" cols="12">
+                <ValidateFormItem label="Correos" span="12">
                     <AutoComplete v-model="settings.inscription.emails" fluid @complete="search" :suggestions="itemsEmail" :typeahead="true"
                                   multiple/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Mostrar Tarifas" cols="6">
+                <ValidateFormItem label="Mostrar Tarifas" span="6">
                     <ToggleSwitch v-model="settings.inscription.show_tarifas" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Enviar Correos" cols="6">
+                <ValidateFormItem label="Enviar Correos" span="6">
                     <ToggleSwitch v-model="settings.inscription.send_email" fluid/>
                 </ValidateFormItem>
                 <div class="align-buttons-card-footer max-cols-12">

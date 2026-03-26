@@ -57,7 +57,7 @@ const { value: age } = useField<number | null>("age");
 
 const optionsDocuments = computed(() => storeDocumentType().documentType);
 const optionsChurches = computed(() => storeChurches().churches);
-const optionsKinds = computed(() => storeKind().kind);
+const optionsKinds = computed(() => storeKind().kinds);
 
 const addDataFromReniec = async(): Promise<void> => {
     loadingSearch.value = true;

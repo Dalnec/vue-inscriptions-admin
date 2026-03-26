@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
                 <i-material-symbols-call class="text-base"/>
                 <span>{{ props.phone }}</span>
             </div>
-            <span class="font-medium text-primary-500">{{ storeKind().kind.find((ch) => ch.id === props.kind)?.description }}</span>
+            <span class="font-medium text-primary-500">{{ storeKind().kinds.find((ch) => ch.id === props.kind)?.description }}</span>
         </div>
 
         <!-- Iglesia -->

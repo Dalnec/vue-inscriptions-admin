@@ -8,11 +8,11 @@
 }
 
 .p-paginator-content-start {
-    @apply ms-auto
+    @apply me-auto
 }
 
 .p-paginator-content-end {
-    @apply me-auto
+    @apply ms-auto
 }
 
 .p-paginator-page,
@@ -52,4 +52,16 @@
 
 .p-paginator-jtp-input .p-inputtext {
     @apply max-w-10
+}
+
+.p-paginator-content .p-select {
+    @apply text-sm;
+}
+
+.p-paginator-content .p-select .p-select-label {
+    @apply text-sm px-[0.625rem] py-[0.375rem];
+}
+
+.p-paginator-content .p-select .p-select-dropdown .p-icon {
+    @apply text-sm w-[0.875rem] h-[0.875rem];
 }

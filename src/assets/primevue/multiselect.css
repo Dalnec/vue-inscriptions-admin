@@ -6,7 +6,7 @@
 .p-multiselect {
     @apply inline-flex cursor-pointer relative select-none rounded-md
     bg-surface-0 dark:bg-surface-950
-    border border-surface-300 dark:border-surface-700
+    border border-surface-400 dark:border-surface-700
     shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
     transition-colors duration-200 text-[14px] leading-normal
 }
@@ -37,15 +37,15 @@
 }
 
 .p-multiselect-clear-icon {
-    @apply absolute top-1/2 -mt-2 text-surface-500 dark:text-surface-400 end-10
+    @apply self-center absolute top-1/2 -mt-2 text-surface-500 dark:text-surface-400 end-9
 }
 
 .p-multiselect-label-container {
-    @apply overflow-hidden flex-auto
+    @apply overflow-hidden flex-auto cursor-pointer
 }
 
 .p-multiselect-label {
-    @apply flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis px-2 py-[5px] text-surface-700 dark:text-surface-100/90
+    @apply cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis px-3 py-2 text-surface-700 dark:text-surface-100/90
 }
 
 .p-multiselect-label.p-placeholder {
@@ -124,4 +124,12 @@
 
 .p-multiselect-fluid {
     @apply flex
+}
+
+.p-multiselect-sm .p-multiselect-label {
+    @apply text-sm px-[0.625rem] py-[0.375rem]
+}
+
+.p-multiselect-sm .p-multiselect-dropdown .p-icon {
+    @apply text-sm w-[0.875rem] h-[0.875rem]
 }

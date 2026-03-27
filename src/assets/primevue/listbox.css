@@ -3,7 +3,7 @@
 
 .p-listbox {
     @apply bg-surface-0 dark:bg-surface-950 text-surface-700 dark:text-surface-100/90
-    border border-surface-300 dark:border-surface-700 rounded-md
+    border border-surface-400 dark:border-surface-700 rounded-md
     shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
     transition-colors duration-200
 }
@@ -51,11 +51,11 @@
 }
 
 .p-listbox .p-listbox-list .p-listbox-option.p-listbox-option-selected {
-    @apply bg-highlight
+    @apply bg-primary-400 dark:bg-primary-800 text-surface-800 dark:text-surface-200
 }
 
 .p-listbox:not(.p-disabled) .p-listbox-option.p-listbox-option-selected.p-focus {
-    @apply bg-highlight-emphasis
+    @apply bg-primary-500 dark:bg-primary-600 text-surface-800 dark:text-surface-200
 }
 
 .p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled).p-focus {

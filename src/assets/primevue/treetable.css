@@ -5,15 +5,15 @@
 }
 
 .p-treetable-table {
-    @apply border-spacing-0 w-full
+    @apply border-spacing-0 w-full rounded-xl border-separate
 }
 
 .p-treetable-scrollable > .p-treetable-table-container {
-    @apply relative
+    @apply relative rounded-t-md
 }
 
 .p-treetable-scrollable-table > .p-treetable-thead {
-    @apply top-0 z-10
+    @apply top-0 z-10 rounded-t-xl
 }
 
 .p-treetable-scrollable-table > .p-treetable-frozen-tbody {
@@ -33,7 +33,7 @@
 }
 
 .p-treetable-scrollable > .p-treetable-table-container > .p-treetable-table > .p-treetable-thead {
-    @apply bg-surface-0 dark:bg-surface-900
+    @apply bg-surface-0 dark:bg-surface-900 rounded-t-md
 }
 
 .p-treetable-scrollable > .p-treetable-table-container > .p-treetable-table > .p-treetable-tfoot {
@@ -55,7 +55,7 @@
 .p-treetable-resizable-table > .p-treetable-thead > tr > th,
 .p-treetable-resizable-table > .p-treetable-tfoot > tr > td,
 .p-treetable-resizable-table > .p-treetable-tbody > tr > td {
-    @apply overflow-hidden whitespace-nowrap
+    @apply overflow-hidden whitespace-nowrap rounded-t-md
 }
 
 .p-treetable-resizable-table > .p-treetable-thead > tr > th.p-treetable-resizable-column:not(.p-treetable-frozen-column) {
@@ -83,30 +83,30 @@
 }
 
 .p-treetable-paginator-top {
-    @apply border-b border-surface-200 dark:border-surface-700
+    @apply border-b border-surface-300 dark:border-surface-700
 }
 
 .p-treetable-paginator-bottom {
-    @apply border-t border-surface-200 dark:border-surface-700
+    @apply border-t border-surface-300 dark:border-surface-700
 }
 
 .p-treetable-header {
-    @apply py-3 px-4 border-b border-surface-200 dark:border-surface-700
-    bg-surface-0 dark:bg-surface-900
-    text-surface-700 dark:text-surface-100/90
+    @apply py-3 px-4 border-b border-surface-300 dark:border-surface-700
+    bg-surface-0 dark:bg-surface-900 rounded-t-md
+    text-surface-700 dark:text-surface-0
 }
 
 .p-treetable-footer {
-    @apply py-3 px-4 border-b border-surface-200 dark:border-surface-700
+    @apply py-3 px-4 border-b border-surface-300 dark:border-surface-700
     bg-surface-0 dark:bg-surface-900
     text-surface-700 dark:text-surface-100/90
 }
 
 .p-treetable-header-cell {
-    @apply py-3 px-4 font-normal text-left transition-colors duration-200
-    border-b border-surface-200 dark:border-surface-700
-    bg-surface-0 dark:bg-surface-900
-    text-surface-700 dark:text-surface-100/90
+    @apply py-2 px-4 font-semibold text-left transition-colors duration-200
+    border-surface-300 dark:border-surface-700
+    bg-surface-200 dark:bg-surface-800
+    text-surface-700 dark:text-white/80
 }
 
 .p-treetable-column-title {
@@ -114,19 +114,19 @@
 }
 
 .p-treetable-tbody > tr {
-    @apply bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-surface-0 transition-colors duration-200
+    @apply bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-surface-0 transition-colors duration-200 rounded-b-lg
 }
 
 .p-treetable-tbody > tr > td {
-    @apply text-left py-3 px-4 border-b border-surface-200 dark:border-surface-800
+    @apply text-left py-2 px-4 border-b-0 border-surface-300 dark:border-surface-700
 }
 
 .p-treetable-hoverable .p-treetable-tbody > tr:not(.p-treetable-row-selected):hover {
-    @apply bg-surface-100 text-surface-800 dark:bg-surface-800 dark:text-surface-0
+    @apply bg-primary-200 text-surface-800 dark:bg-surface-700 dark:text-surface-0
 }
 
 .p-treetable-tbody > tr.p-treetable-row-selected {
-    @apply bg-highlight
+    @apply bg-primary dark:bg-primary-600
 }
 
 .p-treetable-tbody > tr:has(+ .p-treetable-row-selected) > td {
@@ -143,7 +143,7 @@
 }
 
 .p-treetable-tfoot > tr > td {
-    @apply text-left py-3 px-4 border-b border-surface-200 dark:border-surface-800
+    @apply text-left py-3 px-4 border-b border-surface-300 dark:border-surface-800
     bg-surface-0 dark:bg-surface-900
     text-surface-700 dark:text-surface-0
 }
@@ -175,11 +175,11 @@
 }
 
 .p-treetable-column-sorted {
-    @apply bg-highlight
+    @apply bg-primary dark:bg-primary-600
 }
 
 .p-treetable-column-sorted .p-treetable-sort-icon {
-    @apply bg-highlight
+    @apply bg-primary dark:bg-primary-600
 }
 
 .p-treetable-hoverable .p-treetable-selectable-row {
@@ -195,7 +195,7 @@
 }
 
 .p-treetable-gridlines .p-treetable-footer {
-    @apply border-b border-x
+    @apply border-b border-x rounded-b-md
 }
 
 .p-treetable-gridlines .p-treetable-paginator-top {
@@ -203,19 +203,28 @@
 }
 
 .p-treetable-gridlines .p-treetable-paginator-bottom {
-    @apply border-b border-x
+    @apply border border-t-0 rounded-b-md
 }
 
-.p-treetable-gridlines .p-treetable-thead > tr > th {
-    @apply border-t border-x last:border
+.p-treetable-gridlines:not(:has(.p-treetable-header)) .p-treetable-thead > tr > th {
+    @apply border-y border-l last:border last:rounded-tr-lg first:rounded-tl-lg;
+}
+
+.p-treetable-gridlines:has(.p-treetable-header) .p-treetable-thead > tr > th {
+    @apply border-b border-l last:border-b last:border-r;
+    @apply rounded-none;
 }
 
 .p-treetable-gridlines .p-treetable-tbody > tr > td {
-    @apply border-t border-l last:border-r
+    @apply border-l last:border-r
 }
 
-.p-treetable-gridlines .p-treetable-tbody > tr:last-child > td {
-    @apply border-y border-l last:border
+.p-treetable-gridlines:not(:has(.p-treetable-footer)) .p-treetable-tbody > tr:last-child > td:first-child {
+    @apply rounded-bl-md;
+}
+
+.p-treetable-gridlines:not(:has(.p-treetable-footer)) .p-treetable-tbody > tr:last-child > td:last-child {
+    @apply rounded-br-md;
 }
 
 .p-treetable-gridlines .p-treetable-tfoot > tr > td {
@@ -231,27 +240,27 @@
 }
 
 .p-treetable.p-treetable-gridlines:has(.p-treetable-tbody):has(.p-treetable-tfoot) .p-treetable-tbody > tr:last-child > td {
-    @apply border-x
+    @apply border-l last:border-r
 }
 
 .p-treetable.p-treetable-sm .p-treetable-header {
-    @apply py-1 px-2
+    @apply py-[0.255rem] px-2 text-[0.80rem] leading-[normal]
 }
 
 .p-treetable.p-treetable-sm .p-treetable-thead > tr > th {
-    @apply py-1 px-2
+    @apply py-[0.255rem] px-2 text-[0.80rem] leading-[normal]
 }
 
 .p-treetable.p-treetable-sm .p-treetable-tbody > tr > td {
-    @apply py-1 px-2
+    @apply py-[0.255rem] px-2 text-[0.80rem] leading-[normal]
 }
 
 .p-treetable.p-treetable-sm .p-treetable-tfoot > tr > td {
-    @apply py-1 px-2
+    @apply py-[0.255rem] px-2 text-[0.80rem] leading-[normal]
 }
 
 .p-treetable.p-treetable-sm .p-treetable-footer {
-    @apply py-1 px-2
+    @apply py-[0.255rem] px-2 text-[0.80rem] leading-[normal]
 }
 
 .p-treetable.p-treetable-lg .p-treetable-header {
@@ -283,10 +292,10 @@
 }
 
 .p-treetable-node-toggle-button {
-    @apply inline-flex items-center justify-center overflow-hidden relative select-none
-    transition-colors duration-200 w-7 h-7 rounded-full border-none bg-transparent cursor-pointer
-    enabled:hover:bg-surface-100 dark:enabled:hover:bg-surface-900
-    text-surface-500 dark:text-surface-400 enabled:hover:text-surface-700 dark:enabled:hover:text-surface-0
+    @apply inline-flex items-center justify-center overflow-hidden relative w-7 h-7 cursor-pointer select-none
+    transition-colors duration-200 rounded-full border-none bg-transparent
+    text-surface-500 enabled:hover:bg-surface-200 enabled:hover:text-surface-700
+    dark:text-surface-400 dark:enabled:hover:bg-surface-700 dark:enabled:hover:text-surface-0
     focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary
 
 }

@@ -5,7 +5,7 @@
 }
 
 .p-selectbutton .p-togglebutton {
-    @apply rounded-none border-y border-r border-l-0 w-full
+    @apply rounded-none border-y border-r border-l-0
 }
 
 .p-selectbutton .p-togglebutton:focus-visible {

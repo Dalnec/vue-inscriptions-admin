@@ -1,9 +1,10 @@
+/*noinspection ALL*/
 .p-accordionpanel {
     @apply flex flex-col border-b border-surface-200 dark:border-surface-700
 }
 
 .p-accordionheader {
-    @apply cursor-pointer disabled:cursor-auto flex items-center justify-between p-[1.125rem] font-semibold
+    @apply cursor-pointer disabled:cursor-auto flex items-center justify-between p-[0.75rem] font-semibold
     bg-surface-0 dark:bg-surface-900
     text-surface-500 dark:text-surface-400
     transition-colors duration-200

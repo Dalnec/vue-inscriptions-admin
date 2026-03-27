@@ -1,7 +1,7 @@
 .p-cascadeselect {
     @apply inline-flex cursor-pointer relative select-none rounded-md
     bg-surface-0 dark:bg-surface-950
-    border border-surface-300 dark:border-surface-700
+    border border-surface-400 dark:border-surface-700
     shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
     transition-colors duration-200
 }

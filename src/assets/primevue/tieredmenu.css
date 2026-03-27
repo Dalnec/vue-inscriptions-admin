@@ -52,7 +52,7 @@
 }
 
 .p-tieredmenu-item:not(.p-disabled) > .p-tieredmenu-item-content:hover {
-    @apply bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-0
+    @apply bg-primary-200 dark:bg-surface-800 text-surface-800 dark:text-surface-0
 }
 
 .p-tieredmenu-item:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon {

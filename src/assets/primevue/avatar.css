@@ -1,3 +1,4 @@
+/*noinspection ALL*/
 .p-avatar {
     @apply inline-flex items-center justify-center
         w-8 h-8 text-base rounded-md

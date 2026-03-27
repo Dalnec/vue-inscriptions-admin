@@ -1,6 +1,6 @@
 .p-togglebutton {
     @apply inline-flex items-center justify-center overflow-hidden relative cursor-pointer select-none
-    border border-surface-300 dark:border-surface-700 rounded-md
+    border border-surface-400 dark:border-surface-700 rounded-md
     bg-surface-100 dark:bg-surface-950 text-surface-500 dark:text-surface-400 text-base font-medium
     focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary
     px-4 py-1.5 disabled:opacity-100 disabled:cursor-default

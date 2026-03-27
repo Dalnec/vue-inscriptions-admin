@@ -228,7 +228,7 @@ const openDialog = (income: boolean) => {
                 <LoadingPage/>
             </template>
 
-            <Column style="width: 10rem" field="movement_at" header="Fecha"/>
+            <Column style="width: 8rem" field="movement_at" header="Fecha"/>
             <Column style="width: 15rem" field="description" header="Descripción"/>
             <Column style="width: 10rem" field="reference" header="Referencia"/>
             <Column style="width: 5rem" field="amount" header="Monto" #body="{ data }">
@@ -236,15 +236,15 @@ const openDialog = (income: boolean) => {
                     S/. {{ data.amount }}
                 </p>
             </Column>
-            <Column style="width: 10rem" field="status" header="Estado" #body="slotProps">
-                <Tag :value="slotProps.data.status" :severity="slotProps.data.status === 'DRAFT' ? 'warn' : 'success'"/>
+            <Column style="width: 10rem" field="concept_type" header="Tipo" #body="{ data }">
+                <Tag :value="data.concept_type === 'E' ? 'Egreso' : 'Ingreso'" :severity="data.concept_type === 'E' ? 'warn' : 'success'"/>
             </Column>
-            <Column style="width: 10rem" field="concept_label" header="Concepto"/>
-            <Column style="width: 10rem" field="payment_method_label" header="Método de Pago"/>
-            <Column style="width: 10rem" field="inscription" header="Inscripción"/>
-            <Column style="width: 10rem" field="user" header="Usuario"/>
-            <Column style="width: 10rem" field="activity" header="Actividad"/>
-            <Column style="width: 10rem" field="reversal_of" header="Reversión de"/>
+            <Column style="width: 12rem" field="concept_description" header="Concepto"/>
+            <Column style="width: 12rem" field="payment_method_label" header="Método de Pago"/>
+            <!-- <Column style="width: 10rem" field="inscription" header="Inscripción"/>-->
+            <Column style="width: 10rem" field="username" header="Usuario"/>
+            <Column style="width: 10rem" field="activity_label" header="Actividad"/>
+            <!-- <Column style="width: 10rem" field="reversal_of" header="Reversión de"/>-->
         </DataTable>
     </Card>
 </template>

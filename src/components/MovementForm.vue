@@ -19,8 +19,7 @@ const schemaValidate = yup.object({
     amount: yup.number().required("Monto es requerido").positive("Monto debe ser positivo"),
     concept: yup.number().nullable(),
     description: yup.string().required("Descripción es requerida"),
-    payment_method: yup.number().required("Método de pago es requerido"),
-    reference: yup.string().required("Referencia es requerida")
+    payment_method: yup.number().required("Método de pago es requerido")
 });
 
 const { handleSubmit } = useForm<TillMovements>({
@@ -32,7 +31,6 @@ const { handleSubmit } = useForm<TillMovements>({
 
 const { value: description } = useField<string>("description");
 const { value: reference } = useField<string>("reference");
-const { value: status } = useField<string>("status");
 const { value: amount } = useField<number>("amount");
 const { value: concept } = useField<number | null>("concept");
 const { value: payment_method } = useField<number | null>("payment_method");
@@ -43,12 +41,6 @@ const conceptsOptions = computed(() => useConceptStore.concepts.map(c => ({
     label: c.description, value: c.id, concept_type: c.concept_type
 })).filter(d => d.concept_type === (props.isIncome ? "I" : "E")));
 
-const stausOptions = ref([
-    { label: "BORRADOR", value: "DRAFT" },
-    { label: "CONTABILIZADO", value: "POSTED" },
-    { label: "ANULADO", value: "VOID" }
-]);
-
 const saveMovement = handleSubmit(async(values) => {
     const activeActivity = storeActivities().activities.find(a => a.is_active);
     if ( !activeActivity) {
@@ -58,7 +50,7 @@ const saveMovement = handleSubmit(async(values) => {
     const data = {
         ...values,
         activity: activeActivity.id,
-        status: "DRAFT",
+        status: "POSTED",
         user: userStore.userData.user.id
     };
     const { response }: TillMovementActions = await Api.Post({ route: "till/movements", data });

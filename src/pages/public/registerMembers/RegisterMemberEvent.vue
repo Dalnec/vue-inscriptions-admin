@@ -100,10 +100,7 @@ const saveNewMember = handleSubmit(async(values) => {
     }
 
     isClickCard.value = false;
-}, ({ errors }) => {
-    const errorMessages = Object.entries(errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", \n");
-    toastEvent({ summary: "Campos requeridos: ", detail: errorMessages, life: 5000 });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 const onClickCardMember = (data: InterfaceMembers) => {
     setValues({ ...data });

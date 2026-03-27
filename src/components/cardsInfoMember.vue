@@ -5,17 +5,7 @@ import { storeChurches, storeKind } from "../stores/generalInfoStore.ts";
 
 const membersStoreOptions = useMembersStore();
 
-const props = withDefaults(defineProps<InterfaceMembers>(), {
-    doc_num: "",
-    names: "",
-    lastnames: "",
-    gender: "",
-    age: null,
-    phone: "",
-    kind: null,
-    church: null,
-    docType: null
-});
+const props = withDefaults(defineProps<{ data: InterfaceMembers }>(), {});
 
 </script>
 
@@ -24,27 +14,27 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
         <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-300">
             <div class="flex items-center gap-1">
                 <i-material-symbols-id-card-outline-rounded class="text-base"/>
-                <span>{{ props.doc_num }}</span>
+                <span>{{ props.data.doc_num }}</span>
             </div>
             <Button v-tooltip.left="'Eliminar de la lista'" size="small" severity="danger"
-                    @click.stop.prevent="membersStoreOptions.removeMembers(props)" #icon>
+                    @click.stop.prevent="membersStoreOptions.removeMembers(props.data)" #icon>
                 <i-material-symbols-delete-outline-rounded class="text-lg"/>
             </Button>
         </div>
 
         <h2 class="mt-1 text-base font-bold text-surface-900 dark:text-white">
-            {{ props.names }} {{ props.lastnames }}
+            {{ props.data.names }} {{ props.data.lastnames }}
         </h2>
 
         <div class="mt-1 flex items-center justify-between text-sm">
             <div class="flex items-center gap-1 text-primary-500">
-                <i-material-symbols-male-rounded class="text-base" v-if="props.gender === 'M'"/>
+                <i-material-symbols-male-rounded class="text-base" v-if="props.data.gender === 'M'"/>
                 <i-material-symbols-female-rounded class="text-base" v-else/>
-                <span class="text-surface-700 dark:text-surface-200">{{ props.gender === "M" ? "MASCULINO" : "FEMENINO" }}</span>
+                <span class="text-surface-700 dark:text-surface-200">{{ props.data.gender === "M" ? "MASCULINO" : "FEMENINO" }}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-500 dark:text-gray-300">
                 <i-material-symbols-calendar-month-outline-rounded class="text-base"/>
-                <span>Edad: {{ props.age }}</span>
+                <span>Edad: {{ props.data.age }}</span>
             </div>
         </div>
 
@@ -52,15 +42,15 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
         <div class="mt-1 flex items-center justify-between text-sm">
             <div class="flex items-center gap-1 text-gray-700 dark:text-gray-200">
                 <i-material-symbols-call class="text-base"/>
-                <span>{{ props.phone }}</span>
+                <span>{{ props.data.phone }}</span>
             </div>
-            <span class="font-medium text-primary-500">{{ storeKind().kinds.find((ch) => ch.id === props.kind)?.description }}</span>
+            <span class="font-medium text-primary-500">{{ storeKind().kinds.find((ch) => ch.id === props.data.kind)?.description }}</span>
         </div>
 
         <!-- Iglesia -->
         <div class="mt-1 flex items-center gap-1 text-sm text-gray-700 dark:text-gray-200">
             <i-material-symbols-church-rounded class="text-base"/>
-            <span>{{ storeChurches().churches.find((ch) => ch.id === props.church)?.description }}</span>
+            <span>{{ storeChurches().churches.find((ch) => ch.id === props.data.church)?.description }}</span>
         </div>
     </div>
 </template>

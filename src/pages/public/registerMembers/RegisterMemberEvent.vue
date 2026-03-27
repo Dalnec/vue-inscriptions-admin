@@ -10,6 +10,7 @@ import type { SelectFilterEvent } from "primevue";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import * as yup from "yup";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
 
 const refDrawerMembersSaved = ref();
 const loadingSearch = ref(false);
@@ -237,7 +238,8 @@ watch(doc_num, () => {
                 <Button label="Guardar inscripción" @click="saveNewMember" fluid/>
             </div>
         </div>
-        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember"/>
+        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="pay-inscription-members"
+                            :isPage="false" urlToAdd="inscription-members"/>
     </main>
 </template>
 

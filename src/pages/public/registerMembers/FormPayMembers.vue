@@ -168,7 +168,8 @@ onMounted(async() => {
                 </Button>
             </div>
         </div>
-        <drawer-members-saved ref="refDrawerMembersSaved"/>
+        <drawer-members-saved ref="refDrawerMembersSaved" redirectUrl="pay-inscription-members" :isPage="false"
+                              urlToAdd="inscription-members"/>
     </main>
 </template>
 

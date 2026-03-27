@@ -232,5 +232,6 @@ onMounted(async() => {
             </Button>
         </div>
     </div>
-    <drawer-members-saved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember"/>
+    <drawer-members-saved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="payEvent" isPage
+                          urlToAdd="newRegister"/>
 </template>

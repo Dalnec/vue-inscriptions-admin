@@ -6,14 +6,19 @@ import Drawer from "primevue/drawer";
 import CardsInfoMember from "@/components/cardsInfoMember.vue";
 import routes from "@/router/index";
 import { useRoute } from "vue-router";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 
+const props = defineProps<{ redirectUrl: string, isPage: boolean, urlToAdd: string }>();
 const visibleDrawer = ref(false);
 const membersStoreOptions = useMembersStore();
+const membersStorePage = useMembersStorePage();
 const route = useRoute();
+
+const optionsToRender = props.isPage ? membersStorePage.membersData : membersStoreOptions.membersData;
 
 const addMoreMembers = async() => {
     visibleDrawer.value = false;
-    await routes.push({ name: "inscription-members" });
+    await routes.push({ name: props.urlToAdd });
 };
 
 defineEmits([ "onClickCard" ]);
@@ -29,22 +34,19 @@ defineExpose({ visibleDrawer });
                     Lista de Personas
                 </p>
                 <p class="p-card-subtitle">
-                    {{ membersStoreOptions.membersData.length }} Persona(s) registradas
+                    {{ optionsToRender.length }} Persona(s) registradas
                 </p>
             </div>
         </template>
         <div class="grid space-y-2">
-            <cards-info-member v-for="data in  membersStoreOptions.membersData" :key="data.doc_num" :doc_num="data.doc_num"
-                               :church="data.church" :doc-type="data.documenttype" :gender="data.gender" :kind="data.kind"
-                               :names="data.names" :lastnames="data.lastnames" :phone="data.phone" :age="data.age"
-                               @click="$emit('onClickCard', (data))" :status="data.status"/>
+            <cards-info-member v-for="data in optionsToRender" :key="data.id" :data="data" @click="$emit('onClickCard', (data))"/>
         </div>
         <template #footer>
             <div class="align-buttons-card-footer">
                 <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid #icon>
                     <i-material-symbols-list-alt-add/>
                 </Button>
-                <Button label="Pagar" @click="routes.push({name:'pay-inscription-members'})" fluid
+                <Button label="Pagar" @click="routes.push({name: props.redirectUrl })" fluid
                         v-if="route.name !== 'pay-inscription-members'" #icon>
                     <i-ic-baseline-payments/>
                 </Button>

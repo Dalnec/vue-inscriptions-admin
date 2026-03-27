@@ -13,6 +13,7 @@ declare global {
   const IconMaterialSymbolsCalendarAppsScript: typeof import('~icons/material-symbols/calendar-apps-script').default
   const IconMaterialSymbolsCategoryOutline: typeof import('~icons/material-symbols/category-outline').default
   const IconMaterialSymbolsCircleNotifications: typeof import('~icons/material-symbols/circle-notifications').default
+  const IconMaterialSymbolsEventNoteOutline: typeof import('~icons/material-symbols/event-note-outline').default
   const IconMaterialSymbolsFrameInspectRounded: typeof import('~icons/material-symbols/frame-inspect-rounded').default
   const IconMaterialSymbolsGroupOutlineRounded: typeof import('~icons/material-symbols/group-outline-rounded').default
   const IconMaterialSymbolsPersonRemove: typeof import('~icons/material-symbols/person-remove').default

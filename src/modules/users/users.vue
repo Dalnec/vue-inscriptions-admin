@@ -24,21 +24,15 @@ const addValueParameters = () => {
 </script>
 
 <template>
-    <Card>
-        <template #title>
-            <div class="align-header">
-                <div>
-                    Lista de usuarios
-                </div>
-                <div>
-                    <Button label="Nuevo Usuario" size="small" @click="addValueParameters" #icon>
-                        <i-material-symbols-person-add-outline-rounded/>
-                    </Button>
-                </div>
-            </div>
-        </template>
-        <template #content>
-            <user-list ref="refUserList"/>
-        </template>
+    <Card #content>
+        <div class="align-header mb-4">
+            <p>
+                Lista de usuarios
+            </p>
+            <Button label="Nuevo Usuario" size="small" @click="addValueParameters" #icon>
+                <i-material-symbols-person-add-outline-rounded/>
+            </Button>
+        </div>
+        <user-list ref="refUserList"/>
     </Card>
 </template>

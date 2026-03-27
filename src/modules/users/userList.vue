@@ -87,17 +87,17 @@ defineExpose({ loadUserList });
         </Column>
         <Column style="width: 5%" header="Acciones" #body="{ data }">
             <div class="flex items-center justify-center space-x-1">
-                <Button size="small" severity="warn" v-tooltip="'Editar Usuario'" @click="addParametersUserModal(data)"
-                        class="h-6 !w-6" #icon>
-                    <i-material-symbols-person-edit-rounded/>
+                <Button severity="warn" v-tooltip="'Editar Usuario'" @click="addParametersUserModal(data)"
+                        class="h-7 !w-7" #icon>
+                    <i-material-symbols-person-edit-rounded class="text-xl"/>
                 </Button>
-                <Button size="small" severity="info" v-tooltip="'Cambiar Contraseña'" @click="addParametersChangePassword(data)"
-                        class="h-6 !w-6" #icon>
-                    <i-material-symbols-lock/>
+                <Button severity="info" v-tooltip="'Cambiar Contraseña'" @click="addParametersChangePassword(data)"
+                        class="h-7 !w-7" #icon>
+                    <i-material-symbols-lock class="text-xl"/>
                 </Button>
-                <Button size="small" severity="danger" v-tooltip="'Bloquear usuario'" @click="addParametersUserModal(data)"
-                        class="h-6 !w-6" #icon>
-                    <i-material-symbols-block-outline/>
+                <Button severity="danger" v-tooltip="'Bloquear usuario'" @click="addParametersUserModal(data)"
+                        class="h-7 !w-7" #icon>
+                    <i-material-symbols-block-outline class="text-xl"/>
                 </Button>
             </div>
         </Column>

@@ -43,8 +43,15 @@ const onManageConcept = (concept?: ConceptsInterface) => {
 <template>
     <Card #content>
         <div class="align-header mb-4">
-            <p class="p-card-title">Conceptos de Caja</p>
-            <Button label="Agregar Concepto" icon="pi pi-plus" @click="onManageConcept()" class="p-button-primary"/>
+            <div class="flex items-center gap-2">
+                <Button rounded @click="router.push({name: 'settings', force: true})" #icon>
+                    <i-material-symbols-arrow-back-rounded/>
+                </Button>
+                <p>Configuración de Evento</p>
+            </div>
+            <Button label="Agregar Concepto" @click="onManageConcept()" class="p-button-primary" #icon>
+                <i-material-symbols-list-alt-add/>
+            </Button>
         </div>
         <DataTable :value="dataConcepts" :loading="loading" responsiveLayout="scroll" showGridlines>
             <template #empty>

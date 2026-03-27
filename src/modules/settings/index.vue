@@ -22,6 +22,10 @@ const classContent = "h-72 flex flex-col cursor-pointer items-center justify-cen
                     <i-material-symbols-contract-edit-outline-rounded class="text-9xl text-surface-900 dark:text-white"/>
                     <p class="text-xl font-semibold text-surface-900 dark:text-white">Conceptos</p>
                 </div>
+                <div :class="classContent" @click="router.push({ name: 'conceptsCaja', force: true })">
+                    <i-material-symbols-tile-large-rounded class="text-9xl text-surface-900 dark:text-white"/>
+                    <p class="text-xl font-semibold text-surface-900 dark:text-white">Conceptos de caja</p>
+                </div>
             </div>
         </template>
     </Card>

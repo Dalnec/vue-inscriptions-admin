@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import toastEvent from "@/composables/toastEvent.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,9 +18,9 @@ const router = createRouter({
                 {
                     path: "/pay-event", name: "payEvent", component: () => import("@/modules/registers/payEventView.vue"),
                     beforeEnter: async() => {
-                        const membersStoreOptions = useMembersStore();
+                        const membersStoreOptions = useMembersStorePage();
                         if (membersStoreOptions.membersData.length === 0) {
-                            toastEvent({ severity: "error", summary: "Error al pagar", detail: "Agregue una persona al menos" });
+                            toastEvent({ severity: "warn", summary: "Error al pagar", detail: "Agregue una persona al menos" });
                             await router.push({ name: "newRegister" });
                             return;
                         }
@@ -40,6 +41,12 @@ const router = createRouter({
                         label: "Usuarios", icon: IconMaterialSymbolsGroupOutlineRounded, superOnly: true
                     }
                 },
+                {
+                    path: "/caja", name: "caja", component: () => import("@/modules/caja/caja.vue"),
+                    meta: {
+                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
+                    }
+                },
                 // {
                 //     path: "/assistance", name: "assistance", component: () => import("@/modules/ /AboutView.vue"),
                 //     meta: {
@@ -53,6 +60,10 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue"),
+                    meta: { superOnly: true }
+                },
+                {
                     path: "/event", name: "event", component: () => import("@/modules/settings/eventManage.vue"),
                     meta: { superOnly: true }
                 },
@@ -61,15 +72,9 @@ const router = createRouter({
                     meta: { superOnly: true }
                 },
                 {
-                    path: "/caja", name: "caja", component: () => import("@/modules/caja/caja.vue"),
+                    path: "/activities", name: "activities", component: () => import("@/modules/activities/activities.vue"),
                     meta: {
-                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
-                    }
-                },
-                {
-                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue"),
-                    meta: {
-                        label: "Conceptos de Caja", icon: IconMaterialSymbolsCategoryOutline, superOnly: true
+                        label: "Actividades", icon: IconMaterialSymbolsEventNoteOutline, superOnly: true
                     }
                 }
             ]
@@ -86,7 +91,15 @@ const router = createRouter({
             component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
             meta: { public: true },
             name: "pay-inscription-members",
-            path: "/pagar"
+            path: "/pagar",
+            beforeEnter: async() => {
+                const membersStoreOptions = useMembersStore();
+                if (membersStoreOptions.membersData.length === 0) {
+                    toastEvent({ severity: "warn", summary: "Error al pagar", detail: "Agregue una persona al menos" });
+                    await router.push({ name: "newRegister" });
+                    return;
+                }
+            }
         },
         { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
         { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }

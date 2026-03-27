@@ -133,3 +133,17 @@ export const storeUsers = defineStore("storeUsers", {
         }
     }
 });
+
+export const storeConcepts = defineStore("storeConcepts", {
+    state: () => ({
+        concepts: [] as { id: number, description: string, concept_type: string, is_active: boolean, is_internal: boolean }[]
+    }),
+    actions: {
+        async getConcepts() {
+            const { response } = await Api.Get({ route: "till/concepts" });
+            if (response && response.status === 200) {
+                this.concepts = response.data.results || response.data;
+            }
+        }
+    }
+});

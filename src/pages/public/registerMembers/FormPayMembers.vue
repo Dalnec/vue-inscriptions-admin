@@ -57,7 +57,6 @@ const saveAllMembers = handleSubmit(async() => {
 
         loadingSave.value = true;
         const dataActivity = useStoreActivities.activities.find(act => act.is_active);
-        console.log(useStoreActivities.activities, "activities");
         const payload: Record<string, any> = {
             activity: dataActivity?.id,
             paymentmethod: paymentmethod.value,

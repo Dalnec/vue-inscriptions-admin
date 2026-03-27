@@ -11,6 +11,7 @@ declare global {
   const IconMaterialSymbolsAutoDeleteOutlineRounded: typeof import('~icons/material-symbols/auto-delete-outline-rounded').default
   const IconMaterialSymbolsBookmarkCheck: typeof import('~icons/material-symbols/bookmark-check').default
   const IconMaterialSymbolsCalendarAppsScript: typeof import('~icons/material-symbols/calendar-apps-script').default
+  const IconMaterialSymbolsCategoryOutline: typeof import('~icons/material-symbols/category-outline').default
   const IconMaterialSymbolsCircleNotifications: typeof import('~icons/material-symbols/circle-notifications').default
   const IconMaterialSymbolsFrameInspectRounded: typeof import('~icons/material-symbols/frame-inspect-rounded').default
   const IconMaterialSymbolsGroupOutlineRounded: typeof import('~icons/material-symbols/group-outline-rounded').default

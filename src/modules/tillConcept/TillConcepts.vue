@@ -1,0 +1,73 @@
+<script setup lang="ts">
+
+import { ref, onMounted } from "vue";
+import { h } from "vue";
+import { Api } from "@/api/connection.ts";
+import { useModal } from "@/composables/useModal.ts";
+import ConceptsForm from "@/modules/tillConcept/ConceptsForm.vue";
+import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
+
+const dataConcepts = ref<ConceptsInterface[]>([]);
+const loading = ref<boolean>(false);
+
+const loadConcepts = async(): Promise<void> => {
+    loading.value = true;
+    const { response } = await Api.Get({ route: "till/concepts" });
+    if (response && response.status === 200) {
+        dataConcepts.value = response.data.results || response.data;
+        loading.value = false;
+    }
+};
+
+onMounted(async() => {
+    await loadConcepts();
+});
+
+const { openModal, closeModal } = useModal();
+
+const onManageConcept = (concept?: ConceptsInterface) => {
+    openModal({
+        component: h(ConceptsForm, {
+            closeModal,
+            formData: concept?.id ? { ...concept } : undefined,
+            refreshData: loadConcepts
+        }),
+        header: "Editar Concepto",
+        width: "50vw"
+    });
+};
+
+</script>
+
+<template>
+    <Card #content>
+        <div class="align-header mb-4">
+            <p class="p-card-title">Conceptos de Caja</p>
+            <Button label="Agregar Concepto" icon="pi pi-plus" @click="onManageConcept()" class="p-button-primary"/>
+        </div>
+        <DataTable :value="dataConcepts" :loading="loading" responsiveLayout="scroll" showGridlines>
+            <template #empty>
+                <EmptyTable/>
+            </template>
+            <template #loading>
+                <LoadingPage/>
+            </template>
+            <Column field="description" header="Descripción"></Column>
+            <Column field="concept_type" header="Tipo" #body="slotProps">
+                <Badge :value="slotProps.data.concept_type === 'I' ? 'Ingreso' : 'Egreso'"
+                       :severity="slotProps.data.concept_type === 'I' ? 'success' : 'danger'"/>
+            </Column>
+            <Column field="is_active" header="Activo" #body="slotProps">
+                <Tag :value="slotProps.data.is_active ? 'Sí' : 'No'" :severity="slotProps.data.is_active ? 'success' : 'danger'"/>
+            </Column>
+            <Column field="is_internal" header="Interno" #body="slotProps">
+                <Tag :value="slotProps.data.is_internal ? 'Sí' : 'No'" :severity="slotProps.data.is_internal ? 'info' : 'warning'"/>
+            </Column>
+            <Column header="Acciones" #body="slotProps">
+                <Button @click="onManageConcept(slotProps.data)" #icon>
+                    <i-material-symbols-person-edit-rounded/>
+                </Button>
+            </Column>
+        </DataTable>
+    </Card>
+</template>

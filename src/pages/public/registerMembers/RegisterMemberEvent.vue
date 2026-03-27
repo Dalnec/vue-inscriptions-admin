@@ -44,6 +44,7 @@ const { value: lastnames } = useField<string>("lastnames");
 const { value: names } = useField<string>("names");
 const { value: phone } = useField<string>("phone");
 const { value: age } = useField<number | null>("age");
+const { value: email } = useField<string>("email");
 
 const optionsDocuments = computed(() => storeDocumentType().documentType);
 const optionsChurches = computed(() => storeChurches().churches);
@@ -199,10 +200,14 @@ watch(doc_num, () => {
             <!-- BLOQUE 3 -->
             <div class="form-card">
                 <h3 class="form-section-title">Contacto</h3>
-
-                <ValidateFormItem label="Celular">
-                    <InputText v-model="phone" size="large"/>
-                </ValidateFormItem>
+                <div class="form-grid">
+                    <ValidateFormItem label="Celular">
+                        <InputText v-model="phone" size="large" fluid/>
+                    </ValidateFormItem>
+                    <ValidateFormItem label="Correo">
+                        <InputText v-model="email" size="large" fluid/>
+                    </ValidateFormItem>
+                </div>
             </div>
             <!-- BLOQUE 4 -->
             <div class="form-card">

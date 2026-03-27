@@ -65,6 +65,12 @@ const router = createRouter({
                     meta: {
                         label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
                     }
+                },
+                {
+                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue"),
+                    meta: {
+                        label: "Conceptos de Caja", icon: IconMaterialSymbolsCategoryOutline, superOnly: true
+                    }
                 }
             ]
         },

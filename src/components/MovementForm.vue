@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection";

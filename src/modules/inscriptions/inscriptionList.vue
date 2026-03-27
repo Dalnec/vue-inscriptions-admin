@@ -244,14 +244,12 @@ defineExpose({ loadInscriptionsList });
 </script>
 
 <template>
-    <div class="flex justify-between flex-wrap">
-        <InputText placeholder="Buscar usuario" class="!pl-10 max-w-96" fluid v-model="search"
+    <div class="align-header mb-4">
+        <InputText placeholder="Buscar usuario" class="max-w-96" fluid v-model="search"
                    @update:model-value="loadInscriptionsList"/>
-        <div>
-            <Button label="Descargar Excel" @click="addDataToGenerateExcel()" #icon>
-                <i-material-symbols-sheets/>
-            </Button>
-        </div>
+        <Button label="Descargar Excel" @click="addDataToGenerateExcel()" #icon>
+            <i-material-symbols-sheets/>
+        </Button>
     </div>
     <DataTable size="small" :value="dataMembers" scroll-height="65vh" scrollable tableStyle="min-width: 110rem;" lazy :loading dataKey="id"
                :rows-per-page-options="[25, 50, 100]" :totalRecords paginator :rows :first="currentPage * rows - rows" @page="onPageChange"

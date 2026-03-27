@@ -6,6 +6,7 @@ import { Api } from "@/api/connection.ts";
 import { useModal } from "@/composables/useModal.ts";
 import ConceptsForm from "@/modules/tillConcept/ConceptsForm.vue";
 import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
+import router from "@/router";
 
 const dataConcepts = ref<ConceptsInterface[]>([]);
 const loading = ref<boolean>(false);
@@ -65,7 +66,7 @@ const onManageConcept = (concept?: ConceptsInterface) => {
             </Column>
             <Column header="Acciones" #body="slotProps">
                 <Button @click="onManageConcept(slotProps.data)" #icon>
-                    <i-material-symbols-person-edit-rounded/>
+                    <i-material-symbols-edit-document-rounded/>
                 </Button>
             </Column>
         </DataTable>

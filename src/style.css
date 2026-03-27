@@ -39,18 +39,18 @@ body {
     --p-primary-800: #92400E;
     --p-primary-900: #78350F;
     --p-primary-950: #451A03;
-    --p-surface-0: #ffffff;
-    --p-surface-50: #fafafa;
-    --p-surface-100: #f4f4f5;
-    --p-surface-200: #e4e4e7;
-    --p-surface-300: #d4d4d8;
-    --p-surface-400: #a1a1aa;
-    --p-surface-500: #71717a;
-    --p-surface-600: #52525b;
-    --p-surface-700: #3f3f46;
-    --p-surface-800: #27272a;
-    --p-surface-900: #18181b;
-    --p-surface-950: #09090b;
+    --p-surface-0: #FFFFFF;
+    --p-surface-50: #F8FAFC;
+    --p-surface-100: #F1F5F9;
+    --p-surface-200: #E2E8F0;
+    --p-surface-300: #CBD5E1;
+    --p-surface-400: #94A3B8;
+    --p-surface-500: #64748B;
+    --p-surface-600: #475569;
+    --p-surface-700: #334155;
+    --p-surface-800: #1E293B;
+    --p-surface-900: #0F172A;
+    --p-surface-950: #020617;
     --p-content-border-radius: 6px;
 
     /* Brand */

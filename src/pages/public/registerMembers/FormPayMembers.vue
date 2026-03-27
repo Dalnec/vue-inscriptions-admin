@@ -62,10 +62,10 @@ const saveAllMembers = handleSubmit(async() => {
             paymentmethod: paymentmethod.value,
             people: storeDataMembers.membersData.map(member => ({
                 ...member,
-                status: true,
+                status: true
             })),
             tarifa: tarifa.value,
-            voucheramount: useStoreTotalRate.calculateRate()
+            voucheramount: useStoreTotalRate.calculateRate(false)
         };
         if (isVoucherImage(voucherfile.value)) payload.voucherfile = await fileToBase64(voucherfile.value.file);
 
@@ -128,7 +128,7 @@ onMounted(async() => {
                 <h3 class="form-section-title">Resumen de Pago</h3>
                 <div class="text-center mb-4">
                     <p class="text-2xl font-bold text-white">Persona(s) agregadas: {{ storeDataMembers.membersData.length }}</p>
-                    <p class="text-3xl font-semibold text-green-400">Total S/. {{ useStoreTotalRate.calculateRate() }}</p>
+                    <p class="text-3xl font-semibold text-green-400">Total S/. {{ useStoreTotalRate.calculateRate(false) }}</p>
                 </div>
             </div>
 

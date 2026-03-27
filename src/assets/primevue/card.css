@@ -6,7 +6,7 @@
 }
 
 .p-card-caption {
-    @apply px-4 py-2 flex flex-col bg-surface-50 dark:bg-surface-800 rounded-t-xl border-b border-b-surface-300 dark:border-b-surface-600
+    @apply px-4 py-2 flex flex-col rounded-t-xl
 }
 
 .p-card-body {

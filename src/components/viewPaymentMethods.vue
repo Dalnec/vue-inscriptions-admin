@@ -3,7 +3,8 @@ import { useClipboard } from "@vueuse/core";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 
-const props = withDefaults(defineProps<PaymentMethod>(),
+const props = withDefaults(
+    defineProps<PaymentMethod>(),
     { account: "", active: true, cci: null, description: "", icon: "", id: null }
 );
 
@@ -15,6 +16,7 @@ const copyToClipboard = async() => {
     await copy(fullText);
     useGlobalToast({ severity: "success", summary: "Copiado", detail: "Datos copiados al portapapeles", life: 2000 });
 };
+
 </script>
 
 <template>
@@ -26,8 +28,8 @@ const copyToClipboard = async() => {
                 <p> {{ props.cci }}</p>
             </div>
         </div>
-        <Button size="large" v-tooltip.bottom="'Añadir al portapapeles'" @click="copyToClipboard" v-if="props.account" #icon>
-            <i-material-symbols-content-copy/>
+        <Button v-tooltip="'Añadir al portapapeles'" @click="copyToClipboard" v-if="props.account" #icon>
+            <i-material-symbols-content-copy class="text-xl"/>
         </Button>
     </div>
 </template>

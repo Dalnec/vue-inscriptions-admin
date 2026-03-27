@@ -83,29 +83,25 @@ onMounted(() => {
         <ValidateFormItem mark span="12" label="Descripción" name="description" v-slot="{ error }">
             <InputText v-model="description" fluid input-id="description" :invalid="!!error"/>
         </ValidateFormItem>
-        <ValidateFormItem mark span="6" label="Referencia" name="reference" v-slot="{ error }">
-            <InputText v-model="reference" fluid input-id="reference" :invalid="!!error"/>
-        </ValidateFormItem>
-        <ValidateFormItem mark span="6" label="Estado" name="status" v-slot="{ error }">
-            <Select v-model="status" fluid labelId="status" :invalid="!!error" :options="stausOptions" optionLabel="label"
-                    optionValue="value" placeholder="Seleccionar"/>
+        <ValidateFormItem span="6" label="Referencia" name="reference">
+            <InputText v-model="reference" fluid input-id="reference"/>
         </ValidateFormItem>
         <ValidateFormItem mark span="6" label="Monto" name="amount" v-slot="{ error }">
-            <InputNumber v-model="amount" fluid input-id="amount" mode="currency" currency="PEN" :invalid="!!error"/>
+            <InputNumber v-model="amount" fluid input-id="amount" currency="PEN" prefix="S/ " :invalid="!!error"/>
         </ValidateFormItem>
         <ValidateFormItem span="6" label="Concepto" name="concept" v-slot="{ error }">
             <Select v-model="concept" :options="conceptsOptions" optionLabel="label" optionValue="value" placeholder="Seleccionar" fluid
                     :invalid="!!error">
                 <template #option="slotProps">
-                    <div class="flex align-items-center">
-                        {{ slotProps.option.label }}
+                    <div class="flex items-center flex-wrap">
+                        <p> {{ slotProps.option.label }} </p>
                         <Badge :value="slotProps.option.concept_type === 'I' ? 'Ingreso' : 'Egreso'"
                                :severity="slotProps.option.concept_type === 'I' ? 'success' : 'danger'" class="ml-2"/>
                     </div>
                 </template>
             </Select>
         </ValidateFormItem>
-        <ValidateFormItem mark span="12" label="Método de Pago" name="payment_method" v-slot="{ error }">
+        <ValidateFormItem mark span="6" label="Método de Pago" name="payment_method" v-slot="{ error }">
             <Select v-model="payment_method" :options="paymentMethodsOptions" optionLabel="label" optionValue="value"
                     placeholder="Seleccionar" fluid :invalid="!!error"/>
         </ValidateFormItem>

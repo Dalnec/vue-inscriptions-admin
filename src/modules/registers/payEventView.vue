@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
 import router from "@/router/index.ts";
-import { useMembersStore } from "@/stores/storeMembers.ts";
 import { computed, onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
 import { storeActivities, storeActivityActive, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
@@ -15,13 +14,15 @@ import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import * as yup from "yup";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 
 export type VoucherImageType = { file: File; objectURL: string; };
 
+const route = useRoute();
 const refDrawerMembersSaved = ref();
 const loadingSave = ref(false);
 const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer = true;
-const storeDataMembers = useMembersStore();
+const storeDataMembers = useMembersStorePage();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
 const dataForViewPayment = ref<PaymentMethod>({ account: "", active: true, cci: null, description: "", icon: "", id: null });
@@ -81,7 +82,7 @@ const saveAllMembers = handleSubmit(async() => {
         const dataActivity = useStoreActivities.activities.find(act => act.is_active);
 
         const payload: Record<string, any> = {
-            voucheramount: useStoreTotalRate.calculateRate(),
+            voucheramount: useStoreTotalRate.calculateRate(true),
             tarifa: useStoreActivityActive.showRatesActivity ? tarifa.value : dataRate?.id,
             activity: null,
             paymentmethod: paymentmethod.value,
@@ -131,11 +132,8 @@ const onValueSelectPayment = (id: number) => {
     dataForViewPayment.value = found;
 };
 
-const route = useRoute();
-const membersStore = useMembersStore();
-
 const handleClickCard = async(memberData: InterfaceMembers) => {
-    membersStore.setSelectedMember(memberData);
+    storeDataMembers.setSelectedMember(memberData);
     if (route.name !== "newRegister") {
         await router.push({ name: "newRegister" });
     }
@@ -147,8 +145,12 @@ function refocus($event: InputNumberInputEvent) {
     target.focus();
 }
 
-onMounted(() => {
-    const dataRate = storeRate().rate.find(rt => rt.selected);
+onMounted(async() => {
+    await useStoreRates.getRates();
+    await usePaymentMethodStore.getPaymentMethod();
+    await useStoreActivities.getActivities();
+    const rateSelected = useStoreRates.rate;
+    const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate?.id) {
         setRate(dataRate.id);
         onSelected({ idRate: tarifa.value, priceRate: dataRate.price, nameRate: dataRate.description });
@@ -158,63 +160,58 @@ onMounted(() => {
 </script>
 
 <template>
-    <Card>
-        <template #title>
-            Formulario de Pago
-        </template>
-        <template #subtitle>
-            Revise los datos antes de pagar
-        </template>
-        <template #content>
-            <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-                <ValidateFormItem label="Método de pago" span="12">
-                    <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
-                            size="large" @value-change="(value) => onValueSelectPayment(value)"/>
-                </ValidateFormItem>
-                <ValidateFormItem span="12" hide-error hide-label v-if="paymentmethod">
-                    <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
-                                          :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
-                                          :active="dataForViewPayment.active"/>
-                </ValidateFormItem>
-                <ValidateFormItem span="12" hide-label v-if="useStoreActivityActive.showRatesActivity">
-                    <div class="grid grid-cols-4 gap-3">
-                        <rate-data v-for="act in filterRates" :key="act.id" :name-rate="act.description" :id-rate="act.id"
-                                   :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>
-                    </div>
-                </ValidateFormItem>
-                <ValidateFormItem span="12" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
-                    <InputNumber v-model="voucheramount" :min="1" prefix="S/" fluid size="large" @input="refocus"/>
-                </ValidateFormItem>
-                <ValidateFormItem label="Voucher de pago" span="12"
-                                  v-if="dataForViewPayment.description !== 'EFECTIVO'">
-                    <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full"
-                                ref="refVoucherImage" @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])"
-                                :show-cancel-button="false" @remove="setVoucherImage({})" :show-upload-button="false" input-id="voucherfile"
-                                invalid-file-size-message="Peso de imagen invalido" invalid-file-limit-message="1 imagen máximo.">
-                    </FileUpload>
-                </ValidateFormItem>
-                <div class="max-cols-12">
-                    <p class="text-2xl">
-                        Hay {{ storeDataMembers.membersData.length }} persona(s) agregadas
-                    </p>
+    <Card #content>
+        <p class="p-card-title"> Formulario de Pago </p>
+        <p class="p-card-subtitle"> Revise los datos antes de pagar </p>
+        <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
+            <ValidateFormItem label="Método de pago" span="12">
+                <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
+                        size="large" @value-change="(value) => onValueSelectPayment(value)"/>
+            </ValidateFormItem>
+            <ValidateFormItem span="12" hide-error hide-label v-if="paymentmethod">
+                <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
+                                      :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
+                                      :active="dataForViewPayment.active"/>
+            </ValidateFormItem>
+            <ValidateFormItem span="12" hide-label v-if="useStoreActivityActive.showRatesActivity">
+                <div class="grid grid-cols-4 gap-3">
+                    <rate-data v-for="act in filterRates" :key="act.id" :name-rate="act.description" :id-rate="act.id"
+                               :id-rate-selected="tarifa" :price-rate="act.price" @on-rate-selected="onSelected"/>
                 </div>
-                <div class="mb-4 rounded-md bg-slate-400 p-4 text-center text-2xl font-bold max-cols-12">
-                    Total S/ {{ useStoreTotalRate.calculateRate() }}
-                </div>
-                <div class="max-cols-4">
-                    <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"
-                            v-if="storeDataMembers.membersData.length >= 1" fluid #icon>
-                        <i-material-symbols-list-alt-check/>
-                    </Button>
-                </div>
-
-                <div class="max-cols-8">
-                    <Button label="Enviar y Pagar" @click="saveAllMembers()" fluid :disabled="loadingSave" :loading="loadingSave" #icon>
-                        <i-material-symbols-sync-saved-locally/>
-                    </Button>
-                </div>
+            </ValidateFormItem>
+            <ValidateFormItem span="12" label="Monto a pagar" v-if="labelRateSelected === 'OTRO MONTO'">
+                <InputNumber v-model="voucheramount" :min="1" prefix="S/ " fluid size="large" @input="refocus"/>
+            </ValidateFormItem>
+            <ValidateFormItem label="Voucher de pago" span="12"
+                              v-if="dataForViewPayment.description !== 'EFECTIVO'">
+                <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full"
+                            ref="refVoucherImage" @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])"
+                            :show-cancel-button="false" @remove="setVoucherImage({})" :show-upload-button="false" input-id="voucherfile"
+                            invalid-file-size-message="Peso de imagen invalido" invalid-file-limit-message="1 imagen máximo.">
+                </FileUpload>
+            </ValidateFormItem>
+            <div class="max-cols-12">
+                <p class="text-2xl">
+                    Hay {{ storeDataMembers.membersData.length }} persona(s) agregadas
+                </p>
             </div>
-            <drawer-members-saved ref="refDrawerMembersSaved" @onClickCard="handleClickCard"/>
-        </template>
+            <div class="mb-4 rounded-md bg-slate-400 p-4 text-center text-2xl font-bold max-cols-12">
+                Total S/ {{ useStoreTotalRate.calculateRate(true) }}
+            </div>
+            <div class="max-cols-4">
+                <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"
+                        v-if="storeDataMembers.membersData.length >= 1" fluid #icon>
+                    <i-material-symbols-list-alt-check/>
+                </Button>
+            </div>
+
+            <div class="max-cols-8">
+                <Button label="Enviar y Pagar" @click="saveAllMembers()" fluid :disabled="loadingSave" :loading="loadingSave" #icon>
+                    <i-material-symbols-sync-saved-locally/>
+                </Button>
+            </div>
+        </div>
+        <drawer-members-saved ref="refDrawerMembersSaved" @onClickCard="handleClickCard" redirectUrl="payEvent" :isPage="true"
+                              urlToAdd="payEvent"/>
     </Card>
 </template>

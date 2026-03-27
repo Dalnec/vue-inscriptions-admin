@@ -3,6 +3,7 @@ import { Api } from "@/api/connection.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import type { InterfaceActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
 import type { InterfaceRates } from "@/types/InterfaceRates.ts";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 
 export const storeChurches = defineStore("storeChurches", {
     state: () => ({
@@ -79,9 +80,9 @@ export const storePriceRate = defineStore("storePriceRate", {
         totalPrice: 0
     }),
     actions: {
-        calculateRate(): number {
+        calculateRate(isPage: boolean): number {
             const dataRate = storeRate().rate.find(rt => rt.selected);
-            const totalMembers = useMembersStore().membersData.length;
+            const totalMembers = isPage ? useMembersStorePage().membersData.length : useMembersStore().membersData.length;
             if ( !dataRate) return 0;
             return this.totalPrice = parseFloat(dataRate.price) * totalMembers;
         }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
 import { computed, onMounted, ref, watch } from "vue";
-import { useMembersStore } from "@/stores/storeMembers.ts";
 import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
@@ -11,14 +10,18 @@ import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import { Api } from "@/api/connection.ts";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 
 const refDrawerMembersSaved = ref();
 const loadingSearch = ref(false);
-const membersStoreOptions = useMembersStore();
+const membersStoreOptions = useMembersStorePage();
 const isClickCard = ref(false);
 const wasDniChecked = ref(false);
 // const showMessage = ref(false);
 // const infoMessage = ref({ dni: "", names: "" });
+const useStoreDocumentType = storeDocumentType();
+const useStoreChurches = storeChurches();
+const useStoreKind = storeKind();
 
 const props = defineProps({
     closeModal: { default: () => ({}), required: false, type: Function },
@@ -55,9 +58,9 @@ const { value: names } = useField<string>("names");
 const { value: phone } = useField<string>("phone");
 const { value: age } = useField<number | null>("age");
 
-const optionsDocuments = computed(() => storeDocumentType().documentType);
-const optionsChurches = computed(() => storeChurches().churches);
-const optionsKinds = computed(() => storeKind().kinds);
+const optionsDocuments = computed(() => useStoreDocumentType.documentType);
+const optionsChurches = computed(() => useStoreChurches.churches);
+const optionsKinds = computed(() => useStoreKind.kinds);
 
 const addDataFromReniec = async(): Promise<void> => {
     loadingSearch.value = true;
@@ -146,11 +149,14 @@ watch(() => membersStoreOptions.selectedMember, (member) => {
 }, { immediate: true });
 
 onMounted(async() => {
+    await useStoreDocumentType.getDocumentType();
+    await useStoreChurches.getDataChurches();
+    await useStoreKind.getKinds();
+
     if (props.formData?.id) {
         setValues({ ...props.formData }, false);
         isClickCard.value = true;
     }
-    await storeKind().getKinds();
 });
 
 </script>

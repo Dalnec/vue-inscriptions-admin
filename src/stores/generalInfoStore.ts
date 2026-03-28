@@ -4,6 +4,7 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import type { InterfaceActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
 import type { InterfaceRates } from "@/types/InterfaceRates.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
 
 export const storeChurches = defineStore("storeChurches", {
     state: () => ({
@@ -137,7 +138,7 @@ export const storeUsers = defineStore("storeUsers", {
 
 export const storeConcepts = defineStore("storeConcepts", {
     state: () => ({
-        concepts: [] as { id: number, description: string, concept_type: string, is_active: boolean, is_internal: boolean }[]
+        concepts: [] as ConceptsInterface[]
     }),
     actions: {
         async getConcepts() {

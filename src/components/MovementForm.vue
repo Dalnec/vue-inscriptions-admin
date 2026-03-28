@@ -1,19 +1,25 @@
 <script setup lang="ts">
 
-import { computed, onMounted } from "vue";
-import * as yup from "yup";
-import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection";
 import { storeActivities, storePaymentMethod, storeConcepts } from "@/stores/generalInfoStore.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
+import { computed, h, onMounted, ref } from "vue";
+import { useField, useForm } from "vee-validate";
+import { useModal } from "@/composables/useModal.ts";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import type { TillMovementActions, TillMovements } from "@/types/TillMovements.ts";
+import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
+import ConceptsForm from "@/modules/tillConcept/ConceptsForm.vue";
+import * as yup from "yup";
 
 const props = defineProps<{ closeModal: () => void; isIncome: boolean; refreshData: () => Promise<void>; }>();
 
 const userStore = useUserDataConfigStore();
 const useConceptStore = storeConcepts();
 const usePaymentMethod = storePaymentMethod();
+const { openModal, closeModal } = useModal();
+
+const conceptSelected = ref<ConceptsInterface>();
 
 const schemaValidate = yup.object({
     amount: yup.number().required("Monto es requerido").positive("Monto debe ser positivo"),
@@ -63,6 +69,25 @@ const saveMovement = handleSubmit(async(values) => {
     }
 });
 
+const onGetConceptSelected = (conceptId: number) => {
+    conceptSelected.value = useConceptStore.concepts.find(c => c.id === conceptId);
+};
+
+const onManageConcept = (concept?: ConceptsInterface) => {
+    openModal({
+        component: h(ConceptsForm, {
+            closeModal,
+            formData: concept?.id ? { ...concept } : undefined,
+            disableInternal: true,
+            defaultType: props.isIncome ? "I" : "E",
+            refreshData: () => useConceptStore.getConcepts()
+        }),
+        header: concept?.id ? "Editar Concepto" : "Agregar Concepto",
+        width: "50vw"
+    });
+};
+
+
 onMounted(() => {
     usePaymentMethod.getPaymentMethod();
     useConceptStore.getConcepts();
@@ -82,16 +107,21 @@ onMounted(() => {
             <InputNumber v-model="amount" fluid input-id="amount" currency="PEN" prefix="S/ " :invalid="!!error"/>
         </ValidateFormItem>
         <ValidateFormItem span="6" label="Concepto" name="concept" v-slot="{ error }">
-            <Select v-model="concept" :options="conceptsOptions" optionLabel="label" optionValue="value" placeholder="Seleccionar" fluid
-                    :invalid="!!error">
-                <template #option="slotProps">
-                    <div class="flex items-center flex-wrap">
-                        <p> {{ slotProps.option.label }} </p>
-                        <Badge :value="slotProps.option.concept_type === 'I' ? 'Ingreso' : 'Egreso'"
-                               :severity="slotProps.option.concept_type === 'I' ? 'success' : 'danger'" class="ml-2"/>
-                    </div>
-                </template>
-            </Select>
+            <InputGroup>
+                <Select v-model="concept" :options="conceptsOptions" optionLabel="label" optionValue="value" placeholder="Seleccionar" fluid
+                        @update:modelValue="v => onGetConceptSelected(v)" :invalid="!!error">
+                    <template #option="slotProps">
+                        <div class="flex items-center flex-wrap">
+                            <p> {{ slotProps.option.label }} </p>
+                            <Badge :value="slotProps.option.concept_type === 'I' ? 'Ingreso' : 'Egreso'"
+                                   :severity="slotProps.option.concept_type === 'I' ? 'success' : 'danger'" class="ml-2"/>
+                        </div>
+                    </template>
+                </Select>
+                <Button v-tooltip="!isIncome ? 'Concepto egreso' : 'Concepto ingreso' " @click="onManageConcept(conceptSelected)" #icon>
+                    <i-material-symbols-list-alt-add/>
+                </Button>
+            </InputGroup>
         </ValidateFormItem>
         <ValidateFormItem mark span="6" label="Método de Pago" name="payment_method" v-slot="{ error }">
             <Select v-model="payment_method" :options="paymentMethodsOptions" optionLabel="label" optionValue="value"

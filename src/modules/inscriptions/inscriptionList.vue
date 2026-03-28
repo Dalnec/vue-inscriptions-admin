@@ -166,7 +166,8 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
             }
         });
     } else {
-        const { response }: InterfaceActionsInscriptions = await Api.Put({ route: `inscription/${ data.id }`, data: { ...data, status } });
+        // const { response }: InterfaceActionsInscriptions = await Api.Put({ route: `inscription/${ data.id }`, data: { ...data, status } });
+        const { response }: InterfaceActionsInscriptions = await Api.Post({ route: `inscription-groups/${ data.group.id }/confirm-payment`, data: {  } });
         if (response && response.status === 200) {
             await loadInscriptionsList();
             useGlobalToast({ detail: "Estado actualizado correctamente", severity: "success" });

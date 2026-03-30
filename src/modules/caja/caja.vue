@@ -71,7 +71,6 @@ const conceptTypeOptions = [
     { label: "Egreso", value: "expense" }
 ];
 
-const activitiesOptions = computed(() => storeActivities().activities.map(a => ({ label: a.description, value: a.id })));
 const paymentMethodsOptions = computed(() => storePaymentMethod().paymentMethod.map(p => ({ label: p.description, value: p.id })));
 
 const usersOptions = computed(() => {
@@ -142,24 +141,9 @@ const openDialog = (income: boolean) => {
         <div class="filters-header">
             <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 <div>
-                    <label for="activity">Actividad</label>
-                    <Select v-model="filters.activity" inputId="activity" :options="activitiesOptions" optionLabel="label"
-                            optionValue="value" placeholder="Seleccionar" fluid @change="loadMovements"/>
-                </div>
-                <div>
-                    <label for="concept">Concepto</label>
-                    <InputNumber v-model="filters.concept" inputId="concept" placeholder="ID Concepto" fluid
-                                 @input="loadMovements"/>
-                </div>
-                <div>
                     <label for="concept_type">Tipo de Concepto</label>
                     <Select v-model="filters.concept_type" inputId="concept_type" :options="conceptTypeOptions" optionLabel="label"
                             optionValue="value" placeholder="Seleccionar" fluid @change="loadMovements"/>
-                </div>
-                <div>
-                    <label for="inscription">Inscripción</label>
-                    <InputNumber v-model="filters.inscription" inputId="inscription" placeholder="ID Inscripción" fluid
-                                 @input="loadMovements"/>
                 </div>
                 <div>
                     <label for="movement_at_from">Fecha Desde</label>

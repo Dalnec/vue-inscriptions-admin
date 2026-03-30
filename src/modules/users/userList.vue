@@ -36,6 +36,7 @@ const loadUserList = useDebounceFn(async(): Promise<void> => {
 
 const addParametersUserModal = (data: InterfaceUsers): void => {
     openModal({
+        breakpoints: { "1400px": "94vw", "1100px": "96vw", "640px": "99vw" },
         component: h(addUsers, {
             closeModal,
             refreshData: () => loadUserList(),

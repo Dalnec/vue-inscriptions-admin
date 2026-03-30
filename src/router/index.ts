@@ -31,7 +31,11 @@ const router = createRouter({
                     meta: {
                         label: "Inscripciones", icon: IconMaterialSymbolsFrameInspectRounded,
                         permissions: [
-                            { name: "XD" }
+                            { name: "Permiso 1" },
+                            { name: "Permiso 2" },
+                            { name: "Permiso 3" },
+                            { name: "Permiso 4" },
+                            { name: "Permiso 5" }
                         ]
                     }
                 },

@@ -151,7 +151,7 @@ body {
 }
 
 .align-items-form {
-    @apply grid grid-cols-1 items-start justify-start gap-y-3 gap-x-3.5 md:grid-cols-12;
+    @apply grid grid-cols-1 items-start justify-start gap-y-2 gap-x-2.5 md:grid-cols-12;
 }
 
 .align-header {

@@ -77,7 +77,7 @@ defineExpose({ loadUserList });
             <loading-page/>
         </template>
         <Column style="width: 10%" field="username" header="Usuario"/>
-        <Column style="width: 10%" field="names" header="Nombres"/>
+        <Column style="width: 10%" :field="(dt)=>`${dt.names} ${dt.lastname}`" header="Nombres"/>
         <Column style="width: 10%" field="email" header="Correo"/>
         <Column style="width: 10%" field="profile_description" header="Perfil"/>
         <Column style="width: 5%" header="Estado" field="is_active" #body="{ data }">

@@ -2,10 +2,15 @@
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import { storeChurches, storeKind } from "../stores/generalInfoStore.ts";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import { computed } from "vue";
 
 const membersStoreOptions = useMembersStore();
+const dataMembersPage = useMembersStorePage();
 
-const props = withDefaults(defineProps<{ data: InterfaceMembers }>(), {});
+const props = defineProps<{ data: InterfaceMembers, isPage: boolean }>();
+
+const optionsToRender = computed(() => props.isPage ? dataMembersPage : membersStoreOptions);
 
 </script>
 
@@ -17,7 +22,7 @@ const props = withDefaults(defineProps<{ data: InterfaceMembers }>(), {});
                 <span>{{ props.data.doc_num }}</span>
             </div>
             <Button v-tooltip.left="'Eliminar de la lista'" size="small" severity="danger"
-                    @click.stop.prevent="membersStoreOptions.removeMembers(props.data)" #icon>
+                    @click.stop.prevent="optionsToRender.removeMembers(props.data)" #icon>
                 <i-material-symbols-delete-outline-rounded class="text-lg"/>
             </Button>
         </div>

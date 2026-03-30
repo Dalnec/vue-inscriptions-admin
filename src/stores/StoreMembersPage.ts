@@ -17,16 +17,23 @@ export const useMembersStorePage = defineStore("useMembersStorePage", () => {
         const index = membersData.value.findIndex(dt => dt.doc_num === members.doc_num);
 
         if (index !== -1 && !isClickCard) {
-            useGlobalToast({ severity: "error", summary: "Error al guardar.", detail: `La persona ${ fullName } ya fue agregada.` });
+            useGlobalToast({ severity: "warn", summary: "Error al guardar.", detail: `La persona ${ fullName } ya fue agregada.` });
             return;
         } else if (isClickCard && index !== -1) {
-            membersData.value[index] = { ...members };
+            membersData.value[index] = {
+                ...members
+                // voucheramount: 0
+            };
             useGlobalToast({ summary: "Actualizado", detail: `${ fullName } fue actualizado correctamente.` });
             resetFilters();
         } else {
             useGlobalToast({ severity: "success", summary: "¡Éxito!", detail: `${ fullName } se agregó correctamente.` });
 
-            membersData.value.push(members);
+            membersData.value.push({
+                    ...members
+                    // voucheramount: 0
+                }
+            );
             resetFilters();
         }
     };

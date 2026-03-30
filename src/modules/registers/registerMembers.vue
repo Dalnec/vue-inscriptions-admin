@@ -1,24 +1,22 @@
 <script setup lang="ts">
 
-import { computed, onMounted, ref, watch } from "vue";
-import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
-import * as yup from "yup";
-import { useField, useForm } from "vee-validate";
-import useGlobalToast from "@/composables/toastEvent";
-import ValidateFormItem from "@/components/ValidateFormItem.vue";
-import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
-import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import { Api } from "@/api/connection.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import { computed, onMounted, ref, watch } from "vue";
+import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
+import { useField, useForm } from "vee-validate";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
+import useGlobalToast from "@/composables/toastEvent";
+import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
+import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
+import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
+import * as yup from "yup";
 
 const refDrawerMembersSaved = ref();
 const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStorePage();
 const isClickCard = ref(false);
 const wasDniChecked = ref(false);
-// const showMessage = ref(false);
-// const infoMessage = ref({ dni: "", names: "" });
 const useStoreDocumentType = storeDocumentType();
 const useStoreChurches = storeChurches();
 const useStoreKind = storeKind();
@@ -56,6 +54,7 @@ const { value: kind } = useField<number>("kind");
 const { value: lastnames } = useField<string>("lastnames");
 const { value: names } = useField<string>("names");
 const { value: phone } = useField<string>("phone");
+const { value: email } = useField<string>("email");
 const { value: age } = useField<number | null>("age");
 
 const optionsDocuments = computed(() => useStoreDocumentType.documentType);
@@ -125,9 +124,7 @@ const saveNewMember = handleSubmit(async(values): Promise<void> => {
         }
         isClickCard.value = false;
     }
-}, () => {
-    useGlobalToast({ severity: "error", summary: "Error al guardar", detail: "Por favor, llene el formulario." });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 const onClickCardMember = (data: InterfaceMembers) => {
     setValues({ ...data });
@@ -206,6 +203,9 @@ onMounted(async() => {
         </ValidateFormItem>
         <ValidateFormItem label="Celular" span="12" name="gender" v-slot="{ error }">
             <InputText fluid v-model="phone" maxlength="9" v-key-filter.num :invalid="!!error" size="large"/>
+        </ValidateFormItem>
+        <ValidateFormItem label="Correo" span="12" name="correo" v-slot="{ error }">
+            <InputText fluid v-model="email" :invalid="!!error" size="large"/>
         </ValidateFormItem>
         <ValidateFormItem label="¿Perteneces a alguna iglesia?" span="12" name="kind" v-slot="{ error }">
             <div class="flex flex-wrap items-center gap-4">

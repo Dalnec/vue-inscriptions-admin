@@ -200,7 +200,7 @@ watch(doc_num, () => {
                 <h3 class="form-section-title">Contacto</h3>
                 <div class="form-grid">
                     <ValidateFormItem label="Celular">
-                        <InputText v-model="phone" size="large" fluid/>
+                        <InputText v-model="phone" size="large" maxlength="9" fluid/>
                     </ValidateFormItem>
                     <ValidateFormItem label="Correo">
                         <InputText v-model="email" size="large" fluid/>

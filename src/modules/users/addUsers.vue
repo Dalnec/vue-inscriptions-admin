@@ -2,16 +2,20 @@
 /* general imports */
 import { Api } from "@/api/connection";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
-import { onMounted, ref } from "vue";
+import { onMounted, provide, ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import { useDebounceFn } from "@vueuse/core";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import type { InterfaceProfile, UsersActionsProfile, UsersActiosMembersActions, InterfaceUsers } from "@/types/interfaceUsers.ts";
 import * as yup from "yup";
+import PermissionsManager from "@/modules/users/PermissionsManager.vue";
+import type { PermissionsInfo } from "@/types/DataPermissions.ts";
 
 /* general variables */
 const profileOptions = ref<InterfaceProfile[]>([]);
 const props = defineProps<{ closeModal: () => void; refreshData: () => Promise<void>; formData?: InterfaceUsers }>();
+const refPermissions = ref();
+const checkAll = ref(false);
 
 /**
  * Scheme of rules to be evaluated
@@ -57,6 +61,7 @@ const { value: names, handleBlur: namesBlur } = useField<string>("names");
 const { value: email } = useField<string>("email");
 const { value: profile, handleBlur: profileBlur } = useField<string>("profile");
 const { value: username, handleBlur: usernameBlur } = useField<string>("username");
+const { value: permissions, handleBlur: handleBlurPermissions } = useField<PermissionsInfo[]>("permissions");
 const { value: lastname } = useField<string>("lastname");
 const { value: password, handleBlur: passwordBlur } = useField<string>("password");
 const { value: passwordConfirm, handleBlur: passwordConfirmBlur } = useField<string>("passwordConfirm");
@@ -103,8 +108,13 @@ onMounted(async() => {
     // Check if the form has an existing ID (editing mode)
     if (props.formData?.id) {
         setValues({ ...props.formData }, false);
+
+        const keys = refPermissions.value.flattenPermissionsTree(permissions.value);
+        refPermissions.value.keysSelected = refPermissions.value.updateSelectionKeys(keys);
     }
 });
+
+provide("permissions", { permissions, handleBlurPermissions, checkAll });
 
 </script>
 

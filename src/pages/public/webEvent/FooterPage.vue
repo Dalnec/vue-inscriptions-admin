@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import pageConfig from "@/assets/page_config.json";
+
+const { footer, location } = pageConfig;
+
 const menuItems = [
     { currentPage: "#about", label: "¿De qué se trata?" },
-    { currentPage: "#team", label: "Nuestro equipo" },
+    { currentPage: "#pricing", label: "Tarifas" },
     { currentPage: "#location", label: "Ubícanos" }
 ];
 </script>
@@ -84,9 +88,21 @@ const menuItems = [
                     <h3 class="footer-title">Contacto</h3>
                     <p class="flex items-start gap-2 text-white/70 leading-relaxed">
                         <i class="pi pi-map-marker text-base mt-1"></i>
-                        Jirón San Martín 2193 - Barrio Ancoallo, Lamas, Perú
+                        {{ location.address }}
                     </p>
                 </div>
+            </div>
+        </div>
+
+        <!-- CTA SECTION -->
+        <div class="dark:bg-slate-400/10  border-y border-slate-400/20 px-4 py-12">
+            <div class="max-w-6xl mx-auto text-center">
+                <h2 class="text-2xl md:text-4xl font-info text-white mb-4">
+                    {{ footer.cta_title }}
+                </h2>
+                <Button label="INSCRIBIRSE AHORA"
+                        class="bg-amber-400 text-slate-950 hover:bg-amber-500 rounded-xl font-bold px-8 py-3"
+                        @click="$router.push({ name: 'inscription-members' })"/>
             </div>
         </div>
 
@@ -94,7 +110,7 @@ const menuItems = [
         <div class="border-t border-white/10">
             <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center text-xs text-white/60">
 
-                <p> © 2025 JNI SAM. Todos los derechos reservados </p>
+                <p> © {{ footer.year }} {{ footer.organization }}. Todos los derechos reservados </p>
 
                 <p class="flex items-center gap-2">
                     Powered by

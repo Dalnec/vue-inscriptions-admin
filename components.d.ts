@@ -38,6 +38,7 @@ declare module 'vue' {
     IIcRoundLightMode: typeof import('~icons/ic/round-light-mode')['default']
     IIcTwotoneTextDecrease: typeof import('~icons/ic/twotone-text-decrease')['default']
     ILineiconsInstagramOriginal: typeof import('~icons/lineicons/instagram-original')['default']
+    ImageCarousel: typeof import('./src/components/ImageCarousel.vue')['default']
     IMaterialSymbolsActionKeyOutline: typeof import('~icons/material-symbols/action-key-outline')['default']
     IMaterialSymbolsArrowBackIosNewRounded: typeof import('~icons/material-symbols/arrow-back-ios-new-rounded')['default']
     IMaterialSymbolsArrowBackRounded: typeof import('~icons/material-symbols/arrow-back-rounded')['default']

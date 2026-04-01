@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import TimerEventPage from "@/pages/public/webEvent/TimerEventPage.vue";
+import pageConfig from "@/assets/page_config.json";
 
 const images = ref<string[]>([]);
 const currentIndex = ref(0);
@@ -39,6 +40,8 @@ onMounted(async() => {
 });
 
 onUnmounted(() => stopAutoplay());
+
+const { hero } = pageConfig;
 </script>
 
 <template>
@@ -60,6 +63,29 @@ onUnmounted(() => stopAutoplay());
             <i-material-symbols-arrow-forward-ios-rounded/>
         </Button>
 
+        <!-- CONTENIDO HERO -->
+        <div class="hero-content">
+            <div class="text-center text-white">
+                <h1 class="text-4xl md:text-7xl font-info font-bold mb-4">
+                    {{ hero.motto }}
+                </h1>
+                
+                <p class="text-lg md:text-2xl text-amber-400 mb-2 font-semibold">
+                    "{{ hero.verse }}"
+                </p>
+                
+                <p class="text-sm md:text-base text-slate-300 mb-6">
+                    {{ hero.citation }}
+                </p>
+                
+                <div class="inline-block bg-amber-400/20 border border-amber-400 rounded-lg px-6 py-3 backdrop-blur-sm">
+                    <p class="text-amber-400 font-semibold text-lg">
+                        {{ hero.date_label }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- TIMER -->
         <div class="timer-wrapper">
             <TimerEventPage/>
@@ -71,7 +97,6 @@ onUnmounted(() => stopAutoplay());
 
 .section-hero {
     @apply relative flex flex-col items-center justify-center;
-    padding-bottom: 80px;
 }
 
 .hero-container {
@@ -135,9 +160,12 @@ onUnmounted(() => stopAutoplay());
     @apply !right-4;
 }
 
+.hero-content {
+    @apply absolute inset-0 z-10 flex items-center justify-center px-4;
+}
+
 .timer-wrapper {
-    @apply absolute left-0 w-full px-4 z-30;
-    bottom: -15px;
+    @apply left-0 w-full px-4 z-30 my-10;
 }
 
 </style>

@@ -1,41 +1,36 @@
 <script setup lang="ts">
+import pageConfig from "@/assets/page_config.json";
+import ImageCarousel from "@/components/ImageCarousel.vue";
 
+const { vision_section } = pageConfig;
 </script>
 
 <template>
-    <div class="mx-auto max-w-6xl my-20 px-4 md:px-0">
+    <div class="mx-auto max-w-6xl px-4 md:px-0">
         <!-- HEADER -->
         <div class="text-center md:text-left px-2 md:px-0">
             <h2 class="text-3xl md:text-5xl font-info text-white leading-tight">
-                ¿Estás listo para una experiencia que
-                <span class="text-amber-400">transformará tu vida</span>?
+                {{ vision_section.title }}
+                <span class="text-amber-400 block mt-2">transformará tu vida</span>
             </h2>
 
             <p class="mt-6 text-lg md:text-xl text-slate-300 leading-relaxed">
-                Únete al <span class="font-semibold text-white">Campamento KADOSH 2025</span> y vive
-                5 días de conexión con Dios, amistades reales y un encuentro auténtico con tu propósito.
+                {{ vision_section.description }}
             </p>
         </div>
 
         <!-- CONTENT -->
         <div class="mt-16 grid md:grid-cols-2 gap-8 md:gap-10 items-center">
 
-            <!-- VIDEO -->
-            <div class="relative">
-                <div class="absolute -inset-2 bg-amber-400/10 blur-2xl rounded-3xl"></div>
-
-                <div class="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
-                    <div class="w-full h-[250px] md:h-[350px] text-center flex items-center justify-center">
-                        <p> No joshelito video at the moment </p>
-                    </div>
-                </div>
-            </div>
+            <!-- SLIDER DE IMAGENES -->
+            <ImageCarousel v-if="vision_section.images && vision_section.images.length > 0" :images="vision_section.images"
+                           :autoplay-interval="5000" :show-controls="true" :show-indicators="true"/>
 
             <!-- TEXTO -->
             <div class="text-center md:text-left">
 
                 <h3 class="text-2xl md:text-4xl font-info text-white">
-                    Vive la experiencia KADOSH
+                    Vive la experiencia
                 </h3>
 
                 <p class="mt-6 text-slate-300 text-lg leading-relaxed">

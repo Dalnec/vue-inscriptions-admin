@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { optionsMenuStore } from "@/stores/optionsMenu";
+import { navBarStore } from "@/stores/optionsMenu";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -13,9 +13,9 @@ const confirm = useConfirm();
 const menu = ref();
 const userDataStore = useUserDataConfigStore();
 
-optionsMenuStore.createOptionsMenu();
+navBarStore().createOptionsMenu();
 
-const menuOptions = computed(() => optionsMenuStore.options);
+const menuOptions = computed(() => navBarStore().options);
 
 const isParentActive = (parentRoute: string): boolean => {
     return route?.matched.some((matchedRoute) => {
@@ -31,22 +31,22 @@ const isChildActive = (childrenRoutes: MenuItem[]): boolean => {
 
 const confirm1 = () => {
     confirm.require({
-        message: "¿Estas seguro de cerrar sesión?",
-        header: "Confirmación",
-        rejectProps: {
-            label: "Cancelar",
-            severity: "secondary",
-            outlined: true
-        },
-        acceptProps: {
-            label: "Cerrar"
-        },
         accept: () => {
             userDataStore.logout();
             useGlobalToast({ severity: "info", summary: "Sesión expirada", detail: "Vuelva a iniciar sesión", life: 3000 });
         },
+        acceptProps: {
+            label: "Cerrar"
+        },
+        header: "Confirmación",
+        message: "¿Estas seguro de cerrar sesión?",
         reject: () => {
             useGlobalToast({ severity: "error", summary: "Cancelado", detail: "No se cerro la sesión", life: 3000 });
+        },
+        rejectProps: {
+            label: "Cancelar",
+            outlined: true,
+            severity: "secondary"
         }
     });
 };

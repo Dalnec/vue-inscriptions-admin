@@ -7,6 +7,7 @@ export interface InterfaceLogin {
 
 export interface User {
     email: string;
+    login_name: string;
     gender: string;
     groups: any[];
     id: number;

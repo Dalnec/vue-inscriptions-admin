@@ -226,7 +226,7 @@ const openDialog = (income: boolean) => {
             <Column style="width: 12rem" field="concept_description" header="Concepto"/>
             <Column style="width: 12rem" field="payment_method_label" header="Método de Pago"/>
             <!-- <Column style="width: 10rem" field="inscription" header="Inscripción"/>-->
-            <Column style="width: 10rem" field="username" header="Usuario"/>
+            <Column style="width: 10rem" field="login_name" header="Usuario"/>
             <Column style="width: 10rem" field="activity_label" header="Actividad"/>
             <!-- <Column style="width: 10rem" field="reversal_of" header="Reversión de"/>-->
         </DataTable>

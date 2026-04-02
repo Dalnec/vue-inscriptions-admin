@@ -7,6 +7,7 @@ export interface InterfaceUsers {
     is_active: boolean;
     lastname: string;
     names: string;
+    readonly login_name: string;
     password?: string;
     passwordConfirm?: string;
     profile: number | null;

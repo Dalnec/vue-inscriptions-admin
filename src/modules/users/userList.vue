@@ -55,7 +55,7 @@ const addParametersChangePassword = (data: InterfaceUsers): void => {
             closeForm: closeModal,
             userID: data.id
         }),
-        header: `Cambiar contraseña de ${ data.username }`,
+        header: `Cambiar contraseña de ${ data.login_name }`,
         width: "35vw"
     });
 };
@@ -77,7 +77,7 @@ defineExpose({ loadUserList });
         <template #loading>
             <loading-page/>
         </template>
-        <Column style="width: 10%" field="username" header="Usuario"/>
+        <Column style="width: 10%" field="login_name" header="Usuario"/>
         <Column style="width: 10%" :field="(dt)=>`${dt.names} ${dt.lastname}`" header="Nombres"/>
         <Column style="width: 10%" field="email" header="Correo"/>
         <Column style="width: 10%" field="profile_description" header="Perfil"/>

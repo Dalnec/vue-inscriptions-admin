@@ -3,9 +3,10 @@ import { Api } from "@/api/connection.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
 import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
 import type { InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
 import * as yup from "yup";
-import { castFormErrors } from "@/composables/castFormErrors.ts";
+import { page_config } from "@/assets/page_config.json";
 
 const { loginUserData } = useUserDataConfigStore();
 const refPassword = ref();
@@ -23,7 +24,12 @@ const { value: password } = useField<string>("password");
 const onLogin = handleSubmit(async(values) => {
     try {
         loading.value = true;
-        const { response }: InterfaceUserLoginActions = await Api.Post({ route: "login", data: { ...values } });
+        const { response }: InterfaceUserLoginActions = await Api.Post({
+            route: "login", data: {
+                ...values,
+                shortname: page_config.eventID
+            }
+        });
         if (response.status === 200) {
             await loginUserData(response.data);
             loading.value = false;

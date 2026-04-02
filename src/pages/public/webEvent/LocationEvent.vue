@@ -6,8 +6,8 @@ import pageConfig from "@/assets/page_config.json";
 
 const { location } = pageConfig;
 
-const lat = -7.1;
-const lng = -76.7;
+const lat = -6.41778842961999;
+const lng = -76.52805907116408;
 
 </script>
 
@@ -71,8 +71,8 @@ const lng = -76.7;
                         </div>
 
                         <!-- CTA opcional -->
-                        <Button as="a" href="https://www.google.com/maps?q=-7.1,-76.7" target="_blank"
-                                label="Ver en Google Maps" class="mt-6"/>
+                        <Button as="a" href="https://maps.app.goo.gl/wiF8SMgAuynaJ83T7" target="_blank" label="Ver en Google Maps"
+                                class="mt-6"/>
 
                     </div>
                 </div>

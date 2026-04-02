@@ -9,15 +9,13 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: "/home", name: "home", redirect: { name: "newRegister" }, component: () => import("@/layout.vue"),
             children: [
                 {
-                    path: "/register", name: "newRegister", component: () => import("@/modules/registers/registersCard.vue"),
-                    meta: { label: "Nueva Inscripción", icon: IconMaterialSymbolsAddNotesOutline }
+                    component: () => import("@/modules/registers/registersCard.vue"),
+                    meta: { icon: IconMaterialSymbolsAddNotesOutline, label: "Nueva Inscripción" }, name: "newRegister",
+                    path: "register"
                 },
-                { path: "/settings", name: "settings", component: () => import("@/modules/settings/concepts.vue") },
                 {
-                    path: "/pay-event", name: "payEvent", component: () => import("@/modules/registers/payEventView.vue"),
                     beforeEnter: async() => {
                         const membersStoreOptions = useMembersStorePage();
                         if (membersStoreOptions.membersData.length === 0) {
@@ -25,12 +23,12 @@ const router = createRouter({
                             await router.push({ name: "newRegister" });
                             return;
                         }
-                    }
+                    }, component: () => import("@/modules/registers/payEventView.vue"), name: "payEvent",
+                    path: "pay-event"
                 },
                 {
-                    path: "/inscriptions", name: "inscriptions", component: () => import("@/modules/inscriptions/inscriptions.vue"),
-                    meta: {
-                        label: "Inscripciones", icon: IconMaterialSymbolsFrameInspectRounded,
+                    component: () => import("@/modules/inscriptions/inscriptions.vue"), meta: {
+                        icon: IconMaterialSymbolsFrameInspectRounded, label: "Inscripciones",
                         permissions: [
                             { name: "Permiso 1" },
                             { name: "Permiso 2" },
@@ -38,45 +36,48 @@ const router = createRouter({
                             { name: "Permiso 4" },
                             { name: "Permiso 5" }
                         ]
-                    }
+                    }, name: "inscriptions",
+                    path: "inscriptions"
                 },
                 {
-                    path: "/users", name: "users", component: () => import("@/modules/users/users.vue"),
-                    meta: {
-                        label: "Usuarios", icon: IconMaterialSymbolsGroupOutlineRounded
-                    }
+                    component: () => import("@/modules/users/users.vue"), meta: {
+                        icon: IconMaterialSymbolsGroupOutlineRounded, label: "Usuarios"
+                    }, name: "users",
+                    path: "users"
                 },
                 {
-                    path: "/caja", name: "caja", component: () => import("@/modules/caja/caja.vue"),
-                    meta: {
-                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline
-                    }
+                    component: () => import("@/modules/caja/caja.vue"), meta: {
+                        icon: IconMaterialSymbolsAccountBalanceWalletOutline, label: "Caja"
+                    }, name: "caja",
+                    path: "caja"
                 },
                 {
-                    path: "/settings", name: "settings", component: () => import("@/modules/settings/index.vue"),
-                    meta: {
-                        label: "Configuraciones", icon: IconMaterialSymbolsCalendarAppsScript
-                    }
+                    component: () => import("@/modules/settings/index.vue"), meta: {
+                        icon: IconMaterialSymbolsCalendarAppsScript, label: "Configuraciones"
+                    },
+                    name: "settings",
+                    path: "settings"
                 },
                 {
-                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue")
+                    component: () => import("@/modules/tillConcept/TillConcepts.vue"), name: "conceptsCaja", path: "concepts-caja"
                 },
                 {
-                    path: "/event", name: "event", component: () => import("@/modules/settings/eventManage.vue")
+                    component: () => import("@/modules/settings/eventManage.vue"), name: "event", path: "event"
                 },
                 {
-                    path: "/concepts", name: "concepts", component: () => import("@/modules/settings/concepts.vue")
+                    component: () => import("@/modules/settings/concepts.vue"), name: "concepts", path: "concepts"
                 },
                 {
-                    path: "/activities", name: "activities", component: () => import("@/modules/activities/activities.vue"),
-                    meta: {
-                        label: "Actividades", icon: IconMaterialSymbolsEventNoteOutline
-                    }
+                    component: () => import("@/modules/activities/activities.vue"), meta: {
+                        icon: IconMaterialSymbolsEventNoteOutline, label: "Actividades"
+                    }, name: "activities",
+                    path: "activities"
                 }
-            ]
+            ], component: () => import("@/layout.vue"), name: "home", path: "/home",
+            redirect: { name: "newRegister" }
         },
-        { path: "/", name: "webPage", component: () => import("@/pages/public/webEvent/HomePage.vue"), meta: { public: true } },
-        { path: "/login", name: "login", component: () => import("@/pages/login.vue"), meta: { public: true } },
+        { component: () => import("@/pages/public/webEvent/HomePage.vue"), meta: { public: true }, name: "webPage", path: "/" },
+        { component: () => import("@/pages/login.vue"), meta: { public: true }, name: "login", path: "/login" },
         {
             component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
             meta: { public: true },
@@ -84,10 +85,6 @@ const router = createRouter({
             path: "/inscribete"
         },
         {
-            component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
-            meta: { public: true },
-            name: "pay-inscription-members",
-            path: "/pagar",
             beforeEnter: async() => {
                 const membersStoreOptions = useMembersStore();
                 if (membersStoreOptions.membersData.length === 0) {
@@ -95,7 +92,11 @@ const router = createRouter({
                     await router.push({ name: "newRegister" });
                     return;
                 }
-            }
+            },
+            component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
+            meta: { public: true },
+            name: "pay-inscription-members",
+            path: "/pagar"
         },
         { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
         { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
@@ -106,17 +107,16 @@ router.beforeEach((to) => {
 
     const isAuth = !!store.userData.token;
     const isStaff = store.userData.user?.is_staff;
-
     const isPublic = to.meta?.public === true;
+
+    const isHomeRoute = to.matched.some(r => r.path === "/home");
 
     if (isPublic) {
         return true;
     }
 
-    if (to.path.startsWith("/home")) {
-        if ( !isAuth) {
-            return { name: "login" };
-        }
+    if (isHomeRoute && !isAuth) {
+        return { name: "login" };
     }
 
     if (isAuth && to.name === "login") {

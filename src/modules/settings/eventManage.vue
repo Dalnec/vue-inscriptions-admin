@@ -34,6 +34,7 @@ const { resetForm, handleSubmit } = useForm<InterfaceActivities>({ initialValues
 const { value: description } = useField<string>("description");
 const { value: end_date } = useField<null | Date>("end_date");
 const { value: title } = useField<string>("title");
+const { value: shortname } = useField<string>("shortname");
 const { value: location } = useField<string>("location");
 const { value: start_date } = useField<null | Date>("start_date");
 const { value: settings } = useField<Settings>("settings");
@@ -85,20 +86,23 @@ onMounted(() => {
         </template>
         <template #content>
             <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-                <ValidateFormItem label="Titulo" span="12">
-                    <InputText v-model="title" fluid/>
+                <ValidateFormItem label="Titulo" span="8" name="title" v-slot="{ error }">
+                    <InputText v-model="title" :invalid="!!error" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Descripción" span="12">
-                    <Textarea v-model="description" fluid/>
+                <ValidateFormItem label="Abreviatura" span="8" name="shortname" v-slot="{ error }">
+                    <InputText v-model="shortname" :invalid="!!error" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Ubicación" span="12">
-                    <InputText v-model="location" fluid/>
+                <ValidateFormItem label="Descripción" span="12" name="description" v-slot="{ error }">
+                    <Textarea v-model="description" :invalid="!!error" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Fecha de inicio" span="12">
-                    <DatePicker showTime hourFormat="24" v-model="start_date" fluid/>
+                <ValidateFormItem label="Ubicación" span="12" name="location" v-slot="{ error }">
+                    <InputText v-model="location" :invalid="!!error" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Fecha de Termino" span="12">
-                    <DatePicker showTime hourFormat="24" v-model="end_date" fluid/>
+                <ValidateFormItem label="Fecha de inicio" span="12" name="start_date" v-slot="{ error }">
+                    <DatePicker showTime hourFormat="24" v-model="start_date" :invalid="!!error" fluid/>
+                </ValidateFormItem>
+                <ValidateFormItem label="Fecha de Termino" span="12" name="end_date" v-slot="{ error }">
+                    <DatePicker showTime hourFormat="24" v-model="end_date" :invalid="!!error" fluid/>
                 </ValidateFormItem>
                 <ValidateFormItem label="Correos" span="12">
                     <AutoComplete v-model="settings.inscription.emails" fluid @complete="search" :suggestions="itemsEmail" :typeahead="true"

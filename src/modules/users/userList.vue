@@ -69,7 +69,7 @@ defineExpose({ loadUserList });
 </script>
 
 <template>
-    <DataTable size="small" :value="dataUsers" scroll-height="65vh" scrollable tableStyle="min-width: 80rem;" lazy :loading="loading"
+    <DataTable size="small" :value="dataUsers" scroll-height="65vh" scrollable tableStyle="min-width: 90rem;" lazy :loading="loading"
                dataKey="id">
         <template #empty>
             <empty-table/>
@@ -81,6 +81,9 @@ defineExpose({ loadUserList });
         <Column style="width: 10%" :field="(dt)=>`${dt.names} ${dt.lastname}`" header="Nombres"/>
         <Column style="width: 10%" field="email" header="Correo"/>
         <Column style="width: 10%" field="profile_description" header="Perfil"/>
+        <Column style="width: 10%" field="activity_description" header="Actividad" #body="{ data }">
+            {{ data.activity_description ?? 'Envía el nombre de la actividad pues joshelito.' }}
+        </Column>
         <Column style="width: 5%" header="Estado" field="is_active" #body="{ data }">
             <Message size="small" :severity="data.is_active? 'success' : 'error'">
                 {{ data.is_active ? "Activo" : "Inactivo" }}

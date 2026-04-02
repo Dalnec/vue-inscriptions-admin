@@ -3,6 +3,7 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import toastEvent from "@/composables/toastEvent.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import SearchValidRoute from "@/composables/searchRouteValid.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,12 +52,6 @@ const router = createRouter({
                         label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
                     }
                 },
-                // {
-                //     path: "/assistance", name: "assistance", component: () => import("@/modules/ /AboutView.vue"),
-                //     meta: {
-                //         label: "Asistencia", icon: IconMaterialSymbolsCalendarAppsScript
-                //     }
-                // },
                 {
                     path: "/settings", name: "settings", component: () => import("@/modules/settings/index.vue"),
                     meta: {
@@ -109,38 +104,39 @@ const router = createRouter({
         { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
     ]
 });
-
 router.beforeEach((to) => {
-    const authStore = useUserDataConfigStore();
-    const isAuth = Boolean(authStore.userData?.token);
+    const store = useUserDataConfigStore();
 
-    const isHomeRoute = to.path.startsWith("/home");
+    const isAuth = !!store.userData.token;
+    const isStaff = store.userData.user?.is_staff === true;
 
-    if ( !isHomeRoute) {
-        // Si está logueado y va a login → redirigir
-        if (isAuth && to.name === "login") {
-            return { name: "home" };
+    const isPublic = to.meta?.public === true;
+
+    if (isPublic) {
+        return true;
+    }
+
+    if (to.path.startsWith("/home")) {
+        if ( !isAuth) {
+            return { name: "login" };
         }
-        return true;
     }
 
-    if ( !isAuth) {
-        return { name: "login" };
+    if (isAuth && to.name === "login") {
+        return { name: "home" };
     }
 
-    const user = authStore.userData?.user;
+    if (isAuth) {
+        if (isStaff) {
+            return true;
+        }
 
-    if (user?.is_superuser || user?.profile_description === "ADMINISTRADOR") {
-        return true;
+        if ( !SearchValidRoute(String(to.name), store.userData.user?.permissions)) {
+            return { name: "not-authorized" };
+        }
     }
 
-    const allowedRoutes = [ "newRegister", "payEvent" ];
-
-    if (allowedRoutes.includes(to.name as string)) {
-        return true;
-    }
-
-    return { name: "home" };
+    return true;
 });
 
 export default router;

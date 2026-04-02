@@ -1,4 +1,4 @@
-import type { InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApi.ts";
+import type { InterfaceAxiosApi, InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApi.ts";
 
 export interface InterfaceActivities {
     created: null | Date;
@@ -33,3 +33,4 @@ export interface PaymentMethod {
 }
 
 export type InterfaceActionsActivities = InterfaceAxiosApiResponse<InterfaceActivities>
+export type InterfaceResponseActivities = InterfaceAxiosApi<InterfaceActivities>

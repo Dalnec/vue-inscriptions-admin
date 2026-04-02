@@ -43,37 +43,34 @@ const router = createRouter({
                 {
                     path: "/users", name: "users", component: () => import("@/modules/users/users.vue"),
                     meta: {
-                        label: "Usuarios", icon: IconMaterialSymbolsGroupOutlineRounded, superOnly: true
+                        label: "Usuarios", icon: IconMaterialSymbolsGroupOutlineRounded
                     }
                 },
                 {
                     path: "/caja", name: "caja", component: () => import("@/modules/caja/caja.vue"),
                     meta: {
-                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
+                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline
                     }
                 },
                 {
                     path: "/settings", name: "settings", component: () => import("@/modules/settings/index.vue"),
                     meta: {
-                        label: "Configuraciones", icon: IconMaterialSymbolsCalendarAppsScript, superOnly: true
+                        label: "Configuraciones", icon: IconMaterialSymbolsCalendarAppsScript
                     }
                 },
                 {
-                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue"),
-                    meta: { superOnly: true }
+                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue")
                 },
                 {
-                    path: "/event", name: "event", component: () => import("@/modules/settings/eventManage.vue"),
-                    meta: { superOnly: true }
+                    path: "/event", name: "event", component: () => import("@/modules/settings/eventManage.vue")
                 },
                 {
-                    path: "/concepts", name: "concepts", component: () => import("@/modules/settings/concepts.vue"),
-                    meta: { superOnly: true }
+                    path: "/concepts", name: "concepts", component: () => import("@/modules/settings/concepts.vue")
                 },
                 {
                     path: "/activities", name: "activities", component: () => import("@/modules/activities/activities.vue"),
                     meta: {
-                        label: "Actividades", icon: IconMaterialSymbolsEventNoteOutline, superOnly: true
+                        label: "Actividades", icon: IconMaterialSymbolsEventNoteOutline
                     }
                 }
             ]
@@ -108,7 +105,7 @@ router.beforeEach((to) => {
     const store = useUserDataConfigStore();
 
     const isAuth = !!store.userData.token;
-    const isStaff = store.userData.user?.is_staff === true;
+    const isStaff = store.userData.user?.is_staff;
 
     const isPublic = to.meta?.public === true;
 

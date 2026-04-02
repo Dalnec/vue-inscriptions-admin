@@ -7,10 +7,10 @@ import { useField, useForm } from "vee-validate";
 import { useDebounceFn } from "@vueuse/core";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import type { InterfaceProfile, UsersActionsProfile, UsersActiosMembersActions, InterfaceUsers } from "@/types/interfaceUsers.ts";
-import type { PermissionsInfo } from "@/types/DataPermissions.ts";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
 import PermissionsManager from "@/modules/users/PermissionsManager.vue";
 import * as yup from "yup";
+import type { PermissionsInfo } from "@/types/InterfaceLogin.ts";
 
 /* general variables */
 const profileOptions = ref<InterfaceProfile[]>([]);

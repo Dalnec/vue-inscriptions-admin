@@ -1,4 +1,4 @@
-import type { PermissionsInfo } from "@/types/DataPermissions.ts";
+import type { PermissionsInfo } from "@/types/InterfaceLogin.ts";
 
 /**
  * Searches for a valid route within a permissions array by matching the provided option name.

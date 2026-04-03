@@ -9,6 +9,7 @@ export interface InterfaceActivities {
     location: string;
     modified: null | Date;
     settings: Settings;
+    shortname: string;
     start_date: null | Date;
     title: string;
 }

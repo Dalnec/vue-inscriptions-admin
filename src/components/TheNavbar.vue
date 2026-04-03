@@ -102,8 +102,8 @@ const onShowOptions = (event: MouseEvent) => {
 
         <template #end>
             <div class="flex space-x-1">
-                <Button size="small" severity="secondary" class="!w-8 !h-8" @click="onShowOptions" aria-haspopup="true"
-                        aria-controls="overlayMenu" #icon>
+                <Button :label="userDataStore.userData.user?.username" size="small" severity="secondary" class="!h-8" @click="onShowOptions"
+                        aria-haspopup="true" aria-controls="overlayMenu" #icon>
                     <i-material-symbols-person-outline-rounded/>
                 </Button>
                 <TieredMenu ref="menu" id="overlayMenu" :model="items()" popup/>

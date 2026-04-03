@@ -70,7 +70,7 @@ const { hero } = pageConfig;
 
         <!-- CONTENIDO HERO -->
         <div class="hero-text-wrapper">
-            <h1 class="hero-title">{{ hero.motto }}</h1>
+            <h1 class="hero-title motto-font">{{ hero.motto }}</h1>
             <p class="hero-verse">"{{ hero.verse }}"</p>
             <p class="hero-citation">{{ hero.citation }}</p>
             <div class="hero-date-badge">

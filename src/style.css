@@ -5,6 +5,8 @@
 @import "./stylesTill.css";
 @import "tailwindcss/utilities";
 
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Montserrat:wght@400;700;900&display=swap');
+
 @font-face {
     font-family: 'Poppins';
     src: url('@/assets/fonts/Poppins-Medium.eot');
@@ -121,6 +123,17 @@ body {
         --p-text-muted-color: var(--p-surface-400);
         --p-text-hover-muted-color: var(--p-surface-300);
     }
+}
+
+.montserrat-font {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.motto-font {
+    font-family: "Bangers", cursive !important;
 }
 
 .reveal {
@@ -250,6 +263,7 @@ body {
 .form-actions {
     @apply flex flex-col md:flex-row gap-3 my-6;
 }
+
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
     @apply h-2 w-2;

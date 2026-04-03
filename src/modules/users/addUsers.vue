@@ -87,8 +87,10 @@ const onGetAllActivities = async() => {
 };
 
 const onSubmit = handleSubmit(async(values) => {
-    delete values.password;
-    delete values.passwordConfirm;
+    if (values.id) {
+        delete values.password;
+        delete values.passwordConfirm;
+    }
     const isUpdate = !!props.formData?.id;
     const url = isUpdate ? `user/${ props.formData?.id }` : "user";
     const method = isUpdate ? Api.Put : Api.Post;

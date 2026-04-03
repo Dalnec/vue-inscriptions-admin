@@ -207,9 +207,6 @@ onMounted(async() => {
 
             <div class="form-grid">
 
-                <!--        <ValidateFormItem span="12" hide-label hide-error v-if="showMessage">-->
-                <!--            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>-->
-                <!--        </ValidateFormItem>-->
                 <ValidateFormItem label="Nombres" name="names" v-slot="{ error }">
                     <InputText fluid v-model="names" :invalid="!!error" size="large"
                                :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>

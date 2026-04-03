@@ -49,6 +49,7 @@ declare module 'vue' {
     IMaterialSymbolsCalendarTodayOutline: typeof import('~icons/material-symbols/calendar-today-outline')['default']
     IMaterialSymbolsCall: typeof import('~icons/material-symbols/call')['default']
     IMaterialSymbolsCancelOutlineRounded: typeof import('~icons/material-symbols/cancel-outline-rounded')['default']
+    IMaterialSymbolsCancelRounded: typeof import('~icons/material-symbols/cancel-rounded')['default']
     IMaterialSymbolsCheckBoxRounded: typeof import('~icons/material-symbols/check-box-rounded')['default']
     IMaterialSymbolsChurchRounded: typeof import('~icons/material-symbols/church-rounded')['default']
     IMaterialSymbolsCircle: typeof import('~icons/material-symbols/circle')['default']

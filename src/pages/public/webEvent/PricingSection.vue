@@ -20,7 +20,7 @@ const handleCTA = (plan: any) => {
             <div class="text-center mb-16">
                 <div class="w-32 h-1 bg-amber-400 mx-auto mb-6 rounded-full"></div>
                 
-                <h2 class="text-3xl md:text-5xl font-info text-white leading-tight">
+                <h2 class="text-3xl md:text-5xl font-info text-white leading-tight motto-font">
                     {{ pricing_plans.section_title }}
                 </h2>
                 

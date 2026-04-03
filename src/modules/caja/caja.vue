@@ -40,6 +40,7 @@ const currentPage = ref(1);
 const totalRecords = ref(0);
 const search = ref("");
 
+const { openModal, closeModal } = useModal();
 const meta = ref<MovementsMeta>({
     cash_total: "0",
     movement_count: 0,
@@ -104,14 +105,6 @@ const loadMovements = useDebounceFn(async(): Promise<void> => {
     }
 }, 250);
 
-onMounted(async() => {
-    await storeUsers().getUsers();
-    await storeActivities().getActivities();
-    await storePaymentMethod().getPaymentMethod();
-    await loadMovements();
-});
-
-const { openModal, closeModal } = useModal();
 
 const openDialog = (income: boolean) => {
     openModal({
@@ -124,6 +117,28 @@ const openDialog = (income: boolean) => {
         width: "50vw"
     });
 };
+
+const onClearFilters = async() => {
+    filters.value = {
+        activity: null,
+        concept: null,
+        concept_type: null,
+        inscription: null,
+        movement_at_from: null,
+        movement_at_to: null,
+        payment_method: null,
+        status: null,
+        user: null
+    };
+    await loadMovements();
+};
+
+onMounted(async() => {
+    await storeUsers().getUsers();
+    await storeActivities().getActivities();
+    await storePaymentMethod().getPaymentMethod();
+    await loadMovements();
+});
 
 </script>
 
@@ -173,6 +188,12 @@ const openDialog = (income: boolean) => {
                 <div>
                     <label for="search">Buscar</label>
                     <InputText v-model="search" inputId="search" placeholder="Buscar movimientos..." fluid @input="loadMovements"/>
+                </div>
+                <div>
+                    <label for="search">Limpiar</label>
+                    <Button label="Limpiar filtros" @click="onClearFilters" #icon>
+                        <i-material-symbols-cancel-rounded/>
+                    </Button>
                 </div>
             </div>
         </div>

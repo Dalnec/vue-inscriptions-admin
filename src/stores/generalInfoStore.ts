@@ -39,8 +39,13 @@ export const storePaymentMethod = defineStore("storePaymentMethod", {
         paymentMethod: [] as PaymentMethod[]
     }),
     actions: {
-        async getPaymentMethod() {
-            const { response } = await Api.Get({ route: "paymentMethod", params: { page_size: 666 } });
+        async getPaymentMethod(shortname?: string) {
+            const { response } = await Api.Get({
+                route: "paymentMethod", params: {
+                    page_size: 666,
+                    activity_shortname: shortname
+                }
+            });
             if (response && response.status === 200) {
                 this.paymentMethod = response.data.results;
             }
@@ -67,8 +72,13 @@ export const storeRate = defineStore("storeRate", {
         rate: [] as InterfaceRates[]
     }),
     actions: {
-        async getRates() {
-            const { response } = await Api.Get({ route: "tarifa", params: { page_size: 666 } });
+        async getRates(shortname?: string) {
+            const { response } = await Api.Get({
+                route: "tarifa", params: {
+                    page_size: 666,
+                    activity_shortname: shortname
+                }
+            });
             if (response && response.status === 200) {
                 this.rate = response.data.results;
             }

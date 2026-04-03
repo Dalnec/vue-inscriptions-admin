@@ -6,8 +6,9 @@ export interface InterfaceLogin {
 }
 
 export interface User {
+    activity: number;
+    activity_shortname: string;
     email: string;
-    login_name: string;
     gender: string;
     groups: any[];
     id: number;
@@ -16,6 +17,7 @@ export interface User {
     is_superuser: boolean;
     last_login: string;
     lastname: string;
+    login_name: string;
     names: string;
     password: string;
     permissions: PermissionsInfo[];

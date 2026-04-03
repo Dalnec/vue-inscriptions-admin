@@ -1,15 +1,16 @@
 <script setup lang="ts">
 
-import router from "@/router";
-import { onMounted, ref } from "vue";
-import type { InterfaceActionsActivities, InterfaceActivities, Settings } from "@/types/interfaceActivities.ts";
-import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection.ts";
 import { storeActivities } from "@/stores/generalInfoStore.ts";
-import * as yup from "yup";
-import type { AutoCompleteCompleteEvent } from "primevue";
+import { page_config } from "@/assets/page_config.json";
+import router from "@/router";
+import { onMounted, ref } from "vue";
+import { useField, useForm } from "vee-validate";
 import { format } from "date-fns";
 import toastEvent from "@/composables/toastEvent.ts";
+import type { AutoCompleteCompleteEvent } from "primevue";
+import type { InterfaceActionsActivities, InterfaceActivities, Settings } from "@/types/interfaceActivities.ts";
+import * as yup from "yup";
 
 const useStoreActivities = storeActivities();
 const itemsEmail = ref<string[]>([]);
@@ -57,7 +58,7 @@ const onSaveForm = handleSubmit(async(values) => {
     });
 
     if (response.status === 200) {
-        await useStoreActivities.getActivities();
+        await useStoreActivities.getActivities(page_config.eventID);
         resetForm({ values: response.data });
     }
 }, () => {

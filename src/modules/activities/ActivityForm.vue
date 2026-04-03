@@ -58,13 +58,11 @@ const saveActivity = handleSubmit(async(formValues) => {
     loading.value = true;
 
     const dataToSend = {
-        title: formValues.title,
-        description: formValues.description,
-        location: formValues.location,
-        start_date: formatDateToString(formValues.start_date as Date, "yyyy-MM-dd HH:mm:ss"),
+        ...formValues,
         end_date: formatDateToString(formValues.end_date as Date, "yyyy-MM-dd HH:mm:ss"),
         is_active: true,
-        settings: JSON.stringify(settingsForm.value)
+        settings: JSON.stringify(settingsForm.value),
+        start_date: formatDateToString(formValues.start_date as Date, "yyyy-MM-dd HH:mm:ss")
     };
 
     const route = props.formData ? `activity/${ props.formData.id }` : "activity";

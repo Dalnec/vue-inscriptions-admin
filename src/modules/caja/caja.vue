@@ -10,6 +10,7 @@ import type { DataTablePageEvent } from "primevue";
 import { storeActivities, storePaymentMethod, storeUsers } from "@/stores/generalInfoStore.ts";
 import { useModal } from "@/composables/useModal";
 import MovementForm from "@/components/MovementForm.vue";
+import { page_config } from "@/assets/page_config.json";
 
 interface Movement {
     activity: number;
@@ -135,7 +136,7 @@ const onClearFilters = async() => {
 
 onMounted(async() => {
     await storeUsers().getUsers();
-    await storeActivities().getActivities();
+    await storeActivities().getActivities(page_config.eventID);
     await storePaymentMethod().getPaymentMethod();
     await loadMovements();
 });

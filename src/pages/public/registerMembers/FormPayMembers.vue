@@ -1,19 +1,20 @@
 <script setup lang="ts">
 
-import { useMembersStore } from "@/stores/storeMembers.ts";
-import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import { computed, ref, onMounted } from "vue";
 import { Api } from "@/api/connection.ts";
-import type { FileUploadSelectEvent } from "primevue";
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-import toastEvent from "@/composables/toastEvent.ts";
-import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
 import { storeActivities, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
-import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
+import { useMembersStore } from "@/stores/storeMembers.ts";
+import { page_config } from "@/assets/page_config.json";
+import { computed, ref, onMounted } from "vue";
+import { useField, useForm } from "vee-validate";
+import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
+import toastEvent from "@/composables/toastEvent.ts";
 import router from "@/router/index";
+import * as yup from "yup";
+import type { FileUploadSelectEvent } from "primevue";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
+import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
+import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 
 type VoucherImageType = { file: File; objectURL: string; };
 
@@ -103,7 +104,7 @@ const onValueSelectPayment = (id: number) => {
 
 onMounted(async() => {
     await storeRate().getRates();
-    await storeActivities().getActivities();
+    await storeActivities().getActivities(page_config.eventID);
     const rateSelected = storeRate().rate;
     const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate) {

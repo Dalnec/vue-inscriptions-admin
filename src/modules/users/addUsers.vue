@@ -152,7 +152,7 @@ provide("permissions", { permissions, handleBlurPermissions, checkAll });
                 </ValidateFormItem>
                 <ValidateFormItem label="Actividad" span="3" mark name="activity" v-slot="{ error }">
                     <Select v-model="activity" label-id="activity" :invalid="!!error" :options="activityOptions" name="activity" fluid
-                            optionLabel="description" optionValue="id" @blur="activityBlur($event, true)" show-clear/>
+                            optionLabel="title" optionValue="id" @blur="activityBlur($event, true)" show-clear/>
                 </ValidateFormItem>
                 <ValidateFormItem v-if="!props.formData?.id" label="Usuario" mark span="4" name="username" v-slot="{ error }">
                     <InputText v-model="username" id="username" :invalid="!!error" fluid @blur="usernameBlur($event, true)"

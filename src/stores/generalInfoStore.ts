@@ -58,8 +58,13 @@ export const storeActivities = defineStore("storeActivities", {
         activities: [] as InterfaceActivities[]
     }),
     actions: {
-        async getActivities() {
-            const { response } = await Api.Get({ route: "activity" });
+        async getActivities(shortname?: string) {
+            const { response } = await Api.Get({
+                params: {
+                    shortname: shortname ?? undefined
+                },
+                route: "activity"
+            });
             if (response && response.status === 200) {
                 this.activities = response.data;
             }

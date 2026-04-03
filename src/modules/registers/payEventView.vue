@@ -4,6 +4,7 @@ import router from "@/router/index.ts";
 import { computed, onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
 import { storeActivities, storeActivityActive, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
+import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 import { useField, useForm } from "vee-validate";
 import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
 import { useRoute } from "vue-router";
@@ -11,10 +12,10 @@ import toastEvent from "@/composables/toastEvent.ts";
 import type { FileUploadSelectEvent, InputNumberInputEvent } from "primevue";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
-import * as yup from "yup";
+import { page_config } from "@/assets/page_config.json";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import * as yup from "yup";
 
 export type VoucherImageType = { file: File; objectURL: string; };
 
@@ -148,7 +149,7 @@ function refocus($event: InputNumberInputEvent) {
 onMounted(async() => {
     await useStoreRates.getRates();
     await usePaymentMethodStore.getPaymentMethod();
-    await useStoreActivities.getActivities();
+    await useStoreActivities.getActivities(page_config.eventID);
     const rateSelected = useStoreRates.rate;
     const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate?.id) {

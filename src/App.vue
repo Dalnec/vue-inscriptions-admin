@@ -4,6 +4,7 @@ import { ref, onMounted, watch } from "vue";
 import { useDark } from "@vueuse/core";
 import Toast from "primevue/toast";
 import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
+import { page_config } from "@/assets/page_config.json";
 
 const loadingPage = ref(true);
 const isDark = useDark({ disableTransition: false, initialValue: "auto" });
@@ -26,7 +27,7 @@ onMounted(async() => {
     await storeChurches().getDataChurches();
     await storeDocumentType().getDocumentType();
     await storePaymentMethod().getPaymentMethod();
-    await storeActivities().getActivities();
+    await storeActivities().getActivities(page_config.eventID);
     await storeRate().getRates();
     await storeKind().getKinds();
     await storeActivityActive().getActiveActivity();

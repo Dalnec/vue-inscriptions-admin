@@ -26,7 +26,7 @@ watch(isDark, (newVal) => {
 onMounted(async() => {
     await storeChurches().getDataChurches();
     await storeDocumentType().getDocumentType();
-    await storePaymentMethod().getPaymentMethod();
+    await storePaymentMethod().getPaymentMethod(page_config.eventID);
     await storeActivities().getActivities(page_config.eventID);
     await storeRate().getRates();
     await storeKind().getKinds();

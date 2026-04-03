@@ -138,7 +138,7 @@ const onClearFilters = async() => {
 onMounted(async() => {
     await storeUsers().getUsers();
     await storeActivities().getActivities(page_config.eventID);
-    await storePaymentMethod().getPaymentMethod();
+    await storePaymentMethod().getPaymentMethod(page_config.eventID);
     await loadMovements();
 });
 

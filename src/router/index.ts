@@ -174,8 +174,9 @@ const router = createRouter({
                 const validSlugs = [ "camp2026" ];
                 const slug = String(to.params.slug);
 
+                // 🔥 si el slug no existe → corta aquí
                 if ( !validSlugs.includes(slug)) {
-                    return { name: "webHome" };
+                    return { name: "not-found" }; // 👈 IMPORTANTE
                 }
 
                 return true;
@@ -204,6 +205,11 @@ const router = createRouter({
                     name: "event-pay",
                     component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
                     meta: { public: true }
+                },
+                {
+                    path: ":pathMatch(.*)*",
+                    name: "event-not-found",
+                    component: () => import("@/components/NotFound.vue")
                 }
             ]
         },
@@ -218,11 +224,7 @@ const router = createRouter({
             beforeEnter: async() => {
                 const membersStoreOptions = useMembersStore();
                 if (membersStoreOptions.membersData.length === 0) {
-                    toastEvent({
-                        severity: "warn",
-                        summary: "Error al pagar",
-                        detail: "Agregue una persona al menos"
-                    });
+                    toastEvent({ detail: "Agregue una persona al menos", severity: "warn", summary: "Error al pagar" });
                     return { name: "newRegister" };
                 }
             },
@@ -240,7 +242,8 @@ const router = createRouter({
         },
         {
             path: "/:pathMatch(.*)*",
-            redirect: "/"
+            name: "not-found",
+            component: () => import("@/components/NotFound.vue")
         }
     ]
 });
@@ -266,12 +269,20 @@ router.beforeEach((to) => {
     const slug = slugStore.slug;
 
     if (slug) {
+        const excludedPaths = [ "/" ];
+
+        const isExcluded = excludedPaths.includes(to.path);
+
         const alreadyHasSlug = to.path === `/${ slug }` || to.path.startsWith(`/${ slug }/`);
-        if ( !alreadyHasSlug) {
+        const isCatchAll = to.matched.some(r => r.path.includes(":pathMatch"));
+
+        const isNotFound = to.name === "not-found" || to.name === "event-not-found";
+
+        if ( !alreadyHasSlug && !isCatchAll && !isExcluded && !isNotFound) {
             return {
+                hash: to.hash,
                 path: `/${ slug }${ to.path }`,
                 query: to.query,
-                hash: to.hash,
                 replace: true
             };
         }

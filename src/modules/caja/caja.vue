@@ -90,6 +90,7 @@ const loadMovements = useDebounceFn(async(): Promise<void> => {
     const params = {
         page: currentPage.value,
         page_size: rows.value,
+        activity_shortname: page_config.eventID,
         search: search.value,
         ...Object.fromEntries(Object.entries(filters.value).filter(([ _, v ]) => v !== null && v !== ""))
     };

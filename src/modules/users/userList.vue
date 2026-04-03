@@ -8,6 +8,7 @@ import { useModal } from "@/composables/useModal.ts";
 import type { InterfaceUsers, UsersResponseMembers } from "@/types/interfaceUsers.ts";
 import addUsers from "./addUsers.vue";
 import changePassword from "./changePassword.vue";
+import { page_config } from "@/assets/page_config.json";
 
 /* Defaults Variables */
 const dataUsers = ref<InterfaceUsers[]>([]);
@@ -27,7 +28,12 @@ const { openModal, closeModal } = useModal();
  */
 const loadUserList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
-    const { response }: UsersResponseMembers = await Api.Get({ route: "user" });
+    const { response }: UsersResponseMembers = await Api.Get({
+        params: {
+            activity_shortname: page_config.eventID
+        },
+        route: "user"
+    });
     if (response && response.status === 200) {
         dataUsers.value = response.data.results;
         loading.value = false;
@@ -82,7 +88,7 @@ defineExpose({ loadUserList });
         <Column style="width: 10%" field="email" header="Correo"/>
         <Column style="width: 10%" field="profile_description" header="Perfil"/>
         <Column style="width: 10%" field="activity_description" header="Actividad" #body="{ data }">
-            {{ data.activity_description ?? 'Envía el nombre de la actividad pues joshelito.' }}
+            {{ data.activity_description ?? "Envía el nombre de la actividad pues joshelito." }}
         </Column>
         <Column style="width: 5%" header="Estado" field="is_active" #body="{ data }">
             <Message size="small" :severity="data.is_active? 'success' : 'error'">

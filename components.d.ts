@@ -29,6 +29,7 @@ declare module 'vue' {
     Divider: typeof import('primevue/divider')['default']
     DrawerMembersSaved: typeof import('./src/components/drawerMembersSaved.vue')['default']
     EmptyTable: typeof import('./src/components/emptyTable.vue')['default']
+    EventLayout: typeof import('./src/components/app/EventLayout.vue')['default']
     FileUpload: typeof import('primevue/fileupload')['default']
     GeneralTableModule: typeof import('./src/components/generalTableModule.vue')['default']
     IIcBaselineFacebook: typeof import('~icons/ic/baseline-facebook')['default']

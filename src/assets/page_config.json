@@ -42,27 +42,7 @@
         "subtitle": "Inscribiéndote hasta el 15 de Mayo",
         "is_recommended": true,
         "cta_text": "ASEGURAR MI LUGAR",
-        "benefits": [
-          "Alojamiento en Cabañas",
-          "Alimentación completa + Snacks",
-          "Pack de Bienvenida (Polo + Gorra)",
-          "Transporte (Juanjuí - Bethel)"
-        ]
-      },
-      {
-        "id": "group_promo",
-        "name": "PROMO GRUPAL",
-        "price": 165,
-        "subtitle": "Mínimo 5 personas (Precio por persona)",
-        "is_recommended": false,
-        "cta_text": "CONTACTAR POR WHATSAPP",
-        "whatsapp_link": "https://wa.me/51900000000",
-        "benefits": [
-          "Alojamiento Grupal",
-          "Alimentación completa",
-          "Material de conferencias",
-          "Acceso a todas las actividades"
-        ]
+        "benefits": []
       }
     ]
   },

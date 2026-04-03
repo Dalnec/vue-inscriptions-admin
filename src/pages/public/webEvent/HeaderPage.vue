@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import router from "@/router";
+import { useRoute } from "vue-router";
 
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
 const w = globalThis as unknown as Window;
+const route = useRoute();
 
 const handleScroll = () => isScrolled.value = w.scrollY > 50;
 const toggleMobileMenu = () => isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -20,7 +22,7 @@ const specialItem = { label: "Inscríbete" };
 
 const onInscriptions = () => {
     // useGlobalToast({ life: 10000, severity: "warn", summary: "Las Inscripciones por este medio están inactivas" });
-    router.push({ name: "inscription-members" });
+    router.push({ name: "event-inscription", params: { slug: route.params.slug } });
 };
 
 watch(isMobileMenuOpen, (val) => {

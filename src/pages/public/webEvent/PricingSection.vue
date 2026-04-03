@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import pageConfig from "@/assets/page_config.json";
+import router from "@/router";
 
 const { pricing_plans } = pageConfig;
 
@@ -7,8 +8,7 @@ const handleCTA = (plan: any) => {
     if (plan.whatsapp_link) {
         window.open(plan.whatsapp_link, "_blank");
     } else {
-        // Navegar a inscripciones o manejar como sea necesario
-        console.log("Inscribirse en:", plan.name);
+        router.push({ name: "inscription-members" });
     }
 };
 </script>
@@ -19,11 +19,11 @@ const handleCTA = (plan: any) => {
             <!-- HEADER -->
             <div class="text-center mb-16">
                 <div class="w-32 h-1 bg-amber-400 mx-auto mb-6 rounded-full"></div>
-                
+
                 <h2 class="text-3xl md:text-5xl font-info text-white leading-tight motto-font">
                     {{ pricing_plans.section_title }}
                 </h2>
-                
+
                 <p class="mt-4 text-slate-400 max-w-2xl mx-auto">
                     Elige el plan que mejor se adapte a ti
                 </p>
@@ -33,7 +33,7 @@ const handleCTA = (plan: any) => {
             <div class="grid md:grid-cols-2 gap-8 items-center">
                 <div v-for="(plan, index) in pricing_plans.plans" :key="index"
                      :class="['pricing-card', plan.is_recommended && 'recommended']">
-                    
+
                     <!-- BADGE RECOMENDADO -->
                     <div v-if="plan.is_recommended" class="absolute -top-4 left-1/2 transform -translate-x-1/2">
                         <span class="bg-amber-400 text-slate-950 px-4 py-1 rounded-full text-sm font-bold">
@@ -68,10 +68,12 @@ const handleCTA = (plan: any) => {
                         <!-- BENEFICIOS -->
                         <div class="mb-8 flex-grow">
                             <ul class="space-y-3">
-                                <li v-for="(benefit, idx) in plan.benefits" :key="idx" 
+                                <li v-for="(benefit, idx) in plan.benefits" :key="idx"
                                     class="flex items-start gap-3 text-slate-300">
                                     <svg class="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        <path fill-rule="evenodd"
+                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                              clip-rule="evenodd"/>
                                     </svg>
                                     <span>{{ benefit }}</span>
                                 </li>

@@ -17,15 +17,13 @@ navBarStore().createOptionsMenu();
 
 const menuOptions = computed(() => navBarStore().options);
 
-const isParentActive = (parentRoute: string): boolean => {
-    return route?.matched.some((matchedRoute) => {
-        return matchedRoute.path === parentRoute || matchedRoute.name === parentRoute;
-    });
+const isParentActive = (routeName: string): boolean => {
+    return route.matched.some((r) => r.name === routeName);
 };
 
 const isChildActive = (childrenRoutes: MenuItem[]): boolean => {
     return childrenRoutes.some((child) => {
-        return route.matched.some((matchedRoute) => matchedRoute.path === child.route);
+        return route.matched.some((r) => r.name === child.key);
     });
 };
 
@@ -81,8 +79,8 @@ const onShowOptions = (event: MouseEvent) => {
         <template #item="{ item, props }">
             <router-link v-if="item.route && !item.items" :to="item?.route" v-slot="{href, navigate}">
                 <a @click="navigate" class="cursor-pointer" v-bind="props.action" :href
-                   :class="`select-none ${isParentActive(item.route) ? 'bg-primary-500/80 rounded' : ''}`" v-ripple>
-                    <component :is="item.icon" :class="`${isParentActive(item.route) ? 'text-white' : 'text-primary-500'} text-[15px]`"/>
+                   :class="`select-none ${isParentActive(item.key!) ? 'bg-primary-500/80 rounded' : ''}`" v-ripple>
+                    <component :is="item.icon" :class="`${isParentActive(item.key!) ? 'text-white' : 'text-primary-500'} text-[15px]`"/>
                     <span :class="`${isParentActive(item.route) ? 'text-white' : 'text-surface-900 dark:text-surface-200'} ml-1`">
                         {{ item.label }}
                     </span>

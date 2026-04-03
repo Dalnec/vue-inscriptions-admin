@@ -47,8 +47,8 @@ defineExpose({ visibleDrawer });
                 <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid #icon>
                     <i-material-symbols-list-alt-add/>
                 </Button>
-                <Button label="Pagar" @click="routes.push({name: props.redirectUrl })" fluid
-                        v-if="route.name !== 'pay-inscription-members'" #icon>
+                <Button label="Pagar" @click="routes.push({name: props.redirectUrl, force: true })" fluid
+                        v-if="route.name !== props.redirectUrl" #icon>
                     <i-ic-baseline-payments/>
                 </Button>
             </div>

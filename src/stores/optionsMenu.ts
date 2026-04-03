@@ -3,6 +3,7 @@ import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { defineStore } from "pinia";
 import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import type { RouteRecordRaw } from "vue-router";
+import { useEventSlugStore } from "@/stores/eventSlug.ts";
 
 interface RouteMeta {
     icon?: string;
@@ -95,31 +96,60 @@ export const navBarStore = defineStore("optionsMenu", {
                 const isDynamic = route.path.includes(":");
                 const hasRequired = this.hasRequiredParams(route.path);
 
+                const slugStore = useEventSlugStore();
+                const slug = slugStore.slug;
+
+                // 🔥 PARAMS BASE (si hay slug se inyecta automáticamente)
+                const baseParams = slug ? { slug } : {};
+
+                // =========================
+                // RESOLUCIÓN DE RUTA
+                // =========================
                 if ( !isDynamic) {
-                    objOption.route = route.path;
-                    objOption.path = route.path;
+                    const resolved = router.resolve({
+                        name: route.name as string,
+                        params: baseParams
+                    });
+
+                    objOption.route = resolved.fullPath;
+                    objOption.path = resolved.path;
                 } else if ( !hasRequired) {
-                    const resolved = router.resolve({ name: route.name as string, params: {} });
+                    const resolved = router.resolve({
+                        name: route.name as string,
+                        params: baseParams
+                    });
+
                     objOption.route = resolved.fullPath;
                     objOption.path = resolved.path;
                 } else {
                     return null;
                 }
 
+                // =========================
+                // CHILDREN (SUBMENÚ)
+                // =========================
                 if (route.children && !route?.meta?.isNotMenu) {
                     objOption.items = this.processRoutes(route.children);
                     objOption.expand = false;
                     return objOption.items.length ? objOption : null;
                 }
 
-                if (useUserDataConfig.userData.user?.is_staff) return objOption;
+                // =========================
+                // PERMISOS
+                // =========================
+                if (useUserDataConfig.userData.user?.is_staff) {
+                    return objOption;
+                }
 
-                const existOption = SearchValidRoute(objOption.key, useUserDataConfig.userData.user?.permissions);
+                const existOption = SearchValidRoute(
+                    objOption.key,
+                    useUserDataConfig.userData.user?.permissions
+                );
+
                 return existOption ? objOption : null;
             }
 
             return null;
         }
-
     }
 });

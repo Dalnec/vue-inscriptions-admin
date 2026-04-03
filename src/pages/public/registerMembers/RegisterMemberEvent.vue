@@ -238,8 +238,8 @@ watch(doc_num, () => {
                 <Button label="Guardar inscripción" @click="saveNewMember" fluid/>
             </div>
         </div>
-        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="pay-inscription-members"
-                            :isPage="false" urlToAdd="inscription-members"/>
+        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="event-pay"
+                            :isPage="false" urlToAdd="event-inscription"/>
     </main>
 </template>
 

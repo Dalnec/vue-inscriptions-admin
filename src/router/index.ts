@@ -1,62 +1,154 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useMembersStore } from "@/stores/storeMembers.ts";
+import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import toastEvent from "@/composables/toastEvent.ts";
+import { useMembersStore } from "@/stores/storeMembers.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
-import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import { useEventSlugStore } from "@/stores/eventSlug.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         // =========================
-        // HOME (LEGACY - NO TOCAR)
+        // LANDING GLOBAL (SIN SLUG)
         // =========================
         {
+            path: "/",
+            name: "webHome",
+            component: () => import("@/components/app/stillWorking.vue"),
+            meta: { public: true }
+        },
+
+        // =========================
+        // EVENTO (PÚBLICO)
+        // =========================
+        {
+            path: "/:slug",
+            component: () => import("@/components/app/EventLayout.vue"),
+            meta: { public: true },
+
+            beforeEnter: (to) => {
+                const validSlugs = [ "camp2026" ];
+                const slug = String(to.params.slug);
+
+                if ( !validSlugs.includes(slug)) {
+                    return { name: "not-found" };
+                }
+
+                return true;
+            },
+
             children: [
                 {
-                    component: () => import("@/modules/registers/registersCard.vue"),
-                    meta: { icon: IconMaterialSymbolsAddNotesOutline, label: "Nueva Inscripción" },
-                    name: "newRegister",
-                    path: "register"
+                    path: "",
+                    name: "webPage",
+                    component: () => import("@/pages/public/webEvent/HomePage.vue")
                 },
                 {
-                    beforeEnter: async() => {
-                        const membersStoreOptions = useMembersStorePage();
-                        if (membersStoreOptions.membersData.length === 0) {
+                    path: "login",
+                    name: "event-login",
+                    component: () => import("@/pages/login.vue"),
+                    meta: { public: true }
+                },
+                {
+                    path: "inscribirse",
+                    name: "event-inscription",
+                    component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
+                    meta: { public: true }
+                },
+                {
+                    path: "pagar",
+                    name: "event-pay",
+                    component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
+                    meta: { public: true },
+                    beforeEnter: async(to) => {
+                        const store = useMembersStore();
+
+                        if (store.membersData.length === 0) {
                             toastEvent({
                                 severity: "warn",
                                 summary: "Error al pagar",
                                 detail: "Agregue una persona al menos"
                             });
-                            return { name: "newRegister" };
+
+                            return {
+                                name: "event-inscription",
+                                params: { slug: to.params.slug }
+                            };
                         }
-                    },
-                    component: () => import("@/modules/registers/payEventView.vue"),
-                    name: "payEvent",
-                    path: "pay-event"
+                    }
+                },
+
+                // 404 EVENTO
+                {
+                    path: ":pathMatch(.*)*",
+                    name: "event-not-found",
+                    component: () => import("@/components/NotFound.vue")
+                }
+            ]
+        },
+
+        // =========================
+        // PANEL PRIVADO
+        // =========================
+        {
+            path: "/:slug/home",
+            component: () => import("@/layout.vue"),
+            name: "home",
+
+            beforeEnter: (to) => {
+                const validSlugs = [ "camp2026" ];
+                const slug = String(to.params.slug);
+
+                if ( !validSlugs.includes(slug)) {
+                    return { name: "not-found" };
+                }
+
+                return true;
+            },
+
+            redirect: { name: "newRegister" },
+
+            children: [
+                {
+                    path: "register",
+                    name: "newRegister",
+                    component: () => import("@/modules/registers/registersCard.vue"),
+                    meta: {
+                        icon: IconMaterialSymbolsAddNotesOutline,
+                        label: "Nueva Inscripción"
+                    }
                 },
                 {
+                    path: "pay-event",
+                    name: "payEvent",
+                    component: () => import("@/modules/registers/payEventView.vue"),
+                    beforeEnter: async(to) => {
+                        const store = useMembersStorePage();
+                        console.log(store.membersData);
+                        if (store.membersData.length === 0) {
+                            return {
+                                name: "newRegister",
+                                params: { slug: to.params.slug }
+                            };
+                        }
+                        return true;
+                    }
+                },
+                {
+                    path: "inscriptions",
+                    name: "inscriptions",
                     component: () => import("@/modules/inscriptions/inscriptions.vue"),
                     meta: {
                         icon: IconMaterialSymbolsFrameInspectRounded,
-                        label: "Inscripciones",
-                        permissions: [
-                            { name: "Permiso 1" },
-                            { name: "Permiso 2" },
-                            { name: "Permiso 3" },
-                            { name: "Permiso 4" },
-                            { name: "Permiso 5" }
-                        ]
-                    },
-                    name: "inscriptions",
-                    path: "inscriptions"
+                        label: "Inscripciones"
+                    }
                 },
                 {
-                    component: () => import("@/modules/users/users.vue"),
                     meta: { icon: IconMaterialSymbolsGroupOutlineRounded, label: "Usuarios" },
+                    path: "users",
                     name: "users",
-                    path: "users"
+                    component: () => import("@/modules/users/users.vue")
                 },
                 {
                     component: () => import("@/modules/caja/caja.vue"),
@@ -76,11 +168,6 @@ const router = createRouter({
                     path: "concepts-caja"
                 },
                 {
-                    component: () => import("@/modules/settings/eventManage.vue"),
-                    name: "event",
-                    path: "event"
-                },
-                {
                     component: () => import("@/modules/settings/concepts.vue"),
                     name: "concepts",
                     path: "concepts"
@@ -94,152 +181,32 @@ const router = createRouter({
                     name: "activities",
                     path: "activities"
                 }
-            ],
-            component: () => import("@/layout.vue"),
-            name: "home",
-            path: "/home",
-            redirect: { name: "newRegister" }
-        },
-
-        // =========================
-        // HOME POR EVENTO (NUEVO)
-        // =========================
-        {
-            path: "/:slug/home",
-            component: () => import("@/layout.vue"),
-            name: "event-home",
-
-            beforeEnter: (to) => {
-                const validSlugs = [ "camp2026" ];
-                const slug = String(to.params.slug);
-
-                if ( !validSlugs.includes(slug)) {
-                    return { name: "webHome" };
-                }
-
-                return true;
-            },
-
-            redirect: (to) => ({
-                name: "event-newRegister",
-                params: { slug: to.params.slug }
-            }),
-
-            children: [
-                {
-                    path: "register",
-                    name: "event-newRegister",
-                    component: () => import("@/modules/registers/registersCard.vue")
-                },
-                {
-                    path: "pay-event",
-                    name: "event-payEvent",
-                    component: () => import("@/modules/registers/payEventView.vue"),
-                    beforeEnter: async(to) => {
-                        const store = useMembersStorePage();
-
-                        if (store.membersData.length === 0) {
-                            toastEvent({
-                                severity: "warn",
-                                summary: "Error al pagar",
-                                detail: "Agregue una persona al menos"
-                            });
-
-                            return {
-                                name: "event-newRegister",
-                                params: { slug: to.params.slug }
-                            };
-                        }
-                    }
-                }
             ]
         },
 
         // =========================
-        // PUBLICO
+        // REDIRECCIONES (SIN DUPLICAR VISTAS)
         // =========================
-        {
-            path: "/",
-            name: "webHome",
-            component: () => import("@/components/app/stillWorking.vue"),
-            meta: { public: true }
-        },
+        // {
+        //     path: "/inscribirse",
+        //     redirect: () => {
+        //         const slugStore = useEventSlugStore();
+        //         return slugStore.slug
+        //                ? `/${ slugStore.slug }/inscribirse`
+        //                : "/";
+        //     }
+        // },
+        // {
+        //     path: "/pagar",
+        //     redirect: () => {
+        //         const slugStore = useEventSlugStore();
+        //         return slugStore.slug ? `/${ slugStore.slug }/pagar` : "/";
+        //     }
+        // },
 
-        {
-            path: "/:slug",
-            component: () => import("@/components/app/EventLayout.vue"),
-            meta: { public: true },
-
-            beforeEnter: (to) => {
-                const validSlugs = [ "camp2026" ];
-                const slug = String(to.params.slug);
-
-                // 🔥 si el slug no existe → corta aquí
-                if ( !validSlugs.includes(slug)) {
-                    return { name: "not-found" }; // 👈 IMPORTANTE
-                }
-
-                return true;
-            },
-
-            children: [
-                {
-                    path: "",
-                    name: "webPage",
-                    component: () => import("@/pages/public/webEvent/HomePage.vue")
-                },
-                {
-                    path: "login",
-                    name: "event-login",
-                    component: () => import("@/pages/login.vue"),
-                    meta: { public: true }
-                },
-                {
-                    path: "inscribete",
-                    name: "event-inscription",
-                    component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
-                    meta: { public: true }
-                },
-                {
-                    path: "pagar",
-                    name: "event-pay",
-                    component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
-                    meta: { public: true }
-                },
-                {
-                    path: ":pathMatch(.*)*",
-                    name: "event-not-found",
-                    component: () => import("@/components/NotFound.vue")
-                }
-            ]
-        },
-        {
-            component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
-            meta: { public: true },
-            name: "inscription-members",
-            path: "/inscribete"
-        },
-
-        {
-            beforeEnter: async() => {
-                const membersStoreOptions = useMembersStore();
-                if (membersStoreOptions.membersData.length === 0) {
-                    toastEvent({ detail: "Agregue una persona al menos", severity: "warn", summary: "Error al pagar" });
-                    return { name: "newRegister" };
-                }
-            },
-            component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
-            meta: { public: true },
-            name: "pay-inscription-members",
-            path: "/pagar"
-        },
-
-        {
-            component: () => import("@/pages/login.vue"),
-            meta: { public: true },
-            name: "viewEvent",
-            path: "/view-event"
-        },
+        // =========================
+        // 404 GLOBAL
+        // =========================
         {
             path: "/:pathMatch(.*)*",
             name: "not-found",
@@ -253,63 +220,70 @@ const router = createRouter({
 /// =========================
 router.beforeEach((to) => {
     const store = useUserDataConfigStore();
+    const slugStore = useEventSlugStore();
 
     const isAuth = !!store.userData.token;
     const isStaff = store.userData.user?.is_staff;
     const isPublic = to.meta?.public === true;
 
-    const isHomeRoute = to.matched.some(r => r.path === "/home");
-
-    const slugStore = useEventSlugStore();
-
+    // =========================
+    // SYNC SLUG
+    // =========================
     if (to.params.slug) {
         slugStore.setSlug(String(to.params.slug));
     }
 
     const slug = slugStore.slug;
 
+    // =========================
+    // INYECTAR SLUG (si falta)
+    // =========================
     if (slug) {
-        const excludedPaths = [ "/" ];
-
-        const isExcluded = excludedPaths.includes(to.path);
-
-        const alreadyHasSlug = to.path === `/${ slug }` || to.path.startsWith(`/${ slug }/`);
+        const alreadyHasSlug = to.path.startsWith(`/${ slug }`);
         const isCatchAll = to.matched.some(r => r.path.includes(":pathMatch"));
+        const isNotFound = [ "not-found", "event-not-found" ].includes(String(to.name));
+        const isRoot = to.path === "/";
 
-        const isNotFound = to.name === "not-found" || to.name === "event-not-found";
-
-        if ( !alreadyHasSlug && !isCatchAll && !isExcluded && !isNotFound) {
+        if ( !alreadyHasSlug && !isCatchAll && !isNotFound && !isRoot) {
             return {
-                hash: to.hash,
                 path: `/${ slug }${ to.path }`,
                 query: to.query,
+                hash: to.hash,
                 replace: true
             };
         }
     }
 
+    // =========================
+    // REDIRECT LOGIN SI YA ESTÁ LOGUEADO
+    // =========================
+    if (isAuth && (to.name === "login" || to.name === "event-login")) {
+        return {
+            name: "home",
+            params: { slug }
+        };
+    }
+
+    // =========================
+    // RUTAS PUBLICAS
+    // =========================
     if (isPublic) return true;
 
+    // =========================
+    // BLOQUEO SI NO AUTH EN /home
+    // =========================
+    const isHomeRoute = to.path.includes("/home");
+
     if (isHomeRoute && !isAuth) {
-        const slug = to.params.slug;
-
-        if (slug) {
-            return { name: "event-login", params: { slug } };
-        }
-
-        return { name: "login" };
+        return {
+            name: "event-login",
+            params: { slug }
+        };
     }
 
-    if (isAuth && (to.name === "login" || to.name === "event-login")) {
-        const slug = to.params.slug;
-
-        if (slug) {
-            return { name: "event-home", params: { slug } };
-        }
-
-        return { name: "home" };
-    }
-
+    // =========================
+    // PERMISOS
+    // =========================
     if (isAuth) {
         if (isStaff) return true;
 

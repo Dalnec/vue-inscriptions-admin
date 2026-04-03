@@ -76,8 +76,30 @@ const router = createRouter({
             ], component: () => import("@/layout.vue"), name: "home", path: "/home",
             redirect: { name: "newRegister" }
         },
-        { component: () => import("@/pages/public/webEvent/HomePage.vue"), meta: { public: true }, name: "webPage", path: "/" },
-        { component: () => import("@/pages/login.vue"), meta: { public: true }, name: "login", path: "/login" },
+        {
+            path: "/",
+            name: "webHome",
+            component: () => import("@/components/app/stillWorking.vue"),
+            meta: { public: true }
+        },
+        {
+            beforeEnter: (to) => {
+                const validSlugs = [ "camp2026" ];
+
+                const slug = String(to.params.slug);
+
+                if ( !validSlugs.includes(slug)) {
+                    return { name: "webHome" };
+                }
+
+                return true;
+            },
+            component: () => import("@/pages/public/webEvent/HomePage.vue"),
+            meta: { public: true },
+            name: "webPage",
+
+            path: "/:slug"
+        },
         {
             component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
             meta: { public: true },
@@ -99,9 +121,10 @@ const router = createRouter({
             path: "/pagar"
         },
         { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
-        { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
+        { path: "/:pathMatch(.*)*", name: "Page not found", redirect: "/" }
     ]
 });
+
 router.beforeEach((to) => {
     const store = useUserDataConfigStore();
 

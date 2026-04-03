@@ -103,6 +103,7 @@ declare module 'vue' {
     Select: typeof import('primevue/select')['default']
     ShowVoucherFile: typeof import('./src/components/showVoucherFile.vue')['default']
     Skeleton: typeof import('primevue/skeleton')['default']
+    StillWorking: typeof import('./src/components/app/stillWorking.vue')['default']
     Tab: typeof import('primevue/tab')['default']
     TabList: typeof import('primevue/tablist')['default']
     TabPanel: typeof import('primevue/tabpanel')['default']

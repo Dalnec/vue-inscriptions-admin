@@ -14,7 +14,62 @@ export default {
             lg: "976px",
             xl: "1440px"
         },
-        extend: {}
+        extend: {
+            colors: {
+                "on-tertiary-fixed": "#1b1c1c",
+                "on-secondary": "#ffffff",
+                "surface": "#f9f9f9",
+                "on-error-container": "#93000a",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-bright": "#f9f9f9",
+                "primary-fixed-dim": "#ffb3b1",
+                "on-surface": "#1b1b1b",
+                "tertiary": "#5c5c5c",
+                "on-tertiary-container": "#fefcfc",
+                "on-tertiary-fixed-variant": "#464747",
+                "surface-container": "#eeeeee",
+                "outline": "#946e6c",
+                "on-primary": "#ffffff",
+                "on-primary-fixed": "#410007",
+                "tertiary-fixed": "#e4e2e2",
+                "tertiary-container": "#757474",
+                "secondary": "#734f8e",
+                "tertiary-fixed-dim": "#c7c6c6",
+                "on-primary-container": "#fffbff",
+                "primary-container": "#e90034",
+                "on-secondary-fixed-variant": "#5a3875",
+                "on-error": "#ffffff",
+                "secondary-fixed-dim": "#e1b6fd",
+                "primary-fixed": "#ffdad8",
+                "surface-container-lowest": "#ffffff",
+                "inverse-surface": "#303030",
+                "inverse-primary": "#ffb3b1",
+                "surface-container-highest": "#e2e2e2",
+                "secondary-container": "#e1b6fd",
+                "background": "#f9f9f9",
+                "error": "#ba1a1a",
+                "on-background": "#1b1b1b",
+                "error-container": "#ffdad6",
+                "on-secondary-fixed": "#2c0746",
+                "outline-variant": "#e9bcba",
+                "surface-variant": "#e2e2e2",
+                "on-surface-variant": "#5f3e3e",
+                "on-secondary-container": "#674381",
+                "surface-tint": "#bf0029",
+                "surface-container-high": "#e8e8e8",
+                "secondary-fixed": "#f2daff",
+                "primary": "#bb0028",
+                "on-tertiary": "#ffffff",
+                "surface-container-low": "#f3f3f3",
+                "on-primary-fixed-variant": "#92001d",
+                "surface-dim": "#dadada"
+            },
+            fontFamily: {
+                "headline": ["Be Vietnam Pro"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+        }
     },
     corePlugins: {
         preflight: true, // change this to false if you don't want TailwindCSS to reset your CSS

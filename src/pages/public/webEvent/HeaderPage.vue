@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import router from "@/router";
+import { useRoute } from "vue-router";
 
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
 const w = globalThis as unknown as Window;
+const route = useRoute();
 
 const handleScroll = () => isScrolled.value = w.scrollY > 50;
 const toggleMobileMenu = () => isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -20,7 +22,7 @@ const specialItem = { label: "Inscríbete" };
 
 const onInscriptions = () => {
     // useGlobalToast({ life: 10000, severity: "warn", summary: "Las Inscripciones por este medio están inactivas" });
-    router.push({ name: "inscription-members" });
+    router.push({ name: "event-inscription", params: { slug: route.params.slug } });
 };
 
 watch(isMobileMenuOpen, (val) => {
@@ -44,7 +46,7 @@ onUnmounted(() => {
         <nav class="container mx-auto flex items-center justify-between py-3 px-4">
 
             <!-- Logo -->
-            <router-link to="/" class="flex items-center gap-3">
+            <router-link to="/camp2026" class="flex items-center gap-3">
                 <img src="../../../assets/images/kadosh.png" class="h-12" alt=""/>
                 <div class="hidden sm:flex flex-col">
                     <span class="text-white font-semibold text-lg">Kadosh</span>
@@ -63,7 +65,7 @@ onUnmounted(() => {
             <!-- Desktop -->
             <ul class="hidden md:flex items-center gap-6">
                 <li v-for="(item, index) in menuItems" :key="index">
-                    <router-link :to="{ path:'/', hash: item.currentPage }" class="menu-items-effect">
+                    <router-link :to="{ path:'/camp2026', hash: item.currentPage }" class="menu-items-effect">
                         {{ item.label }}
                     </router-link>
                 </li>
@@ -80,7 +82,7 @@ onUnmounted(() => {
 
                         <ul class="flex flex-col gap-4 text-center">
                             <li v-for="(item, index) in menuItems" :key="index">
-                                <router-link :to="{ path:'/', hash: item.currentPage }"
+                                <router-link :to="{ path:'/camp2026', hash: item.currentPage }"
                                              class="block text-slate-300 hover:text-white transition text-lg"
                                              @click="isMobileMenuOpen = false"> {{ item.label }}
                                 </router-link>

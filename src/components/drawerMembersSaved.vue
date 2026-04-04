@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useMembersStore } from "@/stores/storeMembers";
 import Drawer from "primevue/drawer";
 import CardsInfoMember from "@/components/cardsInfoMember.vue";
@@ -14,7 +14,7 @@ const membersStoreOptions = useMembersStore();
 const membersStorePage = useMembersStorePage();
 const route = useRoute();
 
-const optionsToRender = props.isPage ? membersStorePage.membersData : membersStoreOptions.membersData;
+const optionsToRender = computed(() => props.isPage ? membersStorePage.membersData : membersStoreOptions.membersData);
 
 const addMoreMembers = async() => {
     visibleDrawer.value = false;
@@ -39,15 +39,16 @@ defineExpose({ visibleDrawer });
             </div>
         </template>
         <div class="grid space-y-2">
-            <cards-info-member v-for="data in optionsToRender" :key="data.id" :data="data" @click="$emit('onClickCard', (data))"/>
+            <cards-info-member v-for="data in optionsToRender" :key="data.id" :data="data" @click="$emit('onClickCard', (data))"
+                               :isPage="props.isPage"/>
         </div>
         <template #footer>
             <div class="align-buttons-card-footer">
                 <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid #icon>
                     <i-material-symbols-list-alt-add/>
                 </Button>
-                <Button label="Pagar" @click="routes.push({name: props.redirectUrl })" fluid
-                        v-if="route.name !== 'pay-inscription-members'" #icon>
+                <Button label="Pagar" @click="routes.push({name: props.redirectUrl, force: true })" fluid
+                        v-if="route.name !== props.redirectUrl" #icon>
                     <i-ic-baseline-payments/>
                 </Button>
             </div>

@@ -1,15 +1,17 @@
 import type { InterfaceAxiosApi, InterfaceAxiosApiPaginate, InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApi.ts";
 
 export interface InterfaceUsers {
-    names: string;
+    activity: number | null;
     email: string;
+    id?: number;
+    is_active: boolean;
     lastname: string;
-    username: string;
+    names: string;
+    readonly login_name: string;
     password?: string;
     passwordConfirm?: string;
-    is_active: boolean;
     profile: number | null;
-    id?: number;
+    username: string;
 }
 
 export interface InterfaceProfile {

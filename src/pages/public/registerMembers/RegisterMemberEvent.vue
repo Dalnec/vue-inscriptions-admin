@@ -200,7 +200,7 @@ watch(doc_num, () => {
                 <h3 class="form-section-title">Contacto</h3>
                 <div class="form-grid">
                     <ValidateFormItem label="Celular">
-                        <InputText v-model="phone" size="large" fluid/>
+                        <InputText v-model="phone" size="large" maxlength="9" fluid/>
                     </ValidateFormItem>
                     <ValidateFormItem label="Correo">
                         <InputText v-model="email" size="large" fluid/>
@@ -238,8 +238,8 @@ watch(doc_num, () => {
                 <Button label="Guardar inscripción" @click="saveNewMember" fluid/>
             </div>
         </div>
-        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="pay-inscription-members"
-                            :isPage="false" urlToAdd="inscription-members"/>
+        <DrawerMembersSaved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="event-pay"
+                            :isPage="false" urlToAdd="event-inscription"/>
     </main>
 </template>
 

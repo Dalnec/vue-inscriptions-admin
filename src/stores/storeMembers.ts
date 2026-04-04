@@ -37,7 +37,7 @@ export const useMembersStore = defineStore("membersStore", () => {
         useGlobalToast({ severity: "success", summary: "!Eliminado¡", detail: `${ fullName } se eliminó de la lista` });
         if (membersData.value.length === 0) {
             useGlobalToast({ severity: "warn", summary: "!Error¡", detail: `La lista esta vacía, agregue nuevos datos` });
-            await routes.push({ name: "suscribe" });
+            await routes.push({ name: "inscription-members" });
         }
     };
 

@@ -4,6 +4,7 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import type { InterfaceActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
 import type { InterfaceRates } from "@/types/InterfaceRates.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
 
 export const storeChurches = defineStore("storeChurches", {
     state: () => ({
@@ -38,8 +39,13 @@ export const storePaymentMethod = defineStore("storePaymentMethod", {
         paymentMethod: [] as PaymentMethod[]
     }),
     actions: {
-        async getPaymentMethod() {
-            const { response } = await Api.Get({ route: "paymentMethod", params: { page_size: 666 } });
+        async getPaymentMethod(shortname?: string) {
+            const { response } = await Api.Get({
+                route: "paymentMethod", params: {
+                    page_size: 666,
+                    activity_shortname: shortname
+                }
+            });
             if (response && response.status === 200) {
                 this.paymentMethod = response.data.results;
             }
@@ -52,8 +58,13 @@ export const storeActivities = defineStore("storeActivities", {
         activities: [] as InterfaceActivities[]
     }),
     actions: {
-        async getActivities() {
-            const { response } = await Api.Get({ route: "activity" });
+        async getActivities(shortname?: string) {
+            const { response } = await Api.Get({
+                params: {
+                    shortname: shortname ?? undefined
+                },
+                route: "activity"
+            });
             if (response && response.status === 200) {
                 this.activities = response.data;
             }
@@ -66,8 +77,13 @@ export const storeRate = defineStore("storeRate", {
         rate: [] as InterfaceRates[]
     }),
     actions: {
-        async getRates() {
-            const { response } = await Api.Get({ route: "tarifa", params: { page_size: 666 } });
+        async getRates(shortname?: string) {
+            const { response } = await Api.Get({
+                route: "tarifa", params: {
+                    page_size: 666,
+                    activity_shortname: shortname
+                }
+            });
             if (response && response.status === 200) {
                 this.rate = response.data.results;
             }
@@ -137,7 +153,7 @@ export const storeUsers = defineStore("storeUsers", {
 
 export const storeConcepts = defineStore("storeConcepts", {
     state: () => ({
-        concepts: [] as { id: number, description: string, concept_type: string, is_active: boolean, is_internal: boolean }[]
+        concepts: [] as ConceptsInterface[]
     }),
     actions: {
         async getConcepts() {

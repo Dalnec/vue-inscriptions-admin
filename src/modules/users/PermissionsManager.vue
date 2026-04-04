@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import router from "@/router";
 import { computed, inject, type Ref, ref } from "vue";
 import { type RouteRecordRaw } from "vue-router";
-import router from "@/router";
 import { type TreeSelectionKeys } from "primevue";
 
 // Interfaces for injected permissions and tree option
 type DataInjectPermissions = {
-    permission: Ref<any[]>,
+    permissions: Ref<any[]>,
     handleBlurPermissions: Function,
     checkAll: Ref<boolean>,
     keyValues: Ref<any[]>,
@@ -21,7 +21,7 @@ const injectedPermissions = inject<DataInjectPermissions>("permissions", {} as D
 if ( !injectedPermissions) {
     throw new Error("dataPermissionsProvide is not available via provide");
 }
-const { checkAll, handleBlurPermissions, permission } = injectedPermissions;
+const { checkAll, handleBlurPermissions, permissions } = injectedPermissions;
 
 /**
  * createOptionsTreeRoute
@@ -34,17 +34,24 @@ const { checkAll, handleBlurPermissions, permission } = injectedPermissions;
  * - class: taken from meta.icon.
  */
 const createOptionsTreeRoute = computed(() => {
-    const routesSystem = [
-        ...useRoute.resolve({ name: "home" }).matched[0].children.filter((route: RouteRecordRaw) => route.meta)
-    ];
+    const home = useRoute.options.routes.find(r => r.name === "home");
+
+    const homeModules = (home?.children || []).filter((route: RouteRecordRaw) => route.meta?.label);
+
+    const rootModules = useRoute.options.routes.filter((route: RouteRecordRaw) => (route.meta?.isLayout || route.meta?.isMenu) && route.name !== "home");
+
+    const routesSystem = [ ...homeModules, ...rootModules ];
 
     function createOptionsTree({ correctData, fatherNamePer, isChildren }: {
         correctData: any[];
         fatherNamePer?: string;
-        isChildren?: boolean
+        isChildren?: boolean;
     }) {
         return correctData.map(optionInfo => {
-            const newOption: { key: string, label: string, children?: any[], class?: string } = { key: "", label: "" };
+            const newOption: { key: string; label: string; children?: any[]; class?: string } = {
+                key: "",
+                label: ""
+            };
 
             // Process children recursively, if any
             if (optionInfo.children) {
@@ -205,10 +212,10 @@ const CheckAllPermissions = () => {
     if (checkAll.value) {
         keysSelected.value = {};
         markAll(createOptionsTreeRoute.value);
-        permission.value = NewUserPermissions();
+        permissions.value = NewUserPermissions();
     } else {
         keysSelected.value = {};
-        permission.value = [];
+        permissions.value = [];
     }
 };
 
@@ -216,7 +223,7 @@ const CheckAllPermissions = () => {
 // NewUserPermissions
 // Reconstructs the user permissions data to be sent. It traverses the option tree and
 // filters only those nodes (or permissions) that are selected, regardless of the parent's state.
-// For permission nodes, it extracts only the permission string (after the '%').
+// For permissions nodes, it extracts only the permissions string (after the '%').
 function NewUserPermissions(): any[] {
     function createNewOptionPermission(actualData: any[]): any[] {
         const newData: any[] = [];
@@ -231,16 +238,16 @@ function NewUserPermissions(): any[] {
 
             let childrenSelected: any[] = [];
             if (dataInfo.children) {
-                // Filter children into nodes and permission nodes
+                // Filter children into nodes and permissions nodes
                 const childNodes = dataInfo.children.filter((childInfo: { key: string }) =>
                     childInfo.key.includes("isChildren:")
                 );
-                const permissionNodes = dataInfo.children.filter((childInfo: { key: string }) =>
+                const permissionsNodes = dataInfo.children.filter((childInfo: { key: string }) =>
                     childInfo.key.includes("isPermission:")
                 );
 
                 const newChildNodes = createNewOptionPermission(childNodes);
-                const newPermissionNodes = createNewOptionPermission(permissionNodes);
+                const newPermissionNodes = createNewOptionPermission(permissionsNodes);
 
                 if (newChildNodes.length) newObjInfo.children = newChildNodes;
                 if (newPermissionNodes.length) newObjInfo.permissions = newPermissionNodes;
@@ -274,8 +281,8 @@ defineExpose({ CheckAllPermissions, flattenPermissionsTree, keysSelected, keyVal
 
 <template>
     <Tree v-model:value="createOptionsTreeRoute" selection-mode="checkbox" filter-mode="strict" filter ref="refPermissions"
-          v-model="permission" v-bind="handleBlurPermissions" @node-select="() => { permission = NewUserPermissions() }"
-          v-model:selection-keys="keysSelected" @node-unselect="() => { permission = NewUserPermissions() }">
+          v-model="permissions" v-bind="handleBlurPermissions" @node-select="() => { permissions = NewUserPermissions() }"
+          v-model:selection-keys="keysSelected" @node-unselect="() => { permissions = NewUserPermissions() }">
         <template #nodeicon="{ node }">
             <component :is="node.class"/>
         </template>

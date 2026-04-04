@@ -6,21 +6,31 @@ export interface InterfaceLogin {
 }
 
 export interface User {
-    id: number
-    password: string
-    last_login: string
-    is_superuser: boolean
-    username: string
-    names: any
-    email: string
-    lastname: any
-    gender: string
-    is_staff: boolean
-    is_active: boolean
-    profile: number
-    profile_description: string
-    groups: any[]
-    user_permissions: any[]
+    activity: number;
+    activity_shortname: string;
+    email: string;
+    gender: string;
+    groups: any[];
+    id: number;
+    is_active: boolean;
+    is_staff: boolean;
+    is_superuser: boolean;
+    last_login: string;
+    lastname: string;
+    login_name: string;
+    names: string;
+    password: string;
+    permissions: PermissionsInfo[];
+    profile: number;
+    profile_description: string;
+    username: string;
+}
+
+export interface PermissionsInfo {
+    children?: PermissionsInfo[];
+    meta?: { permissions?: string[] };
+    name: string;
+    permissions?: string[];
 }
 
 export type InterfaceUserLoginActions = InterfaceAxiosApiResponse<InterfaceLogin> 

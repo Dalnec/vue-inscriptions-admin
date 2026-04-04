@@ -1,0 +1,67 @@
+{
+  "page_config": {
+    "title": "RENOVACIÓN 2026 | Campamento Juvenil",
+    "theme_color": "#f97316",
+    "language": "es-PE",
+    "eventID": "camp2025"
+  },
+  "hero": {
+    "motto": "RENOVACIÓN",
+    "verse": "No os conforméis a este siglo",
+    "citation": "Romanos 12:2",
+    "date_label": "JULIO 15-18, 2026",
+    "background_image": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=1600"
+  },
+  "vision_section": {
+    "title": "¿Preparado para el cambio?",
+    "description": "Desconecta del ruido digital y reconecta con tu propósito. En Renovación 2026, vivirás un encuentro real con Dios a través de la naturaleza, la amistad y la Palabra.",
+    "features": [
+      {
+        "icon": "🔥",
+        "label": "Adoración"
+      },
+      {
+        "icon": "🏔️",
+        "label": "Aventura"
+      }
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1526481280693-3bfa7563ee0e?auto=format&fit=crop&q=80&w=400",
+      "https://images.unsplash.com/photo-1475483768296-6163e08872a1?auto=format&fit=crop&q=80&w=400"
+    ]
+  },
+  "pricing_plans": {
+    "section_title": "Invierte en tu Eternidad",
+    "currency": "S/",
+    "plans": [
+      {
+        "id": "early_bird",
+        "name": "PREVENTA (EARLY BIRD)",
+        "price": 180,
+        "original_price": 250,
+        "subtitle": "Inscribiéndote hasta el 15 de Mayo",
+        "is_recommended": true,
+        "cta_text": "ASEGURAR MI LUGAR",
+        "benefits": []
+      }
+    ]
+  },
+  "location": {
+    "place_name": "CAMPAMENTO KADOSH",
+    "address": "I.E Martin de la Riva y Herrera”.\nJirón San Martín 2193 - Barrio Ancoallo, Lamas 220501, Perú",
+    "city": "Lamas",
+    "description": "Estaremos viviendo toda esta experiencia de Kadosh en la “I.E Martin de la Riva y Herrera”.\nJirón San Martín 2193 - Barrio Ancoallo, Lamas 220501, Perú.",
+    "map_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.8136049920654!2d-76.5280698!3d-6.417991000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91b0a6151a39a883%3A0x7f4a0d609a4bf325!2sIE%20Mart%C3%ADn%20de%20la%20Riva%20y%20Herrera!5e0!3m2!1ses-419!2spe!4v1775104905683!5m2!1ses-419!2spe",
+    "amenities": [
+      "Espacio de confort",
+      "Zonas de esparcimiento",
+      "Seguridad 24/7"
+    ]
+  },
+  "footer": {
+    "cta_title": "¿ESTÁS LISTO PARA TU RENOVACIÓN?",
+    "organization": "Kadosh — Lamas, San Martín",
+    "year": 2026
+  }
+}
+

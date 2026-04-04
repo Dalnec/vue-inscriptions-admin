@@ -10,6 +10,7 @@ import type { DataTablePageEvent } from "primevue";
 import { storeActivities, storePaymentMethod, storeUsers } from "@/stores/generalInfoStore.ts";
 import { useModal } from "@/composables/useModal";
 import MovementForm from "@/components/MovementForm.vue";
+import { page_config } from "@/assets/page_config.json";
 
 interface Movement {
     activity: number;
@@ -40,6 +41,7 @@ const currentPage = ref(1);
 const totalRecords = ref(0);
 const search = ref("");
 
+const { openModal, closeModal } = useModal();
 const meta = ref<MovementsMeta>({
     cash_total: "0",
     movement_count: 0,
@@ -71,7 +73,6 @@ const conceptTypeOptions = [
     { label: "Egreso", value: "expense" }
 ];
 
-const activitiesOptions = computed(() => storeActivities().activities.map(a => ({ label: a.description, value: a.id })));
 const paymentMethodsOptions = computed(() => storePaymentMethod().paymentMethod.map(p => ({ label: p.description, value: p.id })));
 
 const usersOptions = computed(() => {
@@ -89,6 +90,7 @@ const loadMovements = useDebounceFn(async(): Promise<void> => {
     const params = {
         page: currentPage.value,
         page_size: rows.value,
+        activity_shortname: page_config.eventID,
         search: search.value,
         ...Object.fromEntries(Object.entries(filters.value).filter(([ _, v ]) => v !== null && v !== ""))
     };
@@ -105,14 +107,6 @@ const loadMovements = useDebounceFn(async(): Promise<void> => {
     }
 }, 250);
 
-onMounted(async() => {
-    await storeUsers().getUsers();
-    await storeActivities().getActivities();
-    await storePaymentMethod().getPaymentMethod();
-    await loadMovements();
-});
-
-const { openModal, closeModal } = useModal();
 
 const openDialog = (income: boolean) => {
     openModal({
@@ -125,6 +119,28 @@ const openDialog = (income: boolean) => {
         width: "50vw"
     });
 };
+
+const onClearFilters = async() => {
+    filters.value = {
+        activity: null,
+        concept: null,
+        concept_type: null,
+        inscription: null,
+        movement_at_from: null,
+        movement_at_to: null,
+        payment_method: null,
+        status: null,
+        user: null
+    };
+    await loadMovements();
+};
+
+onMounted(async() => {
+    await storeUsers().getUsers();
+    await storeActivities().getActivities(page_config.eventID);
+    await storePaymentMethod().getPaymentMethod(page_config.eventID);
+    await loadMovements();
+});
 
 </script>
 
@@ -142,24 +158,9 @@ const openDialog = (income: boolean) => {
         <div class="filters-header">
             <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 <div>
-                    <label for="activity">Actividad</label>
-                    <Select v-model="filters.activity" inputId="activity" :options="activitiesOptions" optionLabel="label"
-                            optionValue="value" placeholder="Seleccionar" fluid @change="loadMovements"/>
-                </div>
-                <div>
-                    <label for="concept">Concepto</label>
-                    <InputNumber v-model="filters.concept" inputId="concept" placeholder="ID Concepto" fluid
-                                 @input="loadMovements"/>
-                </div>
-                <div>
                     <label for="concept_type">Tipo de Concepto</label>
                     <Select v-model="filters.concept_type" inputId="concept_type" :options="conceptTypeOptions" optionLabel="label"
                             optionValue="value" placeholder="Seleccionar" fluid @change="loadMovements"/>
-                </div>
-                <div>
-                    <label for="inscription">Inscripción</label>
-                    <InputNumber v-model="filters.inscription" inputId="inscription" placeholder="ID Inscripción" fluid
-                                 @input="loadMovements"/>
                 </div>
                 <div>
                     <label for="movement_at_from">Fecha Desde</label>
@@ -189,6 +190,12 @@ const openDialog = (income: boolean) => {
                 <div>
                     <label for="search">Buscar</label>
                     <InputText v-model="search" inputId="search" placeholder="Buscar movimientos..." fluid @input="loadMovements"/>
+                </div>
+                <div>
+                    <label for="search">Limpiar</label>
+                    <Button label="Limpiar filtros" @click="onClearFilters" #icon>
+                        <i-material-symbols-cancel-rounded/>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -242,7 +249,7 @@ const openDialog = (income: boolean) => {
             <Column style="width: 12rem" field="concept_description" header="Concepto"/>
             <Column style="width: 12rem" field="payment_method_label" header="Método de Pago"/>
             <!-- <Column style="width: 10rem" field="inscription" header="Inscripción"/>-->
-            <Column style="width: 10rem" field="username" header="Usuario"/>
+            <Column style="width: 10rem" field="login_name" header="Usuario"/>
             <Column style="width: 10rem" field="activity_label" header="Actividad"/>
             <!-- <Column style="width: 10rem" field="reversal_of" header="Reversión de"/>-->
         </DataTable>

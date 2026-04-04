@@ -1,142 +1,298 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useMembersStore } from "@/stores/storeMembers.ts";
+import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import toastEvent from "@/composables/toastEvent.ts";
+import { useMembersStore } from "@/stores/storeMembers.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import { useEventSlugStore } from "@/stores/eventSlug.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
+        // =========================
+        // LANDING GLOBAL (SIN SLUG)
+        // =========================
         {
-            path: "/home", name: "home", redirect: { name: "newRegister" }, component: () => import("@/layout.vue"),
+            path: "/",
+            name: "webHome",
+            component: () => import("@/components/app/stillWorking.vue"),
+            meta: { public: true }
+        },
+
+        // =========================
+        // EVENTO (PÚBLICO)
+        // =========================
+        {
+            path: "/:slug",
+            component: () => import("@/components/app/EventLayout.vue"),
+            meta: { public: true },
+
+            beforeEnter: (to) => {
+                const validSlugs = [ "camp2026" ];
+                const slug = String(to.params.slug);
+
+                if ( !validSlugs.includes(slug)) {
+                    return { name: "not-found" };
+                }
+
+                return true;
+            },
+
             children: [
                 {
-                    path: "/register", name: "newRegister", component: () => import("@/modules/registers/registersCard.vue"),
-                    meta: { label: "Nueva Inscripción", icon: IconMaterialSymbolsAddNotesOutline }
+                    path: "",
+                    name: "webPage",
+                    component: () => import("@/pages/public/webEvent/HomePage.vue")
                 },
-                { path: "/settings", name: "settings", component: () => import("@/modules/settings/concepts.vue") },
                 {
-                    path: "/pay-event", name: "payEvent", component: () => import("@/modules/registers/payEventView.vue"),
-                    beforeEnter: async() => {
-                        const membersStoreOptions = useMembersStorePage();
-                        if (membersStoreOptions.membersData.length === 0) {
-                            toastEvent({ severity: "warn", summary: "Error al pagar", detail: "Agregue una persona al menos" });
-                            await router.push({ name: "newRegister" });
-                            return;
+                    path: "login",
+                    name: "event-login",
+                    component: () => import("@/pages/login.vue"),
+                    meta: { public: true }
+                },
+                {
+                    path: "inscribirse",
+                    name: "event-inscription",
+                    component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
+                    meta: { public: true }
+                },
+                {
+                    path: "pagar",
+                    name: "event-pay",
+                    component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
+                    meta: { public: true },
+                    beforeEnter: async(to) => {
+                        const store = useMembersStore();
+
+                        if (store.membersData.length === 0) {
+                            toastEvent({
+                                severity: "warn",
+                                summary: "Error al pagar",
+                                detail: "Agregue una persona al menos"
+                            });
+
+                            return {
+                                name: "event-inscription",
+                                params: { slug: to.params.slug }
+                            };
                         }
                     }
                 },
+
+                // 404 EVENTO
                 {
-                    path: "/inscriptions", name: "inscriptions", component: () => import("@/modules/inscriptions/inscriptions.vue"),
-                    meta: {
-                        label: "Inscripciones", icon: IconMaterialSymbolsFrameInspectRounded,
-                        permissions: [
-                            { name: "XD" }
-                        ]
-                    }
-                },
-                {
-                    path: "/users", name: "users", component: () => import("@/modules/users/users.vue"),
-                    meta: {
-                        label: "Usuarios", icon: IconMaterialSymbolsGroupOutlineRounded, superOnly: true
-                    }
-                },
-                {
-                    path: "/caja", name: "caja", component: () => import("@/modules/caja/caja.vue"),
-                    meta: {
-                        label: "Caja", icon: IconMaterialSymbolsAccountBalanceWalletOutline, superOnly: true
-                    }
-                },
-                // {
-                //     path: "/assistance", name: "assistance", component: () => import("@/modules/ /AboutView.vue"),
-                //     meta: {
-                //         label: "Asistencia", icon: IconMaterialSymbolsCalendarAppsScript
-                //     }
-                // },
-                {
-                    path: "/settings", name: "settings", component: () => import("@/modules/settings/index.vue"),
-                    meta: {
-                        label: "Configuraciones", icon: IconMaterialSymbolsCalendarAppsScript, superOnly: true
-                    }
-                },
-                {
-                    path: "/concepts-caja", name: "conceptsCaja", component: () => import("@/modules/tillConcept/TillConcepts.vue"),
-                    meta: { superOnly: true }
-                },
-                {
-                    path: "/event", name: "event", component: () => import("@/modules/settings/eventManage.vue"),
-                    meta: { superOnly: true }
-                },
-                {
-                    path: "/concepts", name: "concepts", component: () => import("@/modules/settings/concepts.vue"),
-                    meta: { superOnly: true }
-                },
-                {
-                    path: "/activities", name: "activities", component: () => import("@/modules/activities/activities.vue"),
-                    meta: {
-                        label: "Actividades", icon: IconMaterialSymbolsEventNoteOutline, superOnly: true
-                    }
+                    path: ":pathMatch(.*)*",
+                    name: "event-not-found",
+                    component: () => import("@/components/NotFound.vue")
                 }
             ]
         },
-        { path: "/", name: "webPage", component: () => import("@/pages/public/webEvent/HomePage.vue"), meta: { public: true } },
-        { path: "/login", name: "login", component: () => import("@/pages/login.vue"), meta: { public: true } },
+
+        // =========================
+        // PANEL PRIVADO
+        // =========================
         {
-            component: () => import("@/pages/public/registerMembers/RegisterMemberEvent.vue"),
-            meta: { public: true },
-            name: "inscription-members",
-            path: "/inscribete"
-        },
-        {
-            component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
-            meta: { public: true },
-            name: "pay-inscription-members",
-            path: "/pagar",
-            beforeEnter: async() => {
-                const membersStoreOptions = useMembersStore();
-                if (membersStoreOptions.membersData.length === 0) {
-                    toastEvent({ severity: "warn", summary: "Error al pagar", detail: "Agregue una persona al menos" });
-                    await router.push({ name: "newRegister" });
-                    return;
+            path: "/:slug/home",
+            component: () => import("@/layout.vue"),
+            name: "home",
+
+            beforeEnter: (to) => {
+                const validSlugs = [ "camp2026" ];
+                const slug = String(to.params.slug);
+
+                if ( !validSlugs.includes(slug)) {
+                    return { name: "not-found" };
                 }
-            }
+
+                return true;
+            },
+
+            redirect: { name: "newRegister" },
+
+            children: [
+                {
+                    path: "register",
+                    name: "newRegister",
+                    component: () => import("@/modules/registers/registersCard.vue"),
+                    meta: {
+                        icon: IconMaterialSymbolsAddNotesOutline,
+                        label: "Nueva Inscripción"
+                    }
+                },
+                {
+                    path: "pay-event",
+                    name: "payEvent",
+                    component: () => import("@/modules/registers/payEventView.vue"),
+                    beforeEnter: async(to) => {
+                        const store = useMembersStorePage();
+                        console.log(store.membersData);
+                        if (store.membersData.length === 0) {
+                            return {
+                                name: "newRegister",
+                                params: { slug: to.params.slug }
+                            };
+                        }
+                        return true;
+                    }
+                },
+                {
+                    path: "inscriptions",
+                    name: "inscriptions",
+                    component: () => import("@/modules/inscriptions/inscriptions.vue"),
+                    meta: {
+                        icon: IconMaterialSymbolsFrameInspectRounded,
+                        label: "Inscripciones"
+                    }
+                },
+                {
+                    meta: { icon: IconMaterialSymbolsGroupOutlineRounded, label: "Usuarios" },
+                    path: "users",
+                    name: "users",
+                    component: () => import("@/modules/users/users.vue")
+                },
+                {
+                    component: () => import("@/modules/caja/caja.vue"),
+                    meta: { icon: IconMaterialSymbolsAccountBalanceWalletOutline, label: "Caja" },
+                    name: "caja",
+                    path: "caja"
+                },
+                {
+                    component: () => import("@/modules/settings/index.vue"),
+                    meta: { icon: IconMaterialSymbolsCalendarAppsScript, label: "Configuraciones" },
+                    name: "settings",
+                    path: "settings"
+                },
+                {
+                    component: () => import("@/modules/tillConcept/TillConcepts.vue"),
+                    name: "conceptsCaja",
+                    path: "concepts-caja"
+                },
+                {
+                    component: () => import("@/modules/settings/concepts.vue"),
+                    name: "concepts",
+                    path: "concepts"
+                },
+                {
+                    component: () => import("@/modules/activities/activities.vue"),
+                    meta: {
+                        icon: IconMaterialSymbolsEventNoteOutline,
+                        label: "Actividades"
+                    },
+                    name: "activities",
+                    path: "activities"
+                }
+            ]
         },
-        { path: "/view-event", name: "viewEvent", component: () => import("@/pages/login.vue"), meta: { public: true } },
-        { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
+
+        // =========================
+        // REDIRECCIONES (SIN DUPLICAR VISTAS)
+        // =========================
+        // {
+        //     path: "/inscribirse",
+        //     redirect: () => {
+        //         const slugStore = useEventSlugStore();
+        //         return slugStore.slug
+        //                ? `/${ slugStore.slug }/inscribirse`
+        //                : "/";
+        //     }
+        // },
+        // {
+        //     path: "/pagar",
+        //     redirect: () => {
+        //         const slugStore = useEventSlugStore();
+        //         return slugStore.slug ? `/${ slugStore.slug }/pagar` : "/";
+        //     }
+        // },
+
+        // =========================
+        // 404 GLOBAL
+        // =========================
+        {
+            path: "/:pathMatch(.*)*",
+            name: "not-found",
+            component: () => import("@/components/NotFound.vue")
+        }
     ]
 });
 
+// =========================
+// GLOBAL GUARD (SIN CAMBIOS)
+/// =========================
 router.beforeEach((to) => {
-    const authStore = useUserDataConfigStore();
-    const isAuth = Boolean(authStore.userData?.token);
+    const store = useUserDataConfigStore();
+    const slugStore = useEventSlugStore();
 
-    const isHomeRoute = to.path.startsWith("/home");
+    const isAuth = !!store.userData.token;
+    const isStaff = store.userData.user?.is_staff;
+    const isPublic = to.meta?.public === true;
 
-    if ( !isHomeRoute) {
-        // Si está logueado y va a login → redirigir
-        if (isAuth && to.name === "login") {
-            return { name: "home" };
+    // =========================
+    // SYNC SLUG
+    // =========================
+    if (to.params.slug) {
+        slugStore.setSlug(String(to.params.slug));
+    }
+
+    const slug = slugStore.slug;
+
+    // =========================
+    // INYECTAR SLUG (si falta)
+    // =========================
+    if (slug) {
+        const alreadyHasSlug = to.path.startsWith(`/${ slug }`);
+        const isCatchAll = to.matched.some(r => r.path.includes(":pathMatch"));
+        const isNotFound = [ "not-found", "event-not-found" ].includes(String(to.name));
+        const isRoot = to.path === "/";
+
+        if ( !alreadyHasSlug && !isCatchAll && !isNotFound && !isRoot) {
+            return {
+                path: `/${ slug }${ to.path }`,
+                query: to.query,
+                hash: to.hash,
+                replace: true
+            };
         }
-        return true;
     }
 
-    if ( !isAuth) {
-        return { name: "login" };
+    // =========================
+    // REDIRECT LOGIN SI YA ESTÁ LOGUEADO
+    // =========================
+    if (isAuth && (to.name === "login" || to.name === "event-login")) {
+        return {
+            name: "home",
+            params: { slug }
+        };
     }
 
-    const user = authStore.userData?.user;
+    // =========================
+    // RUTAS PUBLICAS
+    // =========================
+    if (isPublic) return true;
 
-    if (user?.is_superuser || user?.profile_description === "ADMINISTRADOR") {
-        return true;
+    // =========================
+    // BLOQUEO SI NO AUTH EN /home
+    // =========================
+    const isHomeRoute = to.path.includes("/home");
+
+    if (isHomeRoute && !isAuth) {
+        return {
+            name: "event-login",
+            params: { slug }
+        };
     }
 
-    const allowedRoutes = [ "newRegister", "payEvent" ];
+    // =========================
+    // PERMISOS
+    // =========================
+    if (isAuth) {
+        if (isStaff) return true;
 
-    if (allowedRoutes.includes(to.name as string)) {
-        return true;
+        if ( !SearchValidRoute(String(to.name), store.userData.user?.permissions)) {
+            return { name: "not-authorized" };
+        }
     }
 
-    return { name: "home" };
+    return true;
 });
 
 export default router;

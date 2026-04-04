@@ -10,6 +10,7 @@ import router from "@/router";
 
 const dataConcepts = ref<ConceptsInterface[]>([]);
 const loading = ref<boolean>(false);
+const { openModal, closeModal } = useModal();
 
 const loadConcepts = async(): Promise<void> => {
     loading.value = true;
@@ -20,12 +21,6 @@ const loadConcepts = async(): Promise<void> => {
     }
 };
 
-onMounted(async() => {
-    await loadConcepts();
-});
-
-const { openModal, closeModal } = useModal();
-
 const onManageConcept = (concept?: ConceptsInterface) => {
     openModal({
         component: h(ConceptsForm, {
@@ -33,10 +28,15 @@ const onManageConcept = (concept?: ConceptsInterface) => {
             formData: concept?.id ? { ...concept } : undefined,
             refreshData: loadConcepts
         }),
-        header: "Editar Concepto",
+        header: concept?.id ? "Editar Concepto" : "Agregar Concepto",
         width: "50vw"
     });
 };
+
+onMounted(async() => {
+    await loadConcepts();
+});
+
 
 </script>
 

@@ -11,6 +11,8 @@ import * as yup from "yup";
 const props = defineProps<{
     closeModal: () => void;
     formData?: ConceptsInterface;
+    disableInternal?: boolean;
+    defaultType?: "I" | "E"
     refreshData: () => Promise<void>;
 }>();
 
@@ -21,7 +23,7 @@ const schemaValidate = yup.object().shape({
 });
 
 const { handleSubmit, setValues } = useForm<ConceptsInterface>({
-    initialValues: { is_active: true, is_internal: true }, validationSchema: schemaValidate
+    initialValues: { is_active: true, is_internal: false }, validationSchema: schemaValidate
 });
 
 const { value: description } = useField<string>("description");
@@ -32,8 +34,6 @@ const conceptTypeOptions = ref([
     { label: "Ingreso", value: "I" },
     { label: "Egreso", value: "E" }
 ]);
-
-// Load data if editing
 
 const saveConcept = handleSubmit(async(values) => {
     loading.value = true;
@@ -52,6 +52,7 @@ const saveConcept = handleSubmit(async(values) => {
 }, ({ errors }) => castFormErrors(errors));
 
 onMounted(() => {
+    if (props?.defaultType) concept_type.value = props.defaultType;
     if (props.formData?.id) {
         setValues({ ...props.formData });
     }
@@ -62,14 +63,14 @@ onMounted(() => {
 <template>
     <div class="align-items-form">
         <ValidateFormItem mark span="12" label="Descripción" name="description" v-slot="{ error }">
-            <InputText v-model="description" fluid input-id="description" :invalid="!!error"/>
+            <InputText v-model="description" fluid id="description" :invalid="!!error"/>
         </ValidateFormItem>
         <ValidateFormItem mark span="6" label="Tipo de Concepto" name="concept_type" v-slot="{ error }">
             <Select v-model="concept_type" :options="conceptTypeOptions" optionLabel="label" optionValue="value" placeholder="Seleccionar"
-                    fluid :invalid="!!error" :disabled="!!props.formData"/>
+                    labelId="concept_type" fluid :invalid="!!error" :disabled="!!props.formData || !!props.defaultType"/>
         </ValidateFormItem>
         <ValidateFormItem mark span="6" label="Es Interno" name="is_internal" v-slot="{ error }">
-            <ToggleSwitch v-model="is_internal" input-id="is_internal" :invalid="!!error" :disabled="!!props.formData"/>
+            <ToggleSwitch v-model="is_internal" input-id="is_internal" :invalid="!!error" :disabled="!!props.formData || disableInternal"/>
         </ValidateFormItem>
     </div>
     <div class="align-buttons-submit">

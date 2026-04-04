@@ -2,14 +2,17 @@
 import { LMap, LMarker, LTileLayer } from "@maxel01/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import happyYoung from "@/assets/images/imgYoungs.jpg";
+import pageConfig from "@/assets/page_config.json";
 
-const lat = -6.4183;
-const lng = -76.5283;
+const { location } = pageConfig;
+
+const lat = -6.41778842961999;
+const lng = -76.52805907116408;
 
 </script>
 
 <template>
-    <section class="bg-slate-950 py-20 px-4">
+    <section class="bg-slate-950 py-20 px-4" id="location">
         <div class="max-w-6xl mx-auto">
 
             <!-- HEADER -->
@@ -18,7 +21,7 @@ const lng = -76.5283;
                     ¿Dónde será el evento?
                 </h2>
                 <p class="mt-4 text-slate-400 max-w-2xl mx-auto">
-                    Un lugar preparado para vivir una experiencia única con Dios
+                    {{ location.description }}
                 </p>
             </div>
 
@@ -44,23 +47,32 @@ const lng = -76.5283;
                     <!-- contenido -->
                     <div class="relative p-8 text-white">
 
-                        <h3 class="text-2xl md:text-4xl font-info mb-4"> Lamas, Perú </h3>
+                        <h3 class="text-2xl md:text-4xl font-info mb-4"> {{ location.city }} </h3>
 
                         <p class="text-slate-300 leading-relaxed">
-                            Conocida como la <span class="text-amber-400 font-semibold">
-                            Capital Folclórica de la Amazonía Peruana</span>, Lamas ofrece
-                            un entorno perfecto para desconectarte y conectar con Dios.
+                            <span class="text-amber-400 font-semibold">{{ location.place_name }}</span>
+                            - {{ location.address }}
                         </p>
 
                         <p class="mt-4 text-slate-400 text-sm">
-                            I.E. Martín de la Riva y Herrera
-                            <br/>
-                            Jr. San Martín 2193 - Barrio Ancoallo
+                            {{ location.description }}
                         </p>
 
+                        <!-- AMENIDADES -->
+                        <div v-if="location.amenities && location.amenities.length > 0" class="mt-6 space-y-2">
+                            <h4 class="text-amber-400 font-semibold mb-3">Comodidades:</h4>
+                            <ul>
+                                <li v-for="(amenity, index) in location.amenities" :key="index"
+                                    class="text-slate-300 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                    {{ amenity }}
+                                </li>
+                            </ul>
+                        </div>
+
                         <!-- CTA opcional -->
-                        <Button as="a" href="https://www.google.com/maps?q=-6.4183,-76.5283" target="_blank"
-                                label="Ver en Google Maps" class="mt-6"/>
+                        <Button as="a" href="https://maps.app.goo.gl/wiF8SMgAuynaJ83T7" target="_blank" label="Ver en Google Maps"
+                                class="mt-6"/>
 
                     </div>
                 </div>

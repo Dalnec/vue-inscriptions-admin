@@ -17,27 +17,25 @@ const SECRET_KEY = "AmoLasTetas";
 const app = createApp(App);
 const pinia: Pinia = createPinia();
 
-pinia.use(
-    createPersistedState({
-        auto: true,
-        serializer: {
-            deserialize: (value) => {
-                try {
-                    const bytes = CryptoJS.AES.decrypt(value, SECRET_KEY);
-                    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                    return JSON.parse(decrypted);
-                } catch (err) {
-                    console.error("Error al desencriptar los datos:", err);
-                    return {};
-                }
-            },
-            serialize: (value) => {
-                return CryptoJS.AES.encrypt(JSON.stringify(value), SECRET_KEY).toString();
+pinia.use(createPersistedState({
+    auto: true,
+    serializer: {
+        deserialize: (value) => {
+            try {
+                const bytes = CryptoJS.AES.decrypt(value, SECRET_KEY);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                return JSON.parse(decrypted);
+            } catch (err) {
+                console.error("Error al desencriptar los datos:", err);
+                return {};
             }
         },
-        storage: localStorage
-    })
-);
+        serialize: (value) => {
+            return CryptoJS.AES.encrypt(JSON.stringify(value), SECRET_KEY).toString();
+        }
+    },
+    storage: localStorage
+}));
 
 app.component("LoadingPage", LoadingPage);
 app.component("EmptyTable", EmptyTable);
@@ -50,7 +48,7 @@ app.directive("styleclass", StyleClass);
 app.directive("focustrap", FocusTrap);
 app.directive("animateonscroll", AnimateOnScroll);
 app.directive("keyFilter", KeyFilter);
-app.directive("reveal", reveal)
+app.directive("reveal", reveal);
 
 app.use(PrimeVue, {
     locale: {

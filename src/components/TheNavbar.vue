@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { optionsMenuStore } from "@/stores/optionsMenu";
+import { navBarStore } from "@/stores/optionsMenu";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -13,40 +13,38 @@ const confirm = useConfirm();
 const menu = ref();
 const userDataStore = useUserDataConfigStore();
 
-optionsMenuStore.createOptionsMenu();
+navBarStore().createOptionsMenu();
 
-const menuOptions = computed(() => optionsMenuStore.options);
+const menuOptions = computed(() => navBarStore().options);
 
-const isParentActive = (parentRoute: string): boolean => {
-    return route?.matched.some((matchedRoute) => {
-        return matchedRoute.path === parentRoute || matchedRoute.name === parentRoute;
-    });
+const isParentActive = (routeName: string): boolean => {
+    return route.matched.some((r) => r.name === routeName);
 };
 
 const isChildActive = (childrenRoutes: MenuItem[]): boolean => {
     return childrenRoutes.some((child) => {
-        return route.matched.some((matchedRoute) => matchedRoute.path === child.route);
+        return route.matched.some((r) => r.name === child.key);
     });
 };
 
 const confirm1 = () => {
     confirm.require({
-        message: "¿Estas seguro de cerrar sesión?",
-        header: "Confirmación",
-        rejectProps: {
-            label: "Cancelar",
-            severity: "secondary",
-            outlined: true
-        },
-        acceptProps: {
-            label: "Cerrar"
-        },
         accept: () => {
             userDataStore.logout();
             useGlobalToast({ severity: "info", summary: "Sesión expirada", detail: "Vuelva a iniciar sesión", life: 3000 });
         },
+        acceptProps: {
+            label: "Cerrar"
+        },
+        header: "Confirmación",
+        message: "¿Estas seguro de cerrar sesión?",
         reject: () => {
             useGlobalToast({ severity: "error", summary: "Cancelado", detail: "No se cerro la sesión", life: 3000 });
+        },
+        rejectProps: {
+            label: "Cancelar",
+            outlined: true,
+            severity: "secondary"
         }
     });
 };
@@ -81,8 +79,8 @@ const onShowOptions = (event: MouseEvent) => {
         <template #item="{ item, props }">
             <router-link v-if="item.route && !item.items" :to="item?.route" v-slot="{href, navigate}">
                 <a @click="navigate" class="cursor-pointer" v-bind="props.action" :href
-                   :class="`select-none ${isParentActive(item.route) ? 'bg-primary-500/80 rounded' : ''}`" v-ripple>
-                    <component :is="item.icon" :class="`${isParentActive(item.route) ? 'text-white' : 'text-primary-500'} text-[15px]`"/>
+                   :class="`select-none ${isParentActive(item.key!) ? 'bg-primary-500/80 rounded' : ''}`" v-ripple>
+                    <component :is="item.icon" :class="`${isParentActive(item.key!) ? 'text-white' : 'text-primary-500'} text-[15px]`"/>
                     <span :class="`${isParentActive(item.route) ? 'text-white' : 'text-surface-900 dark:text-surface-200'} ml-1`">
                         {{ item.label }}
                     </span>
@@ -102,8 +100,8 @@ const onShowOptions = (event: MouseEvent) => {
 
         <template #end>
             <div class="flex space-x-1">
-                <Button size="small" severity="secondary" class="!w-8 !h-8" @click="onShowOptions" aria-haspopup="true"
-                        aria-controls="overlayMenu" #icon>
+                <Button :label="userDataStore.userData.user?.username" size="small" severity="secondary" class="!h-8" @click="onShowOptions"
+                        aria-haspopup="true" aria-controls="overlayMenu" #icon>
                     <i-material-symbols-person-outline-rounded/>
                 </Button>
                 <TieredMenu ref="menu" id="overlayMenu" :model="items()" popup/>

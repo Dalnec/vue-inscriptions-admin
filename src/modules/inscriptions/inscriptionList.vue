@@ -10,7 +10,8 @@ import useGlobalToast from "@/composables/toastEvent.ts";
 import { type DataTablePageEvent, useConfirm } from "primevue";
 import type { InscriptionsMembers, InterfaceActionsInscriptions, InterfaceResponseInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
-import { storeActivityActive } from "@/stores/generalInfoStore.ts";
+import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
+import { storeActivityActive, storeActivities } from "@/stores/generalInfoStore.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import showVoucherFile from "@/components/showVoucherFile.vue";
 import changeAmount from "@/modules/registers/changeAmount.vue";
@@ -18,6 +19,7 @@ import changeVoucher from "@/components/changeVoucher.vue";
 import notifyMember from "@/components/notifyMember.vue";
 import addObservations from "@/components/addObservations.vue";
 import registerMembers from "@/modules/registers/registerMembers.vue";
+import { page_config } from "@/assets/page_config.json";
 
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
@@ -32,6 +34,7 @@ const search = ref("");
 const userDataStore = useUserDataConfigStore();
 const userDataValue = userDataStore.userData.user;
 const { closeModal, openModal } = useModal();
+const activitySelected = ref<InterfaceActivities>();
 
 const onPageChange = async(event: DataTablePageEvent) => {
     currentPage.value = event.page + 1;
@@ -54,7 +57,7 @@ const loadInscriptionsList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
     const { response }: InterfaceResponseInscriptions = await Api.Get({
         params: {
-            activity: useStoreActivityActive.activityId,
+            activity: activitySelected.value?.id,
             page: currentPage.value,
             page_size: rows.value,
             search: search.value
@@ -167,7 +170,9 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
         });
     } else {
         // const { response }: InterfaceActionsInscriptions = await Api.Put({ route: `inscription/${ data.id }`, data: { ...data, status } });
-        const { response }: InterfaceActionsInscriptions = await Api.Post({ route: `inscription-groups/${ data.group.id }/confirm-payment`, data: {  } });
+        const { response }: InterfaceActionsInscriptions = await Api.Post({
+            route: `inscription-groups/${ data.group.id }/confirm-payment`, data: {}
+        });
         if (response && response.status === 200) {
             await loadInscriptionsList();
             useGlobalToast({ detail: "Estado actualizado correctamente", severity: "success" });
@@ -237,6 +242,8 @@ const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
 }, 250);
 
 onMounted(async() => {
+    await storeActivities().getActivities();
+    activitySelected.value = storeActivities().activities.find(activity => activity.shortname === page_config.eventID);
     await loadInscriptionsList();
 });
 
@@ -300,11 +307,11 @@ defineExpose({ loadInscriptionsList });
         </Column>
         <Column style="width: 3%" header="Acciones" #body="{ data }">
             <div class="flex items-center justify-center space-x-1">
-                <Button size="small" severity="warn" v-tooltip.top="'Editar persona'" @click="addParametersUserModal(data)"
+                <Button size="small" severity="warn" v-tooltip="'Editar persona'" @click="addParametersUserModal(data)"
                         class="!h-8" #icon>
                     <i-material-symbols-person-edit-outline-rounded/>
                 </Button>
-                <Button size="small" severity="info" v-tooltip.top="'Cambiar monto'" @click="onChangeAmount(data)" class="!h-8" #icon>
+                <Button size="small" severity="info" v-tooltip="'Cambiar monto'" @click="onChangeAmount(data)" class="!h-8" #icon>
                     <i-ic-round-attach-money/>
                 </Button>
                 <Button @click="toggle($event, data.id)" aria-haspopup="true" :aria-controls="`menu_${data.id}`" class="!h-8" #icon>
@@ -316,6 +323,8 @@ defineExpose({ loadInscriptionsList });
                 </Menu>
             </div>
         </Column>
-        <template #paginatorstart> Total: {{ totalRecords }}</template>
+        <template #paginatorstart>
+            <p class="text-lg font-semibold text-primary-500"> Total: {{ totalRecords }} </p>
+        </template>
     </DataTable>
 </template>

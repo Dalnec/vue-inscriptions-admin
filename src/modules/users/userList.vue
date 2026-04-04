@@ -8,6 +8,7 @@ import { useModal } from "@/composables/useModal.ts";
 import type { InterfaceUsers, UsersResponseMembers } from "@/types/interfaceUsers.ts";
 import addUsers from "./addUsers.vue";
 import changePassword from "./changePassword.vue";
+import { page_config } from "@/assets/page_config.json";
 
 /* Defaults Variables */
 const dataUsers = ref<InterfaceUsers[]>([]);
@@ -27,7 +28,12 @@ const { openModal, closeModal } = useModal();
  */
 const loadUserList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
-    const { response }: UsersResponseMembers = await Api.Get({ route: "user" });
+    const { response }: UsersResponseMembers = await Api.Get({
+        params: {
+            activity_shortname: page_config.eventID
+        },
+        route: "user"
+    });
     if (response && response.status === 200) {
         dataUsers.value = response.data.results;
         loading.value = false;
@@ -36,6 +42,7 @@ const loadUserList = useDebounceFn(async(): Promise<void> => {
 
 const addParametersUserModal = (data: InterfaceUsers): void => {
     openModal({
+        breakpoints: { "1400px": "94vw", "1100px": "96vw", "640px": "99vw" },
         component: h(addUsers, {
             closeModal,
             refreshData: () => loadUserList(),
@@ -54,7 +61,7 @@ const addParametersChangePassword = (data: InterfaceUsers): void => {
             closeForm: closeModal,
             userID: data.id
         }),
-        header: `Cambiar contraseña de ${ data.username }`,
+        header: `Cambiar contraseña de ${ data.login_name }`,
         width: "35vw"
     });
 };
@@ -68,7 +75,7 @@ defineExpose({ loadUserList });
 </script>
 
 <template>
-    <DataTable size="small" :value="dataUsers" scroll-height="65vh" scrollable tableStyle="min-width: 80rem;" lazy :loading="loading"
+    <DataTable size="small" :value="dataUsers" scroll-height="65vh" scrollable tableStyle="min-width: 90rem;" lazy :loading="loading"
                dataKey="id">
         <template #empty>
             <empty-table/>
@@ -76,10 +83,13 @@ defineExpose({ loadUserList });
         <template #loading>
             <loading-page/>
         </template>
-        <Column style="width: 10%" field="username" header="Usuario"/>
-        <Column style="width: 10%" field="names" header="Nombres"/>
+        <Column style="width: 10%" field="login_name" header="Usuario"/>
+        <Column style="width: 10%" :field="(dt)=>`${dt.names} ${dt.lastname}`" header="Nombres"/>
         <Column style="width: 10%" field="email" header="Correo"/>
         <Column style="width: 10%" field="profile_description" header="Perfil"/>
+        <Column style="width: 10%" field="activity_description" header="Actividad" #body="{ data }">
+            {{ data.activity_description ?? "Envía el nombre de la actividad pues joshelito." }}
+        </Column>
         <Column style="width: 5%" header="Estado" field="is_active" #body="{ data }">
             <Message size="small" :severity="data.is_active? 'success' : 'error'">
                 {{ data.is_active ? "Activo" : "Inactivo" }}

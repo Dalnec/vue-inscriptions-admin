@@ -11,6 +11,7 @@ const { closeModal, openModal } = useModal();
 
 const addValueParameters = () => {
     openModal({
+        breakpoints: { "1400px": "94vw", "1100px": "96vw", "640px": "99vw" },
         component: h(addUsers, {
             closeModal,
             refreshData: () => refUserList.value.loadUserList(),

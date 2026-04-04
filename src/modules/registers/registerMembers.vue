@@ -1,24 +1,25 @@
 <script setup lang="ts">
 
-import { computed, onMounted, ref, watch } from "vue";
-import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
-import * as yup from "yup";
-import { useField, useForm } from "vee-validate";
-import useGlobalToast from "@/composables/toastEvent";
-import ValidateFormItem from "@/components/ValidateFormItem.vue";
-import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
-import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import { Api } from "@/api/connection.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
+import { computed, onMounted, ref, watch } from "vue";
+import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
+import { useField, useForm } from "vee-validate";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
+import useGlobalToast from "@/composables/toastEvent";
+import type { InterfaceMembers, UsersActiosMembers } from "@/types/interfaceMembers.ts";
+import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
+import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
+import * as yup from "yup";
+import type { SelectFilterEvent } from "primevue";
 
+const filteredOptions = ref<{ id: number, description: string, active: boolean }[]>([]);
+const selectRef = ref();
 const refDrawerMembersSaved = ref();
 const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStorePage();
 const isClickCard = ref(false);
 const wasDniChecked = ref(false);
-// const showMessage = ref(false);
-// const infoMessage = ref({ dni: "", names: "" });
 const useStoreDocumentType = storeDocumentType();
 const useStoreChurches = storeChurches();
 const useStoreKind = storeKind();
@@ -48,7 +49,7 @@ const validationSchema = ref(yup.object({
 const { handleReset, handleSubmit, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
 
 // const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | null>("birthdate");
-const { value: church } = useField<string>("church");
+const { value: church } = useField<number>("church");
 const { value: doc_num } = useField<string>("doc_num");
 const { value: documenttype } = useField<number>("documenttype");
 const { value: gender } = useField<string>("gender");
@@ -56,6 +57,7 @@ const { value: kind } = useField<number>("kind");
 const { value: lastnames } = useField<string>("lastnames");
 const { value: names } = useField<string>("names");
 const { value: phone } = useField<string>("phone");
+const { value: email } = useField<string>("email");
 const { value: age } = useField<number | null>("age");
 
 const optionsDocuments = computed(() => useStoreDocumentType.documentType);
@@ -125,9 +127,7 @@ const saveNewMember = handleSubmit(async(values): Promise<void> => {
         }
         isClickCard.value = false;
     }
-}, () => {
-    useGlobalToast({ severity: "error", summary: "Error al guardar", detail: "Por favor, llene el formulario." });
-});
+}, ({ errors }) => castFormErrors(errors));
 
 const onClickCardMember = (data: InterfaceMembers) => {
     setValues({ ...data });
@@ -136,6 +136,21 @@ const onClickCardMember = (data: InterfaceMembers) => {
 
 const clearDataForm = () => handleReset();
 const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer = true;
+
+const onFilter = (event: SelectFilterEvent) => {
+    const query = (event.value || "").toString().toLowerCase().trim();
+
+    filteredOptions.value = optionsChurches.value.filter((dt) => dt.description.toLowerCase().includes(query));
+};
+
+const onEnter = () => {
+    if ( !filteredOptions.value.length) return;
+
+    const first = filteredOptions.value[0];
+
+    church.value = first.id;
+    selectRef.value?.hide();
+};
 
 watch(doc_num, () => {
     wasDniChecked.value = false;
@@ -162,77 +177,106 @@ onMounted(async() => {
 </script>
 
 <template>
-    <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
-        <ValidateFormItem label="Tipo de Documento" span="12" name="documenttype">
-            <Select fluid v-model="documenttype" :options="optionsDocuments" optionLabel="description" option-value="id" size="large"
-                    :disabled="isClickCard"/>
-        </ValidateFormItem>
-        <ValidateFormItem label="DNI" span="12" name="doc_num" v-slot="{ error }">
-            <InputGroup name="doc_num">
-                <InputText fluid v-model="doc_num" placeholder="Ingrese nro de DNI" v-key-filter.num maxlength="8"
-                           :invalid="!!error" size="large" @keyup.enter="addDataFromReniec"
-                           :disabled="isClickCard && !isClickCard && props.formData?.id !== null"/>
-                <Button label="Buscar" :disabled="loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
-                        :loading="loadingSearch" #icon>
-                    <i-material-symbols-person-search-outline-rounded/>
-                </Button>
-            </InputGroup>
-        </ValidateFormItem>
-        <!--        <ValidateFormItem span="12" hide-label hide-error v-if="showMessage">-->
-        <!--            <view-existed-member :dni="infoMessage.dni" :name="infoMessage.names"/>-->
-        <!--        </ValidateFormItem>-->
-        <ValidateFormItem label="Nombres" span="12" name="names" v-slot="{ error }">
-            <InputText fluid v-model="names" :invalid="!!error" size="large"
-                       :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
-        </ValidateFormItem>
-        <ValidateFormItem label="Apellidos" span="12" name="lastnames" v-slot="{ error }">
-            <InputText fluid v-model="lastnames" :invalid="!!error" size="large"
-                       :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
-        </ValidateFormItem>
-        <ValidateFormItem label="Género" span="12" name="gender" v-slot="{ error }">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" :invalid="!!error"/>
-                    <label for="gender1">Masculino</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <RadioButton v-model="gender" inputId="gender2" name="gender" value="F" :invalid="!!error"/>
-                    <label for="gender2">Femenino</label>
-                </div>
-            </div>
-        </ValidateFormItem>
-        <ValidateFormItem label="Edad" span="12" name="gender">
-            <InputNumber fluid v-model="age" size="large"/>
-        </ValidateFormItem>
-        <ValidateFormItem label="Celular" span="12" name="gender" v-slot="{ error }">
-            <InputText fluid v-model="phone" maxlength="9" v-key-filter.num :invalid="!!error" size="large"/>
-        </ValidateFormItem>
-        <ValidateFormItem label="¿Perteneces a alguna iglesia?" span="12" name="kind" v-slot="{ error }">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
-                    <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
-                                 :invalid="!!error" size="large"/>
-                    <label :for="kindData.description">{{ kindData.description }}</label>
-                </div>
-            </div>
-        </ValidateFormItem>
-        <ValidateFormItem label="Iglesia" span="12" name="age" v-slot="{ error }">
-            <Select :options="optionsChurches" fluid v-model="church" filter show-clear size="large" :invalid="!!error"
-                    reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description" option-value="id"/>
-        </ValidateFormItem>
+    <div class="max-w-3xl mx-auto px-4 md:px-6">
+        <div class="form-card-page">
+            <h3 class="form-section-title">Identificación</h3>
 
-        <div class="max-cols-4">
+            <div class="form-grid-page">
+                <ValidateFormItem label="Tipo de Documento" name="documenttype">
+                    <Select fluid v-model="documenttype" :options="optionsDocuments" optionLabel="description" option-value="id"
+                            size="large"
+                            :disabled="isClickCard"/>
+                </ValidateFormItem>
+                <ValidateFormItem label="DNI" name="doc_num" v-slot="{ error }">
+                    <InputGroup name="doc_num">
+                        <InputText fluid v-model="doc_num" placeholder="Ingrese nro de DNI" v-key-filter.num maxlength="8"
+                                   :invalid="!!error" size="large" @keyup.enter="addDataFromReniec"
+                                   :disabled="isClickCard && !isClickCard && props.formData?.id !== null"/>
+                        <Button label="Buscar" :disabled="loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
+                                :loading="loadingSearch" #icon>
+                            <i-material-symbols-person-search-outline-rounded/>
+                        </Button>
+                    </InputGroup>
+                </ValidateFormItem>
+            </div>
+        </div>
+
+        <div class="form-card">
+
+            <h3 class="form-section-title">Datos personales</h3>
+
+            <div class="form-grid">
+
+                <ValidateFormItem label="Nombres" name="names" v-slot="{ error }">
+                    <InputText fluid v-model="names" :invalid="!!error" size="large"
+                               :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
+                </ValidateFormItem>
+                <ValidateFormItem label="Apellidos" name="lastnames" v-slot="{ error }">
+                    <InputText fluid v-model="lastnames" :invalid="!!error" size="large"
+                               :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
+                </ValidateFormItem>
+                <ValidateFormItem label="Edad">
+                    <InputNumber v-model="age" fluid size="large" placeholder="ingrese una edad"/>
+                </ValidateFormItem>
+
+                <ValidateFormItem label="Género" name="gender" v-slot="{ error }">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" :invalid="!!error"/>
+                            <label for="gender1">Masculino</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <RadioButton v-model="gender" inputId="gender2" name="gender" value="F" :invalid="!!error"/>
+                            <label for="gender2">Femenino</label>
+                        </div>
+                    </div>
+                </ValidateFormItem>
+            </div>
+        </div>
+
+        <div class="form-card-page">
+            <h3 class="form-section-title">Contacto</h3>
+            <div class="form-grid-page">
+                <ValidateFormItem label="Celular" name="gender" v-slot="{ error }">
+                    <InputText fluid v-model="phone" maxlength="9" v-key-filter.num :invalid="!!error" size="large"/>
+                </ValidateFormItem>
+                <ValidateFormItem label="Correo" name="correo" v-slot="{ error }">
+                    <InputText fluid v-model="email" :invalid="!!error" size="large"/>
+                </ValidateFormItem>
+            </div>
+        </div>
+
+        <div class="form-card">
+
+            <h3 class="form-section-title">Información adicional</h3>
+
+            <ValidateFormItem label="¿Perteneces a alguna iglesia?" span="12" name="kind" v-slot="{ error }">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
+                        <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
+                                     :invalid="!!error" size="large"/>
+                        <label :for="kindData.description">{{ kindData.description }}</label>
+                    </div>
+                </div>
+            </ValidateFormItem>
+            <ValidateFormItem label="Iglesia" span="12" name="age" v-slot="{ error }">
+                <Select :options="optionsChurches" fluid v-model="church" filter show-clear size="large" :invalid="!!error"
+                        resetFilterOnClear resetFilterOnHide autoFilterFocus optionLabel="description" option-value="id" @filter="onFilter"
+                        @keyup.enter="onEnter"/>
+            </ValidateFormItem>
+        </div>
+
+        <div class="form-actions-page">
+
             <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer "
                     v-if="membersStoreOptions.membersData.length >= 1 && !props.formData?.id" fluid #icon>
                 <i-material-symbols-list-alt-check/>
             </Button>
-        </div>
-        <div class="max-cols-4">
+
             <Button label="Limpiar" severity="warn" fluid @click="clearDataForm()" #icon>
                 <i-material-symbols-tab-close/>
             </Button>
-        </div>
-        <div class="max-cols-4">
+
             <Button :label=" isClickCard || props.formData?.id ? 'Editar' :'¡Agregar!'" @click="saveNewMember()" fluid #icon>
                 <i-material-symbols-sync-saved-locally/>
             </Button>
@@ -241,3 +285,20 @@ onMounted(async() => {
     <drawer-members-saved ref="refDrawerMembersSaved" @on-click-card="onClickCardMember" redirectUrl="payEvent" isPage
                           urlToAdd="newRegister"/>
 </template>
+
+<style>
+
+.form-card-page {
+    @apply bg-white/5 backdrop-blur-md border border-white/10
+    rounded-2xl p-5 md:p-6 mb-6;
+}
+
+.form-grid-page {
+    @apply grid md:grid-cols-2 gap-4;
+}
+
+.form-actions-page {
+    @apply flex flex-col md:flex-row gap-3 my-6;
+}
+
+</style>

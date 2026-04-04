@@ -14,10 +14,6 @@ const classContent = "h-72 flex flex-col cursor-pointer items-center justify-cen
         </template>
         <template #content>
             <div class="flex flex-wrap items-center justify-center gap-2">
-                <div :class="classContent" @click="router.push({ name: 'event', force: true })">
-                    <i-material-symbols-date-range class="text-9xl text-surface-900 dark:text-white"/>
-                    <p class="text-xl font-semibold dark:text-white">Evento</p>
-                </div>
                 <div :class="classContent" @click="router.push({ name: 'concepts', force: true })">
                     <i-material-symbols-contract-edit-outline-rounded class="text-9xl text-surface-900 dark:text-white"/>
                     <p class="text-xl font-semibold text-surface-900 dark:text-white">Conceptos</p>

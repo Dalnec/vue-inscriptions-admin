@@ -33,5 +33,37 @@ export interface PaymentMethod {
     id?: null | number
 }
 
+export interface ActivityCardModel {
+    category: string;
+    date: string;
+    id: number | null;
+    image: string;
+    location: string;
+    title: string;
+}
+
+export const mapActivityToCard = (activity: InterfaceActivities): ActivityCardModel => {
+    return {
+        id: activity.id ?? null,
+        title: activity.title,
+        location: activity.location,
+
+        // formateo de fecha
+        date: activity.start_date
+              ? new Date(activity.start_date).toLocaleDateString("es-PE", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            })
+              : "Sin fecha",
+
+        // fallback (no existe en backend aún)
+        category: "Evento",
+
+        // fallback (no existe en backend aún)
+        image: "https://via.placeholder.com/400x300"
+    };
+};
+
 export type InterfaceActionsActivities = InterfaceAxiosApiResponse<InterfaceActivities>
 export type InterfaceResponseActivities = InterfaceAxiosApi<InterfaceActivities>

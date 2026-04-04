@@ -15,7 +15,7 @@ const router = createRouter({
         {
             path: "/",
             name: "webHome",
-            component: () => import("@/components/app/stillWorking.vue"),
+            component: () => import("@/pages/public/homeEvents/HomePage.vue"),
             meta: { public: true }
         },
 
@@ -183,27 +183,6 @@ const router = createRouter({
                 }
             ]
         },
-
-        // =========================
-        // REDIRECCIONES (SIN DUPLICAR VISTAS)
-        // =========================
-        // {
-        //     path: "/inscribirse",
-        //     redirect: () => {
-        //         const slugStore = useEventSlugStore();
-        //         return slugStore.slug
-        //                ? `/${ slugStore.slug }/inscribirse`
-        //                : "/";
-        //     }
-        // },
-        // {
-        //     path: "/pagar",
-        //     redirect: () => {
-        //         const slugStore = useEventSlugStore();
-        //         return slugStore.slug ? `/${ slugStore.slug }/pagar` : "/";
-        //     }
-        // },
-
         // =========================
         // 404 GLOBAL
         // =========================

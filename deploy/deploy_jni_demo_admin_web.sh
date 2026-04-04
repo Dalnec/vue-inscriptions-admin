@@ -23,6 +23,6 @@ if [[ ! -f .env.demo ]]; then
   cp .env.demo.example .env.demo
 fi
 
-docker compose --env-file .env.demo -f docker-compose.yml -f docker-compose.demo.yml -p jni_demo up -d --build admin_web
-docker compose --env-file .env.demo -f docker-compose.yml -f docker-compose.demo.yml -p jni_demo ps
+docker compose --env-file .env.demo -f docker-compose.demo.yml -p jni_demo up -d --build admin_web
+docker compose --env-file .env.demo -f docker-compose.demo.yml -p jni_demo ps
 docker logs jni_demo_admin_web --tail 80

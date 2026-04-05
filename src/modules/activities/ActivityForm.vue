@@ -32,20 +32,15 @@ const search = (event: AutoCompleteCompleteEvent) => {
 };
 
 const schemaValidate = yup.object().shape({
-    title: yup.string().required("Título es requerido"),
     description: yup.string(),
+    end_date: yup.date().required("Fecha de fin es requerida"),
+    is_active: yup.boolean(),
     location: yup.string(),
     start_date: yup.date().required("Fecha de inicio es requerida"),
-    end_date: yup.date().required("Fecha de fin es requerida"),
-    is_active: yup.boolean()
+    title: yup.string().required("Título es requerido")
 });
 
-const { handleSubmit, setValues } = useForm<InterfaceActivities>({
-    initialValues: {
-        is_active: true
-    },
-    validationSchema: schemaValidate
-});
+const { handleSubmit, setValues } = useForm<InterfaceActivities>({ initialValues: { is_active: true }, validationSchema: schemaValidate });
 
 const { value: title } = useField<string>("title");
 const { value: shortname } = useField<string>("shortname");
@@ -55,36 +50,32 @@ const { value: start_date } = useField<Date | null>("start_date");
 const { value: end_date } = useField<Date | null>("end_date");
 
 const saveActivity = handleSubmit(async(formValues) => {
-    loading.value = true;
+    try {
+        loading.value = true;
+        const dataToSend = {
+            ...formValues,
+            end_date: formatDateToString(formValues.end_date as Date, "yyyy-MM-dd HH:mm:ss"),
+            is_active: true,
+            settings: JSON.stringify(settingsForm.value),
+            start_date: formatDateToString(formValues.start_date as Date, "yyyy-MM-dd HH:mm:ss")
+        };
 
-    const dataToSend = {
-        ...formValues,
-        end_date: formatDateToString(formValues.end_date as Date, "yyyy-MM-dd HH:mm:ss"),
-        is_active: true,
-        settings: JSON.stringify(settingsForm.value),
-        start_date: formatDateToString(formValues.start_date as Date, "yyyy-MM-dd HH:mm:ss")
-    };
+        const route = props.formData ? `activity/${ props.formData.id }` : "activity";
+        const method = props.formData ? Api.Put : Api.Post;
 
-    const route = props.formData ? `activity/${ props.formData.id }` : "activity";
-    const method = props.formData ? Api.Put : Api.Post;
+        const { response } = await method({ route, data: dataToSend });
 
-    const { response } = await method({ route, data: dataToSend });
-
-    if (response && (response.status === 201 || response.status === 200)) {
-        useGlobalToast({
-            severity: "success",
-            summary: props.formData ? "Actividad editada correctamente" : "Actividad creada correctamente"
-        });
-        props.closeModal();
-        await props.refreshData();
-        loading.value = false;
-    } else {
-        // Manejar errores de la API
-        useGlobalToast({
-            severity: "error",
-            summary: "Error",
-            detail: props.formData ? "Error al editar la actividad" : "Error al crear la actividad"
-        });
+        if (response && (response.status === 201 || response.status === 200)) {
+            useGlobalToast({
+                severity: "success",
+                summary: props.formData ? "Actividad editada correctamente" : "Actividad creada correctamente"
+            });
+            props.closeModal();
+            await props.refreshData();
+            loading.value = false;
+        }
+    } catch (e) {
+        console.log(e);
         loading.value = false;
     }
 }, ({ errors }) => castFormErrors(errors));

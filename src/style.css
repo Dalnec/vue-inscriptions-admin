@@ -11,8 +11,8 @@
     font-family: 'Poppins';
     src: url('@/assets/fonts/Poppins-Medium.eot');
     src: url('@/assets/fonts/Poppins-Medium.eot?#iefix') format('embedded-opentype'),
-    url('@/assets/fonts/Poppins-Medium.woff') format('woff'),
-    url('@/assets/fonts/Poppins-Medium.ttf') format('truetype');
+        url('@/assets/fonts/Poppins-Medium.woff') format('woff'),
+        url('@/assets/fonts/Poppins-Medium.ttf') format('truetype');
 }
 
 html {
@@ -123,6 +123,23 @@ body {
         --p-text-muted-color: var(--p-surface-400);
         --p-text-hover-muted-color: var(--p-surface-300);
     }
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.glass-effect {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.kinetic-gradient {
+    background: linear-gradient(135deg, #bb0028 0%, #e90034 100%);
+}
+
+.text-shadow-premium {
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .montserrat-font {
@@ -244,8 +261,7 @@ body {
 }
 
 .form-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10
-    rounded-2xl p-5 md:p-6 mb-6;
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 md:p-6 mb-6;
 }
 
 .form-section-title {
@@ -301,7 +317,8 @@ input:-webkit-autofill:active {
     -webkit-background-clip: text;
     -webkit-text-fill-color: #232323;
     transition: background-color 2000s ease-in-out 0s;
-    box-shadow: inset 0 0 20px 20px #e0e6ee29; /* Fondo claro */
+    box-shadow: inset 0 0 20px 20px #e0e6ee29;
+    /* Fondo claro */
 }
 
 input {
@@ -313,15 +330,20 @@ input {
 .dark input:-webkit-autofill:focus,
 .dark input:-webkit-autofill:active {
     -webkit-background-clip: text;
-    -webkit-text-fill-color: #e0e6ee !important; /* Forzar color claro */
+    -webkit-text-fill-color: #e0e6ee !important;
+    /* Forzar color claro */
     transition: background-color 2000s ease-in-out 0s;
-    box-shadow: inset 0 0 20px 20px #23232329; /* Fondo oscuro */
+    box-shadow: inset 0 0 20px 20px #23232329;
+    /* Fondo oscuro */
 }
 
-.dark input:-moz-ui-invalid, /* Firefox */
+.dark input:-moz-ui-invalid,
+/* Firefox */
 .dark input:invalid {
-    color: #e0e6ee !important; /* Forzar color del texto */
-    text-decoration: none !important; /* Evitar subrayado rojo del navegador */
+    color: #e0e6ee !important;
+    /* Forzar color del texto */
+    text-decoration: none !important;
+    /* Evitar subrayado rojo del navegador */
 }
 
 .v-enter-active,

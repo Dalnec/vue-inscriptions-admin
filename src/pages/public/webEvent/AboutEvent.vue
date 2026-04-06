@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import pageConfig from "@/assets/page_config.json";
 import ImageCarousel from "@/components/ImageCarousel.vue";
+import { onMounted, ref } from "vue";
 
 const { vision_section } = pageConfig;
+const images = ref<string[]>([]);
+
+onMounted(() => {
+    const modules = import.meta.glob("@/assets/KadoshSlider/*.{png,jpg,jpeg,webp}", { eager: true });
+    images.value = Object.values(modules).map((mod: any) => mod.default);
+})
+
 </script>
 
 <template>
@@ -23,7 +31,7 @@ const { vision_section } = pageConfig;
         <div class="mt-16 grid md:grid-cols-2 gap-8 md:gap-10 items-center">
 
             <!-- SLIDER DE IMAGENES -->
-            <ImageCarousel v-if="vision_section.images && vision_section.images.length > 0" :images="vision_section.images"
+            <ImageCarousel v-if="vision_section.images && vision_section.images.length > 0" :images="images"
                            :autoplay-interval="5000" :show-controls="true" :show-indicators="true"/>
 
             <!-- TEXTO -->

@@ -2,10 +2,11 @@
 import LoadingPage from "@/components/loadingPage.vue";
 import { ref, onMounted, watch } from "vue";
 import { useDark } from "@vueuse/core";
+import { useRoute } from "vue-router";
 import Toast from "primevue/toast";
 import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
-import { page_config } from "@/assets/page_config.json";
 
+const route = useRoute();
 const loadingPage = ref(true);
 const isDark = useDark({ disableTransition: false, initialValue: "light" });
 
@@ -26,8 +27,8 @@ watch(isDark, (newVal) => {
 onMounted(async() => {
     await storeChurches().getDataChurches();
     await storeDocumentType().getDocumentType();
-    await storePaymentMethod().getPaymentMethod(page_config.eventID);
-    await storeActivities().getActivities(page_config.eventID);
+    await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
+    await storeActivities().getActivities(route.params?.slug as string);
     await storeRate().getRates();
     await storeKind().getKinds();
     await storeActivityActive().getActiveActivity();

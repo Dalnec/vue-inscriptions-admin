@@ -11,10 +11,11 @@ import type { TillMovementActions, TillMovements } from "@/types/TillMovements.t
 import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
 import ConceptsForm from "@/modules/tillConcept/ConceptsForm.vue";
 import * as yup from "yup";
-import { page_config } from "@/assets/page_config.json";
+import { useRoute } from "vue-router";
 
 const props = defineProps<{ closeModal: () => void; isIncome: boolean; refreshData: () => Promise<void>; }>();
 
+const route = useRoute();
 const userStore = useUserDataConfigStore();
 const useConceptStore = storeConcepts();
 const usePaymentMethod = storePaymentMethod();
@@ -90,7 +91,7 @@ const onManageConcept = (concept?: ConceptsInterface) => {
 
 
 onMounted(() => {
-    usePaymentMethod.getPaymentMethod(page_config.eventID);
+    usePaymentMethod.getPaymentMethod(route.params.slug as string);
     useConceptStore.getConcepts();
 });
 

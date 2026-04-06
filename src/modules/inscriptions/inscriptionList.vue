@@ -6,6 +6,7 @@ import { ref, h, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { exportInscriptionsToExcel } from "@/composables/generateExcelMembers.ts";
 import { useModal } from "@/composables/useModal.ts";
+import { useRoute } from "vue-router";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import { type DataTablePageEvent, useConfirm } from "primevue";
 import type { InscriptionsMembers, InterfaceActionsInscriptions, InterfaceResponseInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
@@ -19,8 +20,8 @@ import changeVoucher from "@/components/changeVoucher.vue";
 import notifyMember from "@/components/notifyMember.vue";
 import addObservations from "@/components/addObservations.vue";
 import registerMembers from "@/modules/registers/registerMembers.vue";
-import { page_config } from "@/assets/page_config.json";
 
+const route = useRoute();
 /* Defaults Variables */
 const dataMembers = ref<InscriptionsMembers[]>([]);
 const loading = ref<boolean>(false);
@@ -243,7 +244,7 @@ const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
 
 onMounted(async() => {
     await storeActivities().getActivities();
-    activitySelected.value = storeActivities().activities.find(activity => activity.shortname === page_config.eventID);
+    activitySelected.value = storeActivities().activities.find(activity => activity.shortname === route.params.slug);
     await loadInscriptionsList();
 });
 

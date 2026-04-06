@@ -3,10 +3,10 @@
 import { Api } from "@/api/connection.ts";
 import { storeActivities, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import { page_config } from "@/assets/page_config.json";
 import { computed, ref, onMounted } from "vue";
 import { useField, useForm } from "vee-validate";
 import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
+import { useRoute } from "vue-router";
 import toastEvent from "@/composables/toastEvent.ts";
 import router from "@/router/index";
 import * as yup from "yup";
@@ -17,6 +17,7 @@ import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 
 type VoucherImageType = { file: File; objectURL: string; };
+const route = useRoute();
 
 const refDrawerMembersSaved = ref();
 const loadingSave = ref(false);
@@ -104,7 +105,7 @@ const onValueSelectPayment = (id: number) => {
 
 onMounted(async() => {
     await storeRate().getRates();
-    await storeActivities().getActivities(page_config.eventID);
+    await storeActivities().getActivities(route.params.slug as string);
     const rateSelected = storeRate().rate;
     const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate) {

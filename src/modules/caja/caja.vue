@@ -3,38 +3,19 @@
 import "@/stylesTill.css";
 
 import { Api } from "@/api/connection";
+import { storeActivities, storePaymentMethod, storeUsers } from "@/stores/generalInfoStore.ts";
 import { ref, onMounted, computed } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { h } from "vue";
-import type { DataTablePageEvent } from "primevue";
-import { storeActivities, storePaymentMethod, storeUsers } from "@/stores/generalInfoStore.ts";
+import { useRoute } from "vue-router";
 import { useModal } from "@/composables/useModal";
+import type { DataTablePageEvent } from "primevue";
+import type { MovementInterface, MovementsMetaInterface } from "@/types/TillInterface.ts";
 import MovementForm from "@/components/MovementForm.vue";
-import { page_config } from "@/assets/page_config.json";
 
-interface Movement {
-    activity: number;
-    amount: string;
-    concept: number;
-    description: string;
-    inscription: number;
-    movement_at: string;
-    payment_method: number;
-    reference: string;
-    reversal_of: number;
-    status: string;
-    user: number;
-}
+const route = useRoute();
 
-interface MovementsMeta {
-    cash_total: string;
-    movement_count: number;
-    total_expenses: string;
-    total_incomes: string;
-    total_inscriptions: string;
-}
-
-const dataMovements = ref<Movement[]>([]);
+const dataMovements = ref<MovementInterface[]>([]);
 const loading = ref<boolean>(false);
 const rows = ref(25);
 const currentPage = ref(1);
@@ -42,7 +23,7 @@ const totalRecords = ref(0);
 const search = ref("");
 
 const { openModal, closeModal } = useModal();
-const meta = ref<MovementsMeta>({
+const meta = ref<MovementsMetaInterface>({
     cash_total: "0",
     movement_count: 0,
     total_expenses: "0",
@@ -90,7 +71,7 @@ const loadMovements = useDebounceFn(async(): Promise<void> => {
     const params = {
         page: currentPage.value,
         page_size: rows.value,
-        activity_shortname: page_config.eventID,
+        activity_shortname: route.params.slug,
         search: search.value,
         ...Object.fromEntries(Object.entries(filters.value).filter(([ _, v ]) => v !== null && v !== ""))
     };
@@ -137,8 +118,8 @@ const onClearFilters = async() => {
 
 onMounted(async() => {
     await storeUsers().getUsers();
-    await storeActivities().getActivities(page_config.eventID);
-    await storePaymentMethod().getPaymentMethod(page_config.eventID);
+    await storeActivities().getActivities(route.params.slug as string);
+    await storePaymentMethod().getPaymentMethod(route.params.slug as string);
     await loadMovements();
 });
 

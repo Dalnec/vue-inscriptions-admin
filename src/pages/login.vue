@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { Api } from "@/api/connection.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
-import { useField, useForm } from "vee-validate";
-import { ref } from "vue";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
+import { ref } from "vue";
+import { useField, useForm } from "vee-validate";
 import type { InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
 import * as yup from "yup";
-import { page_config } from "@/assets/page_config.json";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const { loginUserData } = useUserDataConfigStore();
 const refPassword = ref();
 const loading = ref(false);
@@ -27,7 +28,7 @@ const onLogin = handleSubmit(async(values) => {
         const { response }: InterfaceUserLoginActions = await Api.Post({
             route: "login", data: {
                 ...values,
-                shortname: page_config.eventID
+                shortname: route.params.slug
             }
         });
         if (response.status === 200) {

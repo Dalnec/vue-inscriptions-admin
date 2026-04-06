@@ -12,7 +12,6 @@ import toastEvent from "@/composables/toastEvent.ts";
 import type { FileUploadSelectEvent, InputNumberInputEvent } from "primevue";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
-import { page_config } from "@/assets/page_config.json";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import * as yup from "yup";
@@ -148,8 +147,8 @@ function refocus($event: InputNumberInputEvent) {
 
 onMounted(async() => {
     await useStoreRates.getRates();
-    await usePaymentMethodStore.getPaymentMethod(page_config.eventID);
-    await useStoreActivities.getActivities(page_config.eventID);
+    await usePaymentMethodStore.getPaymentMethod(route.params.slug as string);
+    await useStoreActivities.getActivities(route.params.slug as string);
     const rateSelected = useStoreRates.rate;
     const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate?.id) {

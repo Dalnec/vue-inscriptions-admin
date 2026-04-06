@@ -5,12 +5,13 @@ import { Api } from "@/api/connection";
 import { ref, h, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { useModal } from "@/composables/useModal.ts";
+import { useRoute } from "vue-router";
 import type { InterfaceUsers, UsersResponseMembers } from "@/types/interfaceUsers.ts";
 import addUsers from "./addUsers.vue";
 import changePassword from "./changePassword.vue";
-import { page_config } from "@/assets/page_config.json";
 
 /* Defaults Variables */
+const route = useRoute();
 const dataUsers = ref<InterfaceUsers[]>([]);
 const loading = ref<boolean>(false);
 const { openModal, closeModal } = useModal();
@@ -30,7 +31,7 @@ const loadUserList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
     const { response }: UsersResponseMembers = await Api.Get({
         params: {
-            activity_shortname: page_config.eventID
+            activity_shortname: route.params.slug
         },
         route: "user"
     });

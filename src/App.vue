@@ -4,7 +4,7 @@ import { ref, onMounted, watch } from "vue";
 import { useDark } from "@vueuse/core";
 import { useRoute } from "vue-router";
 import Toast from "primevue/toast";
-import { storeActivities, storeActivityActive, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
+import { storeActivityActive, storeChurches, storeDocumentType, storeKind, storeRate } from "@/stores/generalInfoStore.ts";
 
 const route = useRoute();
 const loadingPage = ref(true);
@@ -27,8 +27,6 @@ watch(isDark, (newVal) => {
 onMounted(async() => {
     await storeChurches().getDataChurches();
     await storeDocumentType().getDocumentType();
-    await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
-    await storeActivities().getActivities(route.params?.slug as string);
     await storeRate().getRates();
     await storeKind().getKinds();
     await storeActivityActive().getActiveActivity();

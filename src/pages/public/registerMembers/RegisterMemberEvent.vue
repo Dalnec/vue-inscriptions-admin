@@ -1,17 +1,19 @@
 <script setup lang="ts">
 
-import { computed, ref, watch } from "vue";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
+import { storeActivities, storeChurches, storeDocumentType, storeKind, storePaymentMethod } from "@/stores/generalInfoStore.ts";
+import { computed, onMounted, ref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
+import { castFormErrors } from "@/composables/castFormErrors.ts";
+import { useRoute } from "vue-router";
 import toastEvent from "@/composables/toastEvent.ts";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import type { SelectFilterEvent } from "primevue";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import * as yup from "yup";
-import { castFormErrors } from "@/composables/castFormErrors.ts";
 
+const route = useRoute();
 const refDrawerMembersSaved = ref();
 const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStore();
@@ -131,6 +133,11 @@ const onEnter = () => {
 
 watch(doc_num, () => {
     wasDniChecked.value = false;
+});
+
+onMounted(async() => {
+    await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
+    await storeActivities().getActivities(route.params?.slug as string);
 });
 
 </script>

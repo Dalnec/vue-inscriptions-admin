@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 
-import concilio1 from "@/assets/images/concilio1.jpg";
-import concilio2 from "@/assets/images/concilio2.jpg";
-import concilio3 from "@/assets/images/presidents.jpg";
+import concilio1 from "@/assets/images/newTeam2026.jpg";
+import concilio2 from "@/assets/images/newTeam20261.jpg";
 
 const team = [
     { name: "Equipo Kadosh", image: concilio1 },
-    { name: "Liderazgo Espiritual", image: concilio2 },
-    { name: "Equipo Organizador", image: concilio3 }
+    { name: "Liderazgo Espiritual", image: concilio2 }
 ];
 
 const currentIndex = ref(0);

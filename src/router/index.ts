@@ -1,17 +1,36 @@
-import { createRouter, createWebHistory } from "vue-router";
-import SearchValidRoute from "@/composables/searchRouteValid.ts";
-import toastEvent from "@/composables/toastEvent.ts";
+import { Api } from "@/api/connection.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 import { useEventSlugStore } from "@/stores/eventSlug.ts";
+import { createRouter, createWebHistory } from "vue-router";
+import SearchValidRoute from "@/composables/searchRouteValid.ts";
+import toastEvent from "@/composables/toastEvent.ts";
+
+const validatedSlugs = new Set<string>();
+
+const validateSlug = async (slug: string) => {
+    if (validatedSlugs.has(slug)) return true;
+
+    try {
+        const { response } = await Api.Get({
+            route: "activity",
+            params: { shortname: slug }
+        });
+
+        const isValid = response?.status === 200 && response.data.length > 0;
+
+        if (isValid) validatedSlugs.add(slug);
+
+        return isValid;
+    } catch {
+        return false;
+    }
+};
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
-        // =========================
-        // LANDING GLOBAL (SIN SLUG)
-        // =========================
         {
             path: "/",
             name: "webHome",
@@ -19,19 +38,17 @@ const router = createRouter({
             meta: { public: true }
         },
 
-        // =========================
-        // EVENTO (PÚBLICO)
-        // =========================
         {
             path: "/:slug",
             component: () => import("@/components/app/EventLayout.vue"),
             meta: { public: true },
 
-            beforeEnter: (to) => {
-                const validSlugs = ["camp2026"];
+            beforeEnter: async(to) => {
                 const slug = String(to.params.slug);
 
-                if (!validSlugs.includes(slug)) {
+                const isValid = await validateSlug(slug);
+
+                if ( !isValid) {
                     return { name: "not-found" };
                 }
 
@@ -42,7 +59,7 @@ const router = createRouter({
                 {
                     path: "",
                     name: "webPage",
-                    component: () => import("@/pages/public/webEvent/HomePage.vue")
+                    component: () => import("@/pages/public/webEvent/index.vue")
                 },
                 {
                     path: "login",
@@ -61,7 +78,7 @@ const router = createRouter({
                     name: "event-pay",
                     component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
                     meta: { public: true },
-                    beforeEnter: async (to) => {
+                    beforeEnter: async(to) => {
                         const store = useMembersStore();
 
                         if (store.membersData.length === 0) {
@@ -88,19 +105,17 @@ const router = createRouter({
             ]
         },
 
-        // =========================
-        // PANEL PRIVADO
-        // =========================
         {
             path: "/:slug/home",
             component: () => import("@/layout.vue"),
             name: "home",
 
-            beforeEnter: (to) => {
-                const validSlugs = ["camp2026"];
+            beforeEnter: async(to) => {
                 const slug = String(to.params.slug);
 
-                if (!validSlugs.includes(slug)) {
+                const isValid = await validateSlug(slug);
+
+                if ( !isValid) {
                     return { name: "not-found" };
                 }
 
@@ -123,9 +138,8 @@ const router = createRouter({
                     path: "pay-event",
                     name: "payEvent",
                     component: () => import("@/modules/registers/payEventView.vue"),
-                    beforeEnter: async (to) => {
+                    beforeEnter: async(to) => {
                         const store = useMembersStorePage();
-                        console.log(store.membersData);
                         if (store.membersData.length === 0) {
                             return {
                                 name: "newRegister",
@@ -183,9 +197,6 @@ const router = createRouter({
                 }
             ]
         },
-        // =========================
-        // 404 GLOBAL
-        // =========================
         {
             path: "/:pathMatch(.*)*",
             name: "not-found",
@@ -194,9 +205,6 @@ const router = createRouter({
     ]
 });
 
-// =========================
-// GLOBAL GUARD (SIN CAMBIOS)
-/// =========================
 router.beforeEach((to) => {
     const store = useUserDataConfigStore();
     const slugStore = useEventSlugStore();
@@ -205,27 +213,21 @@ router.beforeEach((to) => {
     const isStaff = store.userData.user?.is_staff;
     const isPublic = to.meta?.public === true;
 
-    // =========================
-    // SYNC SLUG
-    // =========================
     if (to.params.slug) {
         slugStore.setSlug(String(to.params.slug));
     }
 
     const slug = slugStore.slug;
 
-    // =========================
-    // INYECTAR SLUG (si falta)
-    // =========================
     if (slug) {
-        const alreadyHasSlug = to.path.startsWith(`/${slug}`);
+        const alreadyHasSlug = to.path.startsWith(`/${ slug }`);
         const isCatchAll = to.matched.some(r => r.path.includes(":pathMatch"));
-        const isNotFound = ["not-found", "event-not-found"].includes(String(to.name));
+        const isNotFound = [ "not-found", "event-not-found" ].includes(String(to.name));
         const isRoot = to.path === "/";
 
-        if (!alreadyHasSlug && !isCatchAll && !isNotFound && !isRoot) {
+        if ( !alreadyHasSlug && !isCatchAll && !isNotFound && !isRoot) {
             return {
-                path: `/${slug}${to.path}`,
+                path: `/${ slug }${ to.path }`,
                 query: to.query,
                 hash: to.hash,
                 replace: true
@@ -233,9 +235,6 @@ router.beforeEach((to) => {
         }
     }
 
-    // =========================
-    // REDIRECT LOGIN SI YA ESTÁ LOGUEADO
-    // =========================
     if (isAuth && (to.name === "login" || to.name === "event-login")) {
         return {
             name: "home",
@@ -243,14 +242,8 @@ router.beforeEach((to) => {
         };
     }
 
-    // =========================
-    // RUTAS PUBLICAS
-    // =========================
     if (isPublic) return true;
 
-    // =========================
-    // BLOQUEO SI NO AUTH EN /home
-    // =========================
     const isHomeRoute = to.path.includes("/home");
 
     if (isHomeRoute && !isAuth) {
@@ -260,13 +253,10 @@ router.beforeEach((to) => {
         };
     }
 
-    // =========================
-    // PERMISOS
-    // =========================
     if (isAuth) {
         if (isStaff) return true;
 
-        if (!SearchValidRoute(String(to.name), store.userData.user?.permissions)) {
+        if ( !SearchValidRoute(String(to.name), store.userData.user?.permissions)) {
             return { name: "not-authorized" };
         }
     }

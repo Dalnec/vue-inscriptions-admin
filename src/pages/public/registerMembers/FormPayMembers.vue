@@ -192,12 +192,8 @@ onMounted(async() => {
 }
 
 .form-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10
-    rounded-2xl p-5 md:p-6 mb-6;
-}
-
-.form-section-title {
-    @apply text-white text-lg font-semibold mb-4;
+    @apply bg-surface-100 dark:bg-white/5 backdrop-blur-md border border-surface-200 dark:border-white/10
+    rounded-2xl p-5 md:p-6 mb-6 text-surface-900 dark:text-white;
 }
 
 .form-actions {

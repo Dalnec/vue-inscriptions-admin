@@ -201,7 +201,7 @@ onMounted(async() => {
             </div>
         </div>
 
-        <div class="form-card">
+        <div class="form-card-page">
 
             <h3 class="form-section-title">Datos personales</h3>
 
@@ -246,7 +246,7 @@ onMounted(async() => {
             </div>
         </div>
 
-        <div class="form-card">
+        <div class="form-card-page">
 
             <h3 class="form-section-title">Información adicional</h3>
 
@@ -289,8 +289,8 @@ onMounted(async() => {
 <style>
 
 .form-card-page {
-    @apply bg-white/5 backdrop-blur-md border border-white/10
-    rounded-2xl p-5 md:p-6 mb-6;
+    @apply bg-surface-100 dark:bg-white/5 backdrop-blur-md border border-surface-200 dark:border-white/10
+    rounded-2xl p-5 md:p-6 mb-6 text-surface-900 dark:text-white;
 }
 
 .form-grid-page {

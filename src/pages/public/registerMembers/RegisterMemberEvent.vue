@@ -260,15 +260,6 @@ watch(doc_num, () => {
     @apply text-slate-400 mt-2;
 }
 
-.form-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10
-    rounded-2xl p-5 md:p-6 mb-6;
-}
-
-.form-section-title {
-    @apply text-white text-lg font-semibold mb-4;
-}
-
 .form-grid {
     @apply grid md:grid-cols-2 gap-4;
 }

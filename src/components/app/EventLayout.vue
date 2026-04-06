@@ -3,7 +3,7 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const slug = route.params.slug;
-console.log(slug);
+
 </script>
 
 <template>

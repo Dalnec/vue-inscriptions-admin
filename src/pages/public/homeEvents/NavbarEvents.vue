@@ -1,47 +1,73 @@
 <script setup lang="ts">
 
+import { ref } from "vue";
+
+const emit = defineEmits([ "update:search" ]);
+
+const onInput = () => {
+    emit("update:search");
+};
+
+const search = ref("");
+
+defineExpose({ search });
+
 </script>
 
 <template>
-    <nav class="fixed top-0 w-full z-50 bg-white/85 dark:bg-zinc-950/85 backdrop-blur-xl">
-        <div class="flex justify-between items-center px-6 py-4 max-w-screen-2xl mx-auto">
-            <div class="flex items-center gap-8">
-                <span
-                        class="text-2xl font-black text-red-700 dark:text-red-500 italic tracking-tighter font-headline">KINETIC
-                    STAGE</span>
-                <div class="hidden md:flex items-center space-x-6 font-headline font-bold tracking-tight">
-                    <a class="text-red-700 dark:text-red-500 border-b-2 border-red-700 dark:border-red-500 pb-1"
-                       href="#">Música</a>
-                    <a class="text-zinc-600 dark:text-zinc-400 hover:text-red-600 transition-colors" href="#">Teatro</a>
-                    <a class="text-zinc-600 dark:text-zinc-400 hover:text-red-600 transition-colors"
-                       href="#">Deportes</a>
-                    <a class="text-zinc-600 dark:text-zinc-400 hover:text-red-600 transition-colors"
-                       href="#">Cultura</a>
-                </div>
+    <nav class="navbar">
+        <div class="navbar__container">
+
+            <!-- LOGO -->
+            <div class="navbar__left">
+                <span class="navbar__logo">
+                    Regis
+                </span>
             </div>
-            <div class="flex items-center gap-4 flex-1 max-w-md mx-8">
-                <div class="relative w-full">
-                    <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
-                    <input
-                            class="w-full bg-surface-container-highest border-none rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 transition-all text-sm"
-                            placeholder="Busca tu próximo evento..." type="text" />
-                </div>
+
+            <!-- SEARCH -->
+            <div class="navbar__center">
+                <IconField>
+                    <InputIcon>
+                        <i-material-symbols-search-rounded/>
+                    </InputIcon>
+                    <InputText v-model="search" @update:modelValue="onInput()" fluid placeholder="Buscar eventos..." class="rounded-full"/>
+                </IconField>
             </div>
-            <div class="flex items-center gap-4">
-                <button
-                        class="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-all scale-95 active:scale-90 duration-200">
-                    <span class="material-symbols-outlined text-zinc-600">shopping_cart</span>
-                </button>
-                <button
-                        class="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-all scale-95 active:scale-90 duration-200">
-                    <span class="material-symbols-outlined text-zinc-600">account_circle</span>
-                </button>
+
+            <!-- ACTIONS -->
+            <div class="navbar__right">
             </div>
         </div>
     </nav>
 </template>
 
 <style scoped>
+
+.navbar {
+    @apply fixed top-0 w-full z-50 backdrop-blur-xl border-b border-slate-200/60 dark:border-slate-800/60;
+    @apply bg-white/80 dark:bg-slate-950/80;
+}
+
+.navbar__container {
+    @apply max-w-screen-xl mx-auto flex items-center justify-between px-6 py-3;
+}
+
+.navbar__left {
+    @apply flex items-center;
+}
+
+.navbar__logo {
+    @apply text-xl md:text-2xl font-extrabold italic tracking-tight;
+    @apply text-red-700 dark:text-red-500;
+}
+
+.navbar__center {
+    @apply flex-1 max-w-md mx-6;
+}
+
+.navbar__right {
+    @apply flex items-center gap-2;
+}
 
 </style>

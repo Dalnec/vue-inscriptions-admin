@@ -11,7 +11,7 @@ const visible = ref<boolean>(false);
 const textSize = ref<number>(15);
 const cookies = useCookies();
 
-const isDark = useDark({ disableTransition: false, initialValue: "auto" });
+const isDark = useDark({ disableTransition: false, initialValue: "light" });
 const toggleDrawer = (): boolean => visible.value = !visible.value;
 
 interface ColorPalette {

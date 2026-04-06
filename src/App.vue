@@ -7,7 +7,7 @@ import { storeActivities, storeActivityActive, storeChurches, storeDocumentType,
 import { page_config } from "@/assets/page_config.json";
 
 const loadingPage = ref(true);
-const isDark = useDark({ disableTransition: false, initialValue: "auto" });
+const isDark = useDark({ disableTransition: false, initialValue: "light" });
 
 onMounted(() => {
     window.addEventListener("load", () => {

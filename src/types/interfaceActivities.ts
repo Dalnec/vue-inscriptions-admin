@@ -50,12 +50,12 @@ export const mapActivityToCard = (activity: InterfaceActivities): ActivityCardMo
 
         // formateo de fecha
         date: activity.start_date
-              ? new Date(activity.start_date).toLocaleDateString("es-PE", {
+            ? new Date(activity.start_date).toLocaleDateString("es-PE", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric"
             })
-              : "Sin fecha",
+            : "Sin fecha",
 
         // fallback (no existe en backend aún)
         category: "Evento",

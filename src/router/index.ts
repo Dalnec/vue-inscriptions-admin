@@ -28,10 +28,10 @@ const router = createRouter({
             meta: { public: true },
 
             beforeEnter: (to) => {
-                const validSlugs = [ "camp2026" ];
+                const validSlugs = ["camp2026"];
                 const slug = String(to.params.slug);
 
-                if ( !validSlugs.includes(slug)) {
+                if (!validSlugs.includes(slug)) {
                     return { name: "not-found" };
                 }
 
@@ -61,7 +61,7 @@ const router = createRouter({
                     name: "event-pay",
                     component: () => import("@/pages/public/registerMembers/FormPayMembers.vue"),
                     meta: { public: true },
-                    beforeEnter: async(to) => {
+                    beforeEnter: async (to) => {
                         const store = useMembersStore();
 
                         if (store.membersData.length === 0) {
@@ -97,10 +97,10 @@ const router = createRouter({
             name: "home",
 
             beforeEnter: (to) => {
-                const validSlugs = [ "camp2026" ];
+                const validSlugs = ["camp2026"];
                 const slug = String(to.params.slug);
 
-                if ( !validSlugs.includes(slug)) {
+                if (!validSlugs.includes(slug)) {
                     return { name: "not-found" };
                 }
 
@@ -123,7 +123,7 @@ const router = createRouter({
                     path: "pay-event",
                     name: "payEvent",
                     component: () => import("@/modules/registers/payEventView.vue"),
-                    beforeEnter: async(to) => {
+                    beforeEnter: async (to) => {
                         const store = useMembersStorePage();
                         console.log(store.membersData);
                         if (store.membersData.length === 0) {
@@ -218,14 +218,14 @@ router.beforeEach((to) => {
     // INYECTAR SLUG (si falta)
     // =========================
     if (slug) {
-        const alreadyHasSlug = to.path.startsWith(`/${ slug }`);
+        const alreadyHasSlug = to.path.startsWith(`/${slug}`);
         const isCatchAll = to.matched.some(r => r.path.includes(":pathMatch"));
-        const isNotFound = [ "not-found", "event-not-found" ].includes(String(to.name));
+        const isNotFound = ["not-found", "event-not-found"].includes(String(to.name));
         const isRoot = to.path === "/";
 
-        if ( !alreadyHasSlug && !isCatchAll && !isNotFound && !isRoot) {
+        if (!alreadyHasSlug && !isCatchAll && !isNotFound && !isRoot) {
             return {
-                path: `/${ slug }${ to.path }`,
+                path: `/${slug}${to.path}`,
                 query: to.query,
                 hash: to.hash,
                 replace: true
@@ -266,7 +266,7 @@ router.beforeEach((to) => {
     if (isAuth) {
         if (isStaff) return true;
 
-        if ( !SearchValidRoute(String(to.name), store.userData.user?.permissions)) {
+        if (!SearchValidRoute(String(to.name), store.userData.user?.permissions)) {
             return { name: "not-authorized" };
         }
     }

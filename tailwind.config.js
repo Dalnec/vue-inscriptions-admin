@@ -1,28 +1,3 @@
-<<<<<<< HEAD
-/** @type {import("tailwindcss").Config} */
-export default {
-    content: [
-        "./index.html",
-        "./src/**/*.{vue,js,ts,jsx,tsx,svg}",
-        "./src/**/*/*.svg"
-    ],
-    darkMode: "class",
-    theme: {
-        screens: {
-            sm: "480px",
-            smd: "840px",
-            md: "750px",
-            lg: "976px",
-            xl: "1440px"
-        },
-        extend: {}
-    },
-    corePlugins: {
-        preflight: true, // change this to false if you don't want TailwindCSS to reset your CSS
-        enabled: true
-    },
-    plugins: [ require("tailwindcss-primeui") ]
-=======
 /** @type {import("tailwindcss").Config} */
 export default {
     content: [
@@ -47,28 +22,21 @@ export default {
                 "on-error-container": "#93000a",
                 "inverse-on-surface": "#f1f1f1",
                 "surface-bright": "#f9f9f9",
-                "primary-fixed-dim": "#ffb3b1",
                 "on-surface": "#1b1b1b",
                 "tertiary": "#5c5c5c",
                 "on-tertiary-container": "#fefcfc",
                 "on-tertiary-fixed-variant": "#464747",
                 "surface-container": "#eeeeee",
                 "outline": "#946e6c",
-                "on-primary": "#ffffff",
-                "on-primary-fixed": "#410007",
                 "tertiary-fixed": "#e4e2e2",
                 "tertiary-container": "#757474",
                 "secondary": "#734f8e",
                 "tertiary-fixed-dim": "#c7c6c6",
-                "on-primary-container": "#fffbff",
-                "primary-container": "#e90034",
                 "on-secondary-fixed-variant": "#5a3875",
                 "on-error": "#ffffff",
                 "secondary-fixed-dim": "#e1b6fd",
-                "primary-fixed": "#ffdad8",
                 "surface-container-lowest": "#ffffff",
                 "inverse-surface": "#303030",
-                "inverse-primary": "#ffb3b1",
                 "surface-container-highest": "#e2e2e2",
                 "secondary-container": "#e1b6fd",
                 "background": "#f9f9f9",
@@ -83,16 +51,14 @@ export default {
                 "surface-tint": "#bf0029",
                 "surface-container-high": "#e8e8e8",
                 "secondary-fixed": "#f2daff",
-                "primary": "#bb0028",
                 "on-tertiary": "#ffffff",
                 "surface-container-low": "#f3f3f3",
-                "on-primary-fixed-variant": "#92001d",
                 "surface-dim": "#dadada"
             },
             fontFamily: {
-                "headline": ["Be Vietnam Pro"],
-                "body": ["Inter"],
-                "label": ["Inter"]
+                "headline": [ "Be Vietnam Pro" ],
+                "body": [ "Inter" ],
+                "label": [ "Inter" ]
             }
         }
     },
@@ -101,5 +67,4 @@ export default {
         enabled: true
     },
     plugins: [ require("tailwindcss-primeui") ]
->>>>>>> 7222a76ae600d4966c6295077acafba2f0036dc0
 };

@@ -4,7 +4,7 @@ import useGlobalToast from "@/composables/toastEvent.ts";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 
 const props = withDefaults(
-    defineProps<PaymentMethod>(),
+    defineProps<Partial<PaymentMethod>>(),
     { account: "", active: true, cci: null, description: "", icon: "", id: null }
 );
 

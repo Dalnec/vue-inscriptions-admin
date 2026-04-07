@@ -25,7 +25,7 @@ const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer =
 const storeDataMembers = useMembersStore();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
-const dataForViewPayment = ref<PaymentMethod>({ account: "", active: true, cci: null, description: "", icon: "", id: null });
+const dataForViewPayment = ref<Partial<PaymentMethod>>({ account: "", active: true, cci: null, description: "", icon: "", id: null });
 const usePaymentMethodStore = storePaymentMethod();
 const useStoreTotalRate = storePriceRate();
 const useStoreActivities = storeActivities();

@@ -31,6 +31,7 @@ export interface PaymentMethod {
     description: string,
     icon?: string | null,
     id?: null | number
+    activity: null | number
 }
 
 export interface ActivityCardModel {

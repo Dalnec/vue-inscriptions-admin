@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import type { PaymentMethod } from "@/types/interfaceActivities.ts";
-import { onMounted, ref } from "vue";
-import * as yup from "yup";
-import { useField, useForm } from "vee-validate";
 import { Api } from "@/api/connection.ts";
-import toastEvent from "@/composables/toastEvent.ts";
+import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
+import { onMounted, ref } from "vue";
+import { useField, useForm } from "vee-validate";
 import { setDefaultImages } from "@/composables/convertImageToUpload.ts";
+import toastEvent from "@/composables/toastEvent.ts";
+import type { InterfaceActivities, InterfaceResponseActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
+import * as yup from "yup";
+import { useRoute } from "vue-router";
 
 const props = defineProps<{ formData?: PaymentMethod, closeModal: () => void, refreshData: () => Promise<void> }>();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
 const uploadedFile = ref<File | null>(null);
+const activitiesOptions = ref<InterfaceActivities[]>([]);
+const userData = useUserDataConfigStore();
+const route = useRoute();
 
-const fieldInitial = ref<PaymentMethod>({ account: "", cci: "", description: "", icon: "", active: true });
+const fieldInitial = ref<Partial<PaymentMethod>>({ account: "", cci: "", description: "", icon: "", active: true });
 
 const validationSchema = yup.object({
     description: yup.string().required("Agregue un nombre de cuenta")
@@ -22,6 +27,7 @@ const { handleSubmit, setValues } = useForm({ validationSchema, initialValues: f
 
 const { value: account } = useField<string>("account");
 const { value: cci } = useField<string>("cci");
+const { value: activity } = useField<number | null>("activity");
 const { value: description } = useField<string>("description");
 const { value: active } = useField<boolean>("active");
 const { value: icon, setValue: setValueIcon } = useField<string>("icon");
@@ -62,6 +68,14 @@ const handleFileSelect = (event: any) => {
     }
 };
 
+const onGetActivities = async() => {
+    const { response }: InterfaceResponseActivities = await Api.Get({ route: "activity" });
+    if (response && response.status === 200) {
+        return response.data;
+    }
+    return [] as InterfaceActivities[];
+};
+
 onMounted(async() => {
     if (props.formData?.id) {
         setValues({ ...props.formData });
@@ -69,23 +83,28 @@ onMounted(async() => {
             await setDefaultImages(props.formData.icon, refVoucherImage, icon, props.formData.description);
         }
     }
+    activitiesOptions.value = await onGetActivities();
+    activity.value = activitiesOptions.value.find((item) => item.shortname === route.params?.slug)?.id || null;
 });
 
 </script>
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem label="Nombre de cuenta" span="4" mark name="description">
+        <ValidateFormItem label="Nombre de cuenta" span="6" mark name="description">
             <InputText v-model="description" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Nro de cuenta" span="4">
+        <ValidateFormItem label="Nro de cuenta" span="6">
             <InputText v-model="account" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="CCI" span="4">
+        <ValidateFormItem label="CCI" span="5">
             <InputText v-model="cci" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Activo" span="4">
+        <ValidateFormItem label="Activo" span="2">
             <ToggleSwitch v-model="active" fluid/>
+        </ValidateFormItem>
+        <ValidateFormItem label="Actividad" span="5" v-if="userData.userData.user.is_staff">
+            <Select v-model="activity" :options="activitiesOptions" optionLabel="title" optionValue="id" fluid/>
         </ValidateFormItem>
         <ValidateFormItem label="Icono" span="7">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"

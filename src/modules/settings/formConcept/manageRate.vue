@@ -6,10 +6,16 @@ import * as yup from "yup";
 import { onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
 import toastEvent from "@/composables/toastEvent.ts";
+import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
+import { useRoute } from "vue-router";
+import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
 
 const props = defineProps<{ formData?: InterfaceRates, closeModal: () => void, refreshData: () => Promise<void> }>();
 const loading = ref(false);
 const fieldInitial = ref<InterfaceRates>({ active: true, description: "", price: "", selected: true });
+const activitiesOptions = ref<InterfaceActivities[]>([]);
+const userData = useUserDataConfigStore();
+const route = useRoute();
 
 const validationSchema = yup.object({
     description: yup.string().required("Agregue un nombre de cuenta")
@@ -21,6 +27,7 @@ const { value: description } = useField<string>("description");
 const { value: price } = useField<string>("price");
 const { value: selected } = useField<boolean>("selected");
 const { value: active } = useField<boolean>("active");
+const { value: activity } = useField<number | null>("activity");
 
 const onSavePayments = handleSubmit(async(values) => {
     loading.value = true;
@@ -37,8 +44,18 @@ const onSavePayments = handleSubmit(async(values) => {
     }
 });
 
-onMounted(() => {
+const onGetActivities = async() => {
+    const { response }: InterfaceResponseActivities = await Api.Get({ route: "activity" });
+    if (response && response.status === 200) {
+        return response.data;
+    }
+    return [] as InterfaceActivities[];
+};
+
+onMounted(async () => {
     if (props.formData?.id) setValues({ ...props.formData });
+    activitiesOptions.value = await onGetActivities();
+    activity.value = activitiesOptions.value.find((item) => item.shortname === route.params?.slug)?.id || null;
 });
 
 </script>
@@ -56,6 +73,9 @@ onMounted(() => {
         </ValidateFormItem>
         <ValidateFormItem label="Activo" span="3">
             <ToggleSwitch fluid v-model="active"/>
+        </ValidateFormItem>
+        <ValidateFormItem label="Actividad" span="12" v-if="userData.userData.user.is_staff">
+            <Select v-model="activity" :options="activitiesOptions" optionLabel="title" optionValue="id" fluid/>
         </ValidateFormItem>
         <ValidateFormItem hide-label hide-error span="6">
             <Button label="Cancelar" @click="props.closeModal()" fluid/>

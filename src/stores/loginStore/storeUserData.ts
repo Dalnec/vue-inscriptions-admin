@@ -25,7 +25,7 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
             this.userData = {} as InterfaceLogin;
             localStorage.clear();
             sessionStorage.clear();
-            await router.push({ name: "login", force: true });
+            await router.push({ name: "event-login", force: true });
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {
             const perm = permName.trim().toLowerCase();

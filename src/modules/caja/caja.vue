@@ -71,7 +71,7 @@ const loadMovements = useDebounceFn(async(): Promise<void> => {
     const params = {
         page: currentPage.value,
         page_size: rows.value,
-        activity_shortname: route.params.slug,
+        activity_shortname: route.params.slug === "console" ? undefined : route.params.slug as string,
         search: search.value,
         ...Object.fromEntries(Object.entries(filters.value).filter(([ _, v ]) => v !== null && v !== ""))
     };
@@ -118,8 +118,8 @@ const onClearFilters = async() => {
 
 onMounted(async() => {
     await storeUsers().getUsers();
-    await storeActivities().getActivities(route.params.slug as string);
-    await storePaymentMethod().getPaymentMethod(route.params.slug as string);
+    await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
+    await storePaymentMethod().getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
     await loadMovements();
 });
 

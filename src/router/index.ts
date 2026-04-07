@@ -9,7 +9,7 @@ import toastEvent from "@/composables/toastEvent.ts";
 
 const validatedSlugs = new Set<string>();
 
-const validateSlug = async (slug: string) => {
+const validateSlug = async(slug: string) => {
     if (validatedSlugs.has(slug)) return true;
 
     try {
@@ -28,6 +28,10 @@ const validateSlug = async (slug: string) => {
     }
 };
 
+const isConsoleRoute = (to: any) => {
+    return String(to.path).startsWith("/console");
+};
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -37,9 +41,96 @@ const router = createRouter({
             component: () => import("@/pages/public/homeEvents/HomePage.vue"),
             meta: { public: true }
         },
-
         {
-            path: "/:slug",
+            path: "/console",
+            meta: { console: true },
+            children: [
+                {
+                    path: "login",
+                    name: "console-login",
+                    component: () => import("@/pages/login.vue"),
+                    meta: { public: true }
+                },
+                {
+                    path: "home",
+                    component: () => import("@/layout.vue"),
+                    children: [
+                        {
+                            path: "register",
+                            name: "newRegister",
+                            component: () => import("@/modules/registers/registersCard.vue"),
+                            meta: {
+                                icon: IconMaterialSymbolsAddNotesOutline,
+                                label: "Nueva Inscripción"
+                            }
+                        },
+                        {
+                            path: "pay-event",
+                            name: "payEvent",
+                            component: () => import("@/modules/registers/payEventView.vue"),
+                            beforeEnter: async(to) => {
+                                const store = useMembersStorePage();
+                                if (store.membersData.length === 0) {
+                                    return {
+                                        name: "newRegister",
+                                        params: { slug: to.params.slug }
+                                    };
+                                }
+                                return true;
+                            }
+                        },
+                        {
+                            path: "inscriptions",
+                            name: "inscriptions",
+                            component: () => import("@/modules/inscriptions/inscriptions.vue"),
+                            meta: {
+                                icon: IconMaterialSymbolsFrameInspectRounded,
+                                label: "Inscripciones"
+                            }
+                        },
+                        {
+                            meta: { icon: IconMaterialSymbolsGroupOutlineRounded, label: "Usuarios" },
+                            path: "users",
+                            name: "users",
+                            component: () => import("@/modules/users/users.vue")
+                        },
+                        {
+                            component: () => import("@/modules/caja/caja.vue"),
+                            meta: { icon: IconMaterialSymbolsAccountBalanceWalletOutline, label: "Caja" },
+                            name: "caja",
+                            path: "caja"
+                        },
+                        {
+                            component: () => import("@/modules/settings/index.vue"),
+                            meta: { icon: IconMaterialSymbolsCalendarAppsScript, label: "Configuraciones" },
+                            name: "settings",
+                            path: "settings"
+                        },
+                        {
+                            component: () => import("@/modules/tillConcept/TillConcepts.vue"),
+                            name: "conceptsCaja",
+                            path: "concepts-caja"
+                        },
+                        {
+                            component: () => import("@/modules/settings/concepts.vue"),
+                            name: "concepts",
+                            path: "concepts"
+                        },
+                        {
+                            component: () => import("@/modules/activities/activities.vue"),
+                            meta: {
+                                icon: IconMaterialSymbolsEventNoteOutline,
+                                label: "Actividades"
+                            },
+                            name: "activities",
+                            path: "activities"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            path: "/:slug?",
             component: () => import("@/components/app/EventLayout.vue"),
             meta: { public: true },
 
@@ -54,7 +145,6 @@ const router = createRouter({
 
                 return true;
             },
-
             children: [
                 {
                     path: "",
@@ -106,12 +196,15 @@ const router = createRouter({
         },
 
         {
-            path: "/:slug/home",
+            path: "/:slug?/home",
             component: () => import("@/layout.vue"),
             name: "home",
-
             beforeEnter: async(to) => {
+                if (isConsoleRoute(to)) return true;
+
                 const slug = String(to.params.slug);
+
+                if ([ "console" ].includes(slug)) return true;
 
                 const isValid = await validateSlug(slug);
 
@@ -121,8 +214,7 @@ const router = createRouter({
 
                 return true;
             },
-
-            redirect: { name: "newRegister" },
+            // redirect: { name: "newRegister" },
 
             children: [
                 {
@@ -212,14 +304,32 @@ router.beforeEach((to) => {
     const isAuth = !!store.userData.token;
     const isStaff = store.userData.user?.is_staff;
     const isPublic = to.meta?.public === true;
+    const isConsole = to.path.startsWith("/console");
 
-    if (to.params.slug) {
-        slugStore.setSlug(String(to.params.slug));
+    if (isConsole) {
+        if ( !isAuth && !isPublic) {
+            return { path: "/console/login" };
+        }
+
+        if (isAuth && to.path === "/console/login") {
+            return { path: "/console/home/register" };
+        }
+
+        return true;
     }
 
-    const slug = slugStore.slug;
+    const RESERVED_SLUGS = [ "console" ];
 
-    if (slug) {
+    const rawSlug = to.params.slug as string | undefined;
+
+    const slug =
+        rawSlug && !RESERVED_SLUGS.includes(rawSlug)
+        ? rawSlug
+        : undefined;
+
+    if ( !isConsole && slug) {
+        slugStore.setSlug(slug);
+
         const alreadyHasSlug = to.path.startsWith(`/${ slug }`);
         const isCatchAll = to.matched.some(r => r.path.includes(":pathMatch"));
         const isNotFound = [ "not-found", "event-not-found" ].includes(String(to.name));
@@ -235,7 +345,7 @@ router.beforeEach((to) => {
         }
     }
 
-    if (isAuth && (to.name === "login" || to.name === "event-login")) {
+    if (isAuth && to.name === "event-login") {
         return {
             name: "home",
             params: { slug }

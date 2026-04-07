@@ -1,8 +1,8 @@
-import router from "@/router/index";
-import { authChannel } from "@/api/authChannel.ts";
 import { defineStore } from "pinia";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import { type InterfaceLogin, type PermissionsInfo } from "@/types/InterfaceLogin.ts";
+import { type RouteLocationNormalizedLoaded } from "vue-router";
+import router from "@/router";
 
 export const useUserDataConfigStore = defineStore("userDataConfig", {
     state: () => ({
@@ -14,18 +14,21 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
             if ( !data.user) throw new Error("No user data");
             if (data.user?.id) this.userData = { ...data, user: { ...data.user } };
 
-            if (router.currentRoute.value.name !== ("home")) {
-                useGlobalToast({ summary: `Bienvenido ${ this.userData.user?.username }` });
-                await router.push({ name: "home" });
-            }
-            authChannel.postMessage({ type: "LOGIN", data });
+            useGlobalToast({ summary: `Bienvenido ${ this.userData.user?.username }` });
         },
 
-        async logout() {
+        async logout(context?: { isConsole?: boolean; slug?: string }) {
             this.userData = {} as InterfaceLogin;
             localStorage.clear();
             sessionStorage.clear();
-            await router.push({ name: "event-login", force: true });
+
+            if (context?.isConsole) {
+                await router.push("/console/login");
+            } else if (context?.slug) {
+                await router.push(`/${ context.slug }/login`);
+            } else {
+                await router.push("/");
+            }
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {
             const perm = permName.trim().toLowerCase();
@@ -45,3 +48,14 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
         }
     }
 });
+
+export const getRouteContext = (route: RouteLocationNormalizedLoaded) => {
+    const isConsole = route.path.startsWith("/console");
+    const slug = route.params.slug as string | undefined;
+
+    return {
+        isConsole,
+        isEvent: !isConsole,
+        slug
+    };
+};

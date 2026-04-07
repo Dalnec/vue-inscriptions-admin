@@ -2,16 +2,20 @@
 import { Api } from "@/api/connection.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import type { InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
 import * as yup from "yup";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
-const route = useRoute();
-const { loginUserData } = useUserDataConfigStore();
+const useLoginStore = useUserDataConfigStore();
 const refPassword = ref();
 const loading = ref(false);
+const route = useRoute();
+const router = useRouter();
+
+const isConsole = computed(() => route.path.startsWith("/console"));
+const slug = computed(() => route.params.slug as string | undefined);
 
 const schemaValidate = yup.object({
     password: yup.string().required("Ingrese su contraseña").label("password").min(5, "Ingresa al menos 5 caracteres"),
@@ -26,17 +30,26 @@ const onLogin = handleSubmit(async(values) => {
     try {
         loading.value = true;
         const { response }: InterfaceUserLoginActions = await Api.Post({
-            route: "login", data: {
+            route: "login",
+            data: {
                 ...values,
-                shortname: route.params.slug
+                shortname: isConsole.value ? undefined : slug.value
             }
         });
         if (response.status === 200) {
-            await loginUserData(response.data);
-            loading.value = false;
+            await useLoginStore.loginUserData(response.data);
+
+            if (isConsole.value) {
+                await router.replace("/console/home/register");
+            } else if (slug.value) {
+                await router.replace(`/${ slug.value }/home`);
+            }
+            return;
         }
+
     } catch (e) {
         console.log(e);
+    } finally {
         loading.value = false;
     }
 }, ({ errors }) => castFormErrors(errors));

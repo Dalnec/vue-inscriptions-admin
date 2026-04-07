@@ -9,9 +9,12 @@ import AppConfig from "@/components/app/appConfig.vue";
 import type { MenuItem } from "primevue/menuitem";
 
 const route = useRoute();
+const userDataStore = useUserDataConfigStore();
 const confirm = useConfirm();
 const menu = ref();
-const userDataStore = useUserDataConfigStore();
+
+const isConsole = route.path.startsWith("/console");
+const slug = route.params.slug as string | undefined;
 
 navBarStore().createOptionsMenu();
 
@@ -30,7 +33,7 @@ const isChildActive = (childrenRoutes: MenuItem[]): boolean => {
 const confirm1 = () => {
     confirm.require({
         accept: () => {
-            userDataStore.logout();
+            userDataStore.logout({ isConsole, slug });
             useGlobalToast({ severity: "info", summary: "Sesión expirada", detail: "Vuelva a iniciar sesión", life: 3000 });
         },
         acceptProps: {
@@ -55,11 +58,6 @@ const items = () => {
             label: "Cerrar Sesión", command: () => confirm1()
         }
     ];
-    // if (userDataValue.is_superuser || userDataValue.profile_description === "ADMINISTRADOR") {
-    //     optionsMenu.push({
-    //         label: "Configuraciones", command: () => router.push({ name: "settings" })
-    //     });
-    // }
     return optionsMenu;
 };
 

@@ -57,7 +57,6 @@ const onPageChange = async(event: DataTablePageEvent) => {
  */
 const loadInscriptionsList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
-    console.log(activitySelected.value);
     const { response }: InterfaceResponseInscriptions = await Api.Get({
         params: {
             activity: activitySelected.value?.id,
@@ -246,7 +245,9 @@ const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
 
 onMounted(async() => {
     await storeActivities().getActivities();
-    activitySelected.value = useStoreActivities.activities.find(activity => activity.shortname === route.params.slug);
+    if (route.params.slug === "console" ? undefined : route.params.slug as string) {
+        activitySelected.value = useStoreActivities.activities.find(activity => activity.shortname === route.params.slug);
+    }
     await loadInscriptionsList();
 });
 

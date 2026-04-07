@@ -105,7 +105,7 @@ const onValueSelectPayment = (id: number) => {
 
 onMounted(async() => {
     await storeRate().getRates();
-    await storeActivities().getActivities(route.params.slug as string);
+    await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = storeRate().rate;
     const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate) {

@@ -147,8 +147,8 @@ function refocus($event: InputNumberInputEvent) {
 
 onMounted(async() => {
     await useStoreRates.getRates();
-    await usePaymentMethodStore.getPaymentMethod(route.params.slug as string);
-    await useStoreActivities.getActivities(route.params.slug as string);
+    await usePaymentMethodStore.getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
+    await useStoreActivities.getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = useStoreRates.rate;
     const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate?.id) {

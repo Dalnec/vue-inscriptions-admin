@@ -31,7 +31,7 @@ const loadUserList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
     const { response }: UsersResponseMembers = await Api.Get({
         params: {
-            activity_shortname: route.params.slug
+            activity_shortname: route.params.slug === 'console' ? null: route.params.slug
         },
         route: "user"
     });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import router from "@/router";
-import { h, ref } from "vue";
+import { h, onMounted, ref } from "vue";
 import { useModal } from "@/composables/useModal.ts";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 import type { InterfaceRates } from "@/types/InterfaceRates.ts";
@@ -10,6 +10,7 @@ import ListConcepts from "@/modules/settings/listConcepts.vue";
 import managePaymentMethod from "@/modules/settings/formConcept/managePaymentMethod.vue";
 import manageRate from "@/modules/settings/formConcept/manageRate.vue";
 import basicFormToAddOrEdit from "@/components/app/basicFormToAddOrEdit.vue";
+import { useRoute } from "vue-router";
 
 const conceptSelect = ref("paymentMethod");
 const refGeneralTablePaymentMethod = ref();
@@ -18,7 +19,8 @@ const refGeneralTableChurch = ref();
 const refGeneralTableKind = ref();
 const refGeneralTableDocumentType = ref();
 const { closeModal, openModal } = useModal();
-
+const activity = ref<null | string>();
+const route = useRoute();
 
 const managePaymentForm = (data?: PaymentMethod) => {
     openModal({
@@ -58,6 +60,10 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
     });
 };
 
+onMounted(() => {
+    activity.value = route.params.slug as string || "";
+});
+
 </script>
 
 <template>
@@ -80,7 +86,8 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTablePaymentMethod" route="paymentMethod" min-width="50rem">
+                    <general-table-module ref="refGeneralTablePaymentMethod" route="paymentMethod" min-width="50rem"
+                                          :filters="{ activity_shortname: activity}">
                         <Column style="width: 5%;" field="account" header="Nro de Cuenta"/>
                         <Column style="width: 5%;" field="cci" header="CCI"/>
                         <template #actions>
@@ -99,7 +106,8 @@ const addInfoGeneralForm = (route: string, reloadData: () => Promise<void>, data
                     </div>
                 </template>
                 <template #content>
-                    <general-table-module ref="refGeneralTableRate" route="tarifa" min-width="30rem">
+                    <general-table-module ref="refGeneralTableRate" route="tarifa" min-width="30rem"
+                                          :filters="{ activity_shortname: activity}">
                         <Column header="Precio" field="price" style="width: 5%;"/>
                         <template #actions>
                             <Column style="width: 2%;" #body="{ data }">

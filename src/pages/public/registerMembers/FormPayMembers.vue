@@ -120,7 +120,7 @@ onMounted(async() => {
         <HeaderPage/>
         <div class="form-wrapper">
             <!-- HEADER -->
-            <div class="form-header">
+            <div class="form-header-pay">
                 <h2>Pago de Inscripción</h2>
                 <p>Completa los datos de pago para finalizar tu inscripción</p>
             </div>
@@ -176,25 +176,17 @@ onMounted(async() => {
 </template>
 
 <style>
-.form-wrapper {
-    @apply max-w-3xl mx-auto px-4 md:px-6;
-}
 
-.form-header {
+.form-header-pay {
     @apply text-center mb-10;
 }
 
-.form-header h2 {
+.form-header-pay h2 {
     @apply text-3xl md:text-4xl text-white font-semibold;
 }
 
-.form-header p {
+.form-header-pay p {
     @apply text-slate-400 mt-2;
-}
-
-.form-card {
-    @apply bg-surface-100 dark:bg-white/5 backdrop-blur-md border border-surface-200 dark:border-white/10
-    rounded-2xl p-5 md:p-6 mb-6 text-surface-900 dark:text-white;
 }
 
 .form-actions {

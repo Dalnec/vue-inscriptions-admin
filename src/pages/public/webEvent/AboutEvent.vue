@@ -32,7 +32,7 @@ onMounted(() => {
 
             <!-- SLIDER DE IMAGENES -->
             <ImageCarousel v-if="vision_section.images && vision_section.images.length > 0" :images="images"
-                           :autoplay-interval="5000" :show-controls="true" :show-indicators="true"/>
+                           :autoplay-interval="3000" :show-controls="true" :show-indicators="true"/>
 
             <!-- TEXTO -->
             <div class="text-center md:text-left">

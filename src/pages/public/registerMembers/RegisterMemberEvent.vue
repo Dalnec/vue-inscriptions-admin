@@ -251,9 +251,6 @@ onMounted(async() => {
 </template>
 
 <style>
-.form-wrapper {
-    @apply max-w-3xl mx-auto px-4 md:px-6;
-}
 
 .form-header {
     @apply text-center mb-10;

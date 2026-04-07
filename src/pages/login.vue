@@ -39,10 +39,12 @@ const onLogin = handleSubmit(async(values) => {
         if (response.status === 200) {
             await useLoginStore.loginUserData(response.data);
 
-            if (isConsole.value) {
-                await router.replace("/console/home/register");
+            if (isConsole.value || response?.data.user.is_staff) {
+                await router.replace("/console/home/activities");
             } else if (slug.value) {
                 await router.replace(`/${ slug.value }/home`);
+            } else if (response?.data.user.is_staff) {
+                await router.replace(`/${ slug.value }/home/activities`);
             }
             return;
         }

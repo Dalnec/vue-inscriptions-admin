@@ -29,6 +29,7 @@ const rows = ref(25);
 const currentPage = ref(1);
 const totalRecords = ref(0);
 const useStoreActivityActive = storeActivityActive();
+const useStoreActivities = storeActivities();
 const menus = ref<Record<number, any>>({});
 const confirm = useConfirm();
 const search = ref("");
@@ -56,6 +57,7 @@ const onPageChange = async(event: DataTablePageEvent) => {
  */
 const loadInscriptionsList = useDebounceFn(async(): Promise<void> => {
     loading.value = true;
+    console.log(activitySelected.value);
     const { response }: InterfaceResponseInscriptions = await Api.Get({
         params: {
             activity: activitySelected.value?.id,
@@ -244,7 +246,7 @@ const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
 
 onMounted(async() => {
     await storeActivities().getActivities();
-    activitySelected.value = storeActivities().activities.find(activity => activity.shortname === route.params.slug);
+    activitySelected.value = useStoreActivities.activities.find(activity => activity.shortname === route.params.slug);
     await loadInscriptionsList();
 });
 

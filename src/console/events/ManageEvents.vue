@@ -9,9 +9,10 @@ import { Api } from "@/api/connection.ts";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
 import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 import useGlobalToast from "@/composables/toastEvent.ts";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 
 const isEditMode = ref(false);
 
@@ -33,7 +34,7 @@ const schema = yup.object({
     title: yup.string().required("El título es obligatorio")
 });
 
-const { handleSubmit } = useForm<InterfaceActivities>({ validationSchema: schema });
+const { handleSubmit, resetForm } = useForm<InterfaceActivities>({ validationSchema: schema });
 
 const { value: title } = useField<string>("title");
 const { value: shortname } = useField<string>("shortname");
@@ -75,7 +76,7 @@ const formatDateTime = (date: Date | null): string => {
     return `${ date.getFullYear() }-${ pad(date.getMonth() + 1) }-${ pad(date.getDate()) } ${ pad(date.getHours()) }:${ pad(date.getMinutes()) }:${ pad(date.getSeconds()) }`;
 };
 
-// Update the onSubmit function to parse dates before sending
+// Update the onSubmit function to ensure send_email is always a boolean
 const onSubmit = handleSubmit(async(values) => {
     loading.value = true;
     const formData = new FormData();
@@ -88,6 +89,10 @@ const onSubmit = handleSubmit(async(values) => {
             formData.append(key, value);
         }
     });
+
+    // Ensure send_email is a boolean
+    settingsForm.value.inscription.send_email = Boolean(settingsForm.value.inscription.send_email);
+
     formData.append("location", JSON.stringify(location.value));
     formData.append("settings", JSON.stringify(settingsForm.value));
 
@@ -101,6 +106,7 @@ const onSubmit = handleSubmit(async(values) => {
         if (response && [ 200, 201 ].includes(response.status)) {
             loading.value = false;
             useGlobalToast({ summary: isEdit ? "Actividad actualizada" : "Actividad creada", severity: "success" });
+            ClearForm();
         }
     } catch (error) {
         console.error("Error al enviar el formulario", error);
@@ -108,6 +114,25 @@ const onSubmit = handleSubmit(async(values) => {
         loading.value = false;
     }
 }, ({ errors }) => castFormErrors(errors));
+
+// Add a function to reset the form and route parameter
+const ClearForm = () => {
+    resetForm();
+    tags.value = [];
+    previewLogo.value = "";
+    selectedTags.value = [];
+    settingsForm.value = {
+        inscription: {
+            send_email: false,
+            show_tarifas: false,
+            emails: []
+        }
+    };
+    location.value = { lat: 0, lng: 0 };
+
+    // Remove the route parameter by navigating to the same route without the id
+    router.replace({ path: route.path });
+};
 
 // Corrección para manejar el clic en el input de archivo
 const handleLogoInputClick = () => {
@@ -135,13 +160,28 @@ const loadEventData = async() => {
                 tags.value = eventData.tags;
                 previewLogo.value = eventData.logo; // URL de la imagen
 
+                location.value = {
+                    lat: eventData.location.lat,
+                    lng: eventData.location.lng
+                };
+
+                // Ajustar settingsForm para manejar send_email correctamente
+                settingsForm.value = {
+                    inscription: {
+                        send_email: Boolean(eventData.settings.inscription.send_email),
+                        show_tarifas: Boolean(eventData.settings.inscription.show_tarifas),
+                        emails: eventData.settings.inscription.emails || []
+                    }
+                };
+
                 // Convertir la URL del logo en un objeto File
                 const responseLogo = await fetch(eventData.logo);
                 const blob = await responseLogo.blob();
-                logo.value = new File([ blob ], "logo.jpg", { type: blob.type });
 
+                logo.value = new File([ blob ], "logo.jpg", { type: blob.type });
                 // Marcar el campo logo como "tocado" para vee-validate
                 logoInput.value?.dispatchEvent(new Event("change"));
+
             }
         } catch (error) {
             console.error("Error al cargar los datos del evento:", error);
@@ -276,10 +316,10 @@ onMounted(async() => {
                                      placeholder="Selecciona tags"/>
                     </ValidateFormItem>
                     <ValidateFormItem label="Enviar email de inscripción" span="6">
-                        <Checkbox v-model="settingsForm.inscription.send_email" fluid/>
+                        <Checkbox v-model="settingsForm.inscription.send_email" binary fluid/>
                     </ValidateFormItem>
                     <ValidateFormItem label="Mostrar tarifas" span="6">
-                        <Checkbox v-model="settingsForm.inscription.show_tarifas" fluid/>
+                        <Checkbox v-model="settingsForm.inscription.show_tarifas" binary fluid/>
                     </ValidateFormItem>
                     <ValidateFormItem label="Emails de notificación" span="12" v-if="settingsForm.inscription.send_email">
                         <AutoComplete v-model="settingsForm.inscription.emails" fluid @complete="search" :suggestions="itemsEmail"

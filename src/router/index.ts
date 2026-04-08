@@ -62,6 +62,12 @@ const router = createRouter({
                             path: "dashboard"
                         },
                         {
+                            component: () => import("@/console/events/ManageEvents.vue"),
+                            meta: { icon: IconMaterialSymbolsEventAvailableOutlineRounded, label: "Eventos" },
+                            name: "console-events",
+                            path: "events"
+                        },
+                        {
                             component: () => import("@/modules/users/users.vue"),
                             meta: { icon: IconMaterialSymbolsGroupOutlineRounded, label: "Usuarios" },
                             name: "console-users",

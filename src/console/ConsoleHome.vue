@@ -52,7 +52,10 @@ watch(() => route.fullPath, () => {
 
         <!-- Sidebar -->
         <aside
-                class="flex flex-col w-56 bg-gray-200 dark:bg-gray-900 text-gray-900 dark:text-white overflow-auto">
+                class="fixed inset-y-0 left-0 z-20 w-56 bg-gray-200 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col transform transition-transform duration-300
+         md:relative md:translate-x-0"
+                :class="{'-translate-x-full': !isSidebarOpen, 'translate-x-0': isSidebarOpen}"
+        >
             <!-- Header sidebar -->
             <div class="flex items-center justify-between p-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800">
                 <h1 class="text-2xl font-bold">Joshelito admin</h1>
@@ -82,6 +85,11 @@ watch(() => route.fullPath, () => {
                 </div>
             </div>
         </aside>
+
+        <!-- Overlay móvil -->
+        <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-40 z-10 md:hidden"></div>
+
+        <!-- Botón menú móvil -->
 
         <!-- Overlay móvil -->
         <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-40 z-10 md:hidden"></div>

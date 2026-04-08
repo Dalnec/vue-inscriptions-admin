@@ -45,7 +45,7 @@ const router = createRouter({
             meta: { console: true },
             children: [
                 {
-                    path: "login",
+                    path: "/console/login",
                     name: "console-login",
                     component: () => import("@/pages/login.vue"),
                     meta: { public: true }
@@ -65,7 +65,16 @@ const router = createRouter({
                             component: () => import("@/console/events/ManageEvents.vue"),
                             meta: { icon: IconMaterialSymbolsEventAvailableOutlineRounded, label: "Eventos" },
                             name: "console-events",
-                            path: "events"
+                            path: "events/:id?"
+                        },
+                        {
+                            component: () => import("@/modules/activities/activities.vue"),
+                            meta: {
+                                icon: IconMaterialSymbolsEventNoteOutline,
+                                label: "Lista de eventos"
+                            },
+                            name: "console-events-list",
+                            path: "events-list"
                         },
                         {
                             component: () => import("@/modules/users/users.vue"),
@@ -94,15 +103,6 @@ const router = createRouter({
                             component: () => import("@/modules/settings/concepts.vue"),
                             name: "console-concepts",
                             path: "concepts"
-                        },
-                        {
-                            component: () => import("@/modules/activities/activities.vue"),
-                            meta: {
-                                icon: IconMaterialSymbolsEventNoteOutline,
-                                label: "Actividades"
-                            },
-                            name: "console-activities",
-                            path: "activities"
                         }
                     ]
                 }
@@ -299,6 +299,11 @@ router.beforeEach(async(to) => {
     const slug = to.params.slug as string | undefined;
     const isConsoleRoute = to.path.startsWith("/console");
     const isPublicRoute = to.meta?.public === true;
+
+    // Validación adicional para rutas no permitidas
+    if (to.path === "/login") {
+        return { name: "not-found" };
+    }
 
     const isAuthConsole =
         !!consoleStore.userInfo?.token &&

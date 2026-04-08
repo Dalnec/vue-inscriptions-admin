@@ -81,6 +81,10 @@ const onRedirectEvent = async(shortname: string) => {
     await router.push({ name: "newRegister", params: { slug: shortname } });
 };
 
+// Agregar función para redirigir al formulario de edición
+const onEditActivity = async(id: number) => {
+    await router.push({ name: "console-events", params: { id } });
+};
 
 </script>
 
@@ -110,18 +114,24 @@ const onRedirectEvent = async(shortname: string) => {
 
                 <!-- Activity Header -->
                 <div class="flex items-center justify-between mb-1">
-                    <h3 class="text-base font-semibold text-surface-900 dark:text-surface-0 pr-2 flex-1 line-clamp-2">
+                    <h3 class="text-base font-semibold text-surface-900 dark:text-surface-0">
                         {{ activity.title }}
                     </h3>
-                    <Button rounded class="h-10" @click="onRedirectEvent(activity.shortname)"
-                            v-if="(route.name as string).startsWith('console')" #icon>
-                        <i-material-symbols-visibility-rounded class="text-lg"/>
-                    </Button>
+                    <div class="flex gap-2">
+                        <Button v-tooltip="'Editar actividad'" class="!w-10" @click="onEditActivity(activity.id!)" severity="info"
+                                size="small" v-if="(route.name as string).startsWith('console')" #icon>
+                            <i-material-symbols-edit-document-rounded/>
+                        </Button>
+                        <Button class="h-10" @click="onRedirectEvent(activity.shortname)"
+                                v-if="(route.name as string).startsWith('console')" #icon>
+                            <i-material-symbols-visibility-rounded class="text-lg"/>
+                        </Button>
+                    </div>
                 </div>
                 <!-- Location -->
                 <div class="flex items-center gap-2 text-surface-600 dark:text-surface-400 mb-2 text-xs">
                     <i-material-symbols-location-on-outline class="text-sm"/>
-                    <span class="truncate">{{ activity.location }}</span>
+                    <span class="truncate">{{ activity.location_text }}</span>
                 </div>
 
                 <!-- Description -->
@@ -144,7 +154,9 @@ const onRedirectEvent = async(shortname: string) => {
                 <!-- Actions -->
                 <div class="flex gap-2 justify-between items-center">
                     <div class="flex gap-1">
-                        <Button v-tooltip="'Editar actividad'" @click="onManageActivity(activity)" severity="info" size="small" #icon>
+                        <Button v-tooltip="'Editar actividad'" @click="onManageActivity(activity)" severity="info" size="small"
+                                v-if="!(route.name as string).startsWith('console')"
+                                #icon>
                             <i-material-symbols-edit-document-rounded/>
                         </Button>
                         <Button size="small" :v-tooltip="activity.is_active ? 'Desactivar actividad' : 'Activar actividad'"

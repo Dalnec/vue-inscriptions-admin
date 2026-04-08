@@ -1,15 +1,15 @@
 <script setup lang="ts">
-
-
 import { ref } from "vue";
 
 const selectedConcept = ref("paymentMethod");
+
 const listConcepts = ref([
     { label: "Métodos de pago", value: "paymentMethod" },
     { label: "Tarifas", value: "rates" },
     { label: "Iglesias", value: "church" },
     { label: "Tipos de miembros", value: "kindMember" },
-    { label: "Tipos de documento", value: "documentType" }
+    { label: "Tipos de documento", value: "documentType" },
+    { label: "Etiquetas", value: "tag" },
 ]);
 
 const emit = defineEmits([ "onConceptClick" ]);

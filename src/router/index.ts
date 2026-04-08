@@ -109,7 +109,7 @@ const router = createRouter({
             ]
         },
         {
-            path: "/:slug",
+            path: "/:slug?",
             component: () => import("@/components/app/EventLayout.vue"),
             meta: { public: true },
 
@@ -190,7 +190,7 @@ const router = createRouter({
         },
 
         {
-            path: "/:slug/home",
+            path: "/:slug?/home",
             meta: { allowConsoleAccess: true },
             component: () => import("@/layout.vue"),
             name: "home",
@@ -320,7 +320,7 @@ router.beforeEach(async(to) => {
 
         // si intenta entrar a login del evento → redirigir al home del evento
         if (to.name === "event-login") {
-            return { name: "home", params: { slug } };
+            return true;
         }
 
         // cualquier otra ruta del evento → permitir acceso

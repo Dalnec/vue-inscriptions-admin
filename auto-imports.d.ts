@@ -9,6 +9,7 @@ declare global {
   const IconMaterialSymbolsAccountBalanceWalletOutline: typeof import('~icons/material-symbols/account-balance-wallet-outline').default
   const IconMaterialSymbolsAddNotesOutline: typeof import('~icons/material-symbols/add-notes-outline').default
   const IconMaterialSymbolsAutoDeleteOutlineRounded: typeof import('~icons/material-symbols/auto-delete-outline-rounded').default
+  const IconMaterialSymbolsBarChart4BarsRounded: typeof import('~icons/material-symbols/bar-chart4-bars-rounded').default
   const IconMaterialSymbolsBookmarkCheck: typeof import('~icons/material-symbols/bookmark-check').default
   const IconMaterialSymbolsCalendarAppsScript: typeof import('~icons/material-symbols/calendar-apps-script').default
   const IconMaterialSymbolsCategoryOutline: typeof import('~icons/material-symbols/category-outline').default

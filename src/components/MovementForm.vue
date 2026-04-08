@@ -91,7 +91,7 @@ const onManageConcept = (concept?: ConceptsInterface) => {
 
 
 onMounted(() => {
-    usePaymentMethod.getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
+    usePaymentMethod.getPaymentMethod(route.params.slug as string);
     useConceptStore.getConcepts();
 });
 

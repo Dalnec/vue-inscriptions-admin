@@ -1,14 +1,17 @@
 <script setup lang="ts">
 
-import { ref, onMounted, h } from "vue";
 import { Api } from "@/api/connection.ts";
+import { ref, onMounted, h } from "vue";
 import { useModal } from "@/composables/useModal.ts";
+import { useRoute } from "vue-router";
+import toastEvent from "@/composables/toastEvent.ts";
 import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 import ActivityForm from "@/modules/activities/ActivityForm.vue";
-import toastEvent from "@/composables/toastEvent.ts";
+import router from "@/router";
 
 const dataActivities = ref<InterfaceActivities[]>([]);
 const loading = ref<boolean>(false);
+const route = useRoute();
 
 const { openModal, closeModal } = useModal();
 
@@ -74,6 +77,11 @@ const formatDate = (date: Date): string => {
     });
 };
 
+const onRedirectEvent = async(shortname: string) => {
+    await router.push({ name: "newRegister", params: { slug: shortname } });
+};
+
+
 </script>
 
 <template>
@@ -101,12 +109,15 @@ const formatDate = (date: Date): string => {
                  class="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 shadow-sm hover:shadow-md transition-shadow p-5">
 
                 <!-- Activity Header -->
-                <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center justify-between mb-1">
                     <h3 class="text-base font-semibold text-surface-900 dark:text-surface-0 pr-2 flex-1 line-clamp-2">
                         {{ activity.title }}
                     </h3>
+                    <Button rounded class="h-10" @click="onRedirectEvent(activity.shortname)"
+                            v-if="(route.name as string).startsWith('console')" #icon>
+                        <i-material-symbols-visibility-rounded class="text-lg"/>
+                    </Button>
                 </div>
-
                 <!-- Location -->
                 <div class="flex items-center gap-2 text-surface-600 dark:text-surface-400 mb-2 text-xs">
                     <i-material-symbols-location-on-outline class="text-sm"/>

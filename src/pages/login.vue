@@ -7,8 +7,10 @@ import { useField, useForm } from "vee-validate";
 import type { InterfaceUserLoginActions } from "@/types/InterfaceLogin.ts";
 import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const useLoginStore = useUserDataConfigStore();
+const useLoginConsoleStore = useUserConsoleStore();
 const refPassword = ref();
 const loading = ref(false);
 const route = useRoute();
@@ -36,21 +38,19 @@ const onLogin = handleSubmit(async(values) => {
                 shortname: isConsole.value ? undefined : slug.value
             }
         });
-        if (response.status === 200) {
-            await useLoginStore.loginUserData(response.data);
 
-            if (isConsole.value || response?.data.user.is_staff) {
-                await router.replace("/console/home/activities");
-            } else if (slug.value) {
-                await router.replace(`/${ slug.value }/home`);
-            } else if (response?.data.user.is_staff) {
-                await router.replace(`/${ slug.value }/home/activities`);
-            }
-            return;
+        if (response.status !== 200) return;
+
+        if (isConsole.value) {
+            await useLoginConsoleStore.loginUserData(response.data);
+            await router.replace("/console/home");
+        } else {
+            await useLoginStore.loginUserData(response.data);
+            await router.replace(`/${ slug.value }/home/register`);
         }
 
     } catch (e) {
-        console.log(e);
+        console.error(e);
     } finally {
         loading.value = false;
     }

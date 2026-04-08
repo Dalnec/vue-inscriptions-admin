@@ -13,8 +13,8 @@ const userDataStore = useUserDataConfigStore();
 const confirm = useConfirm();
 const menu = ref();
 
-const isConsole = route.path.startsWith("/console");
-const slug = route.params.slug as string | undefined;
+const isConsole = computed(() => route.path.startsWith("/console"));
+const slug = computed(() => route.params.slug as string | undefined);
 
 navBarStore().createOptionsMenu();
 
@@ -33,7 +33,7 @@ const isChildActive = (childrenRoutes: MenuItem[]): boolean => {
 const confirm1 = () => {
     confirm.require({
         accept: () => {
-            userDataStore.logout({ isConsole, slug });
+            userDataStore.logout({ isConsole: isConsole.value, slug: slug.value });
             useGlobalToast({ severity: "info", summary: "Sesión expirada", detail: "Vuelva a iniciar sesión", life: 3000 });
         },
         acceptProps: {

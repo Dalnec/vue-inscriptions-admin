@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import type { RouteRecordRaw } from "vue-router";
 import { useEventSlugStore } from "@/stores/eventSlug.ts";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 interface RouteMeta {
     icon?: string;
@@ -34,8 +35,27 @@ export const navBarStore = defineStore("optionsMenu", {
          * @return {Promise<void>} A promise that resolves once the option menu has been created.
          */
         async createOptionsMenu(): Promise<void> {
-            const routerViews: RouteRecordRaw[] = router.resolve({ name: "home" })?.matched[0].children || [];
-            this.options = this.processRoutes(routerViews);
+            const route = router.currentRoute.value;
+            const isConsole = route.path.startsWith("/console");
+            const targetRouteName = isConsole ? "console-home" : "home";
+
+            const resolved = router.resolve({ name: targetRouteName });
+            const matched = resolved.matched;
+
+            if ( !matched?.length) {
+                this.options = [];
+                return;
+            }
+
+            // 🔹 Buscar la ruta exacta por name
+            const routeWithChildren = matched.find(r => r.name === targetRouteName);
+
+            if ( !routeWithChildren || !routeWithChildren.children?.length) {
+                this.options = [];
+                return;
+            }
+
+            this.options = this.processRoutes(routeWithChildren.children);
         },
         /**
          * Determines if the given path contains any required parameters.
@@ -57,6 +77,7 @@ export const navBarStore = defineStore("optionsMenu", {
             return routes.reduce((processedRoutes: Option[], route: RouteRecordRaw) => {
                 if (route.meta && "label" in route.meta) {
                     const processedRoute: Option | null = this.valuesRoutesMenu(route);
+
                     if (processedRoute) {
                         processedRoutes.push(processedRoute);
                         if (route.meta?.separator) {
@@ -75,81 +96,63 @@ export const navBarStore = defineStore("optionsMenu", {
          * or null if the route is not valid for the menu.
          */
         valuesRoutesMenu(route: RouteRecordRaw): Option | null {
-            const useUserDataConfig = useUserDataConfigStore();
+            const eventStore = useUserDataConfigStore();
+            const consoleStore = useUserConsoleStore();
+            const slugStore = useEventSlugStore();
+            const slug = slugStore.slug;
 
-            if ( !route.name || !router.hasRoute(route.name)) {
+            if ( !route.name || !router.hasRoute(route.name)) return null;
+
+            if ( !(route.meta && "label" in route.meta)) return null;
+            const meta = route.meta as RouteMeta;
+
+            const objOption: Option = {
+                label: meta.label,
+                key: route.name as string,
+                active: route.name as string,
+                icon: meta.icon,
+                visible: true,
+                meta
+            };
+
+            const isDynamic = route.path.includes(":");
+            const hasRequired = this.hasRequiredParams(route.path);
+
+            // =========================
+            // PARAMS BASE SEGÚN SESIÓN
+            // =========================
+            const isConsole = !!consoleStore.userInfo?.token && !!consoleStore.userInfo?.user;
+            const baseParams = !isConsole && slug ? { slug } : {};
+
+            // =========================
+            // RESOLUCIÓN DE RUTA
+            // =========================
+            if ( !isDynamic || !hasRequired) {
+                const resolved = router.resolve({ name: route.name as string, params: baseParams });
+                objOption.route = resolved.fullPath;
+                objOption.path = resolved.path;
+            } else {
                 return null;
             }
 
-            if (route.meta && "label" in route.meta) {
-                const meta = route.meta as RouteMeta;
-
-                const objOption: Option = {
-                    label: meta.label,
-                    key: route.name as string,
-                    active: route.name as string,
-                    icon: meta.icon,
-                    visible: true,
-                    meta: meta as RouteMeta
-                };
-
-                const isDynamic = route.path.includes(":");
-                const hasRequired = this.hasRequiredParams(route.path);
-
-                const slugStore = useEventSlugStore();
-                const slug = slugStore.slug;
-
-                // 🔥 PARAMS BASE (si hay slug se inyecta automáticamente)
-                const baseParams = slug ? { slug } : {};
-
-                // =========================
-                // RESOLUCIÓN DE RUTA
-                // =========================
-                if ( !isDynamic) {
-                    const resolved = router.resolve({
-                        name: route.name as string,
-                        params: baseParams
-                    });
-
-                    objOption.route = resolved.fullPath;
-                    objOption.path = resolved.path;
-                } else if ( !hasRequired) {
-                    const resolved = router.resolve({
-                        name: route.name as string,
-                        params: baseParams
-                    });
-
-                    objOption.route = resolved.fullPath;
-                    objOption.path = resolved.path;
-                } else {
-                    return null;
-                }
-
-                // =========================
-                // CHILDREN (SUBMENÚ)
-                // =========================
-                if (route.children && !route?.meta?.isNotMenu) {
-                    objOption.items = this.processRoutes(route.children);
-                    objOption.expand = false;
-                    return objOption.items.length ? objOption : null;
-                }
-
-                // =========================
-                // PERMISOS
-                // =========================
-                if (useUserDataConfig.userData.user?.is_staff) {
-                    return objOption;
-                }
-
-                const existOption = SearchValidRoute(
-                    objOption.key,
-                    useUserDataConfig.userData.user?.permissions
-                );
-
-                return existOption ? objOption : null;
+            // =========================
+            // CHILDREN
+            // =========================
+            if (route.children && !route?.meta?.isNotMenu) {
+                objOption.items = this.processRoutes(route.children);
+                objOption.expand = false;
+                return objOption; // aunque items esté vacío, devolvemos el padre
             }
 
-            return null;
+            // =========================
+            // PERMISOS
+            // =========================
+            if (isConsole) return objOption; // console tiene acceso total
+
+            if (eventStore.userData.user?.is_staff) return objOption;
+
+            const existOption = SearchValidRoute(objOption.key, eventStore.userData.user?.permissions);
+            return existOption ? objOption : null;
         }
     }
 });

@@ -5,7 +5,7 @@ import { onMounted, ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
-import type { InterfaceActivities, Settings } from "@/types/interfaceActivities.ts";
+import type { InterfaceActionsActivities, InterfaceActivities, Settings } from "@/types/interfaceActivities.ts";
 import * as yup from "yup";
 import { formatDateToString } from "@/composables/convertDates.ts";
 import type { AutoCompleteCompleteEvent } from "primevue";
@@ -63,7 +63,7 @@ const saveActivity = handleSubmit(async(formValues) => {
         const route = props.formData ? `activity/${ props.formData.id }` : "activity";
         const method = props.formData ? Api.Put : Api.Post;
 
-        const { response } = await method({ route, data: dataToSend });
+        const { response }: InterfaceActionsActivities = await method({ route, data: dataToSend });
 
         if (response && (response.status === 201 || response.status === 200)) {
             useGlobalToast({

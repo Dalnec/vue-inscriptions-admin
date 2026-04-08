@@ -6,7 +6,11 @@ export interface InterfaceActivities {
     end_date: null | Date;
     id?: number | null;
     is_active: boolean;
-    location: string;
+    location: {
+        lat: number;
+        long: number;
+    };
+    location_text: string;
     modified: null | Date;
     settings: Settings;
     shortname: string;
@@ -33,38 +37,6 @@ export interface PaymentMethod {
     id?: null | number
     activity: null | number
 }
-
-export interface ActivityCardModel {
-    category: string;
-    date: string;
-    id: number | null;
-    image: string;
-    location: string;
-    title: string;
-}
-
-export const mapActivityToCard = (activity: InterfaceActivities): ActivityCardModel => {
-    return {
-        id: activity.id ?? null,
-        title: activity.title,
-        location: activity.location,
-
-        // formateo de fecha
-        date: activity.start_date
-            ? new Date(activity.start_date).toLocaleDateString("es-PE", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-            })
-            : "Sin fecha",
-
-        // fallback (no existe en backend aún)
-        category: "Evento",
-
-        // fallback (no existe en backend aún)
-        image: "https://via.placeholder.com/400x300"
-    };
-};
 
 export type InterfaceActionsActivities = InterfaceAxiosApiResponse<InterfaceActivities>
 export type InterfaceResponseActivities = InterfaceAxiosApi<InterfaceActivities>

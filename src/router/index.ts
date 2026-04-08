@@ -318,13 +318,13 @@ router.beforeEach(async(to) => {
     if (isAuthConsole && slug) {
         slugStore.setSlug(slug);
 
-        // si intenta entrar a login del evento → redirigir al home del evento
+        // si intenta entrar a login del evento → redirigir al inicio de configuración del evento
         if (to.name === "event-login") {
-            return true;
+            return { name: "newRegister", params: { slug } };
         }
 
         // cualquier otra ruta del evento → permitir acceso
-        if ( !isConsoleRoute) return true;
+        if (!isConsoleRoute) return true;
     }
 
     // -------------------------

@@ -7,8 +7,8 @@ export interface InterfaceActivities {
     id?: number | null;
     is_active: boolean;
     location: {
-        lat: number;
-        long: number;
+        lat: number | null;
+        lng: number | null;
     };
     location_text: string;
     modified: null | Date;

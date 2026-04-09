@@ -163,6 +163,7 @@ const loadEventData = async() => {
                 start_date.value = new Date(eventData.start_date);
                 end_date.value = new Date(eventData.end_date);
                 tags.value = eventData.tags;
+                selectedTags.value = eventData.tags.map((t: any) => t.id);
                 previewLogo.value = eventData.logo;
                 logo.value = eventData.logo;
                 location.value = {

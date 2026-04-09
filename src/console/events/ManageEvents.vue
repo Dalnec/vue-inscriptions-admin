@@ -21,7 +21,7 @@ const schema = yup.object({
     end_date: yup.date().required("La fecha de fin es obligatoria"),
     location_text: yup.string().required("La ubicación es obligatoria"),
     logo: yup.mixed().test("logo", "El logo es obligatorio", (value) => {
-        return value !== null && (value instanceof File || value instanceof Blob);
+        return value !== null && (value instanceof File || value instanceof Blob || typeof (value as unknown) === "string");
     }),
     shortname: yup.string().required("El nombre corto es obligatorio"),
     start_date: yup.date().required("La fecha de inicio es obligatoria"),
@@ -34,7 +34,7 @@ const schema = yup.object({
     title: yup.string().required("El título es obligatorio")
 });
 
-const { handleSubmit, resetForm } = useForm<InterfaceActivities>({ validationSchema: schema });
+const { handleSubmit, resetForm } = useForm<InterfaceActivities>({ validationSchema: schema, initialValues: { is_active: true } });
 
 const { value: title } = useField<string>("title");
 const { value: shortname } = useField<string>("shortname");
@@ -85,6 +85,11 @@ const onSubmit = handleSubmit(async(values) => {
             formData.append(key, JSON.stringify(value));
         } else if (key === "start_date" || key === "end_date") {
             formData.append(key, formatDateTime(value as Date));
+        } else if (key === "logo") {
+            // Solo enviar el logo si es un File (el usuario lo cambió)
+            if (value instanceof File) {
+                formData.append(key, value);
+            }
         } else {
             formData.append(key, value);
         }
@@ -131,7 +136,7 @@ const ClearForm = () => {
     location.value = { lat: 0, lng: 0 };
 
     // Remove the route parameter by navigating to the same route without the id
-    router.replace({ path: route.path });
+    router.push({ name: "console-events" });
 };
 
 // Corrección para manejar el clic en el input de archivo
@@ -158,8 +163,8 @@ const loadEventData = async() => {
                 start_date.value = new Date(eventData.start_date);
                 end_date.value = new Date(eventData.end_date);
                 tags.value = eventData.tags;
-                previewLogo.value = eventData.logo; // URL de la imagen
-
+                previewLogo.value = eventData.logo;
+                logo.value = eventData.logo;
                 location.value = {
                     lat: eventData.location.lat,
                     lng: eventData.location.lng
@@ -175,13 +180,15 @@ const loadEventData = async() => {
                 };
 
                 // Convertir la URL del logo en un objeto File
-                const responseLogo = await fetch(eventData.logo);
-                const blob = await responseLogo.blob();
-
-                logo.value = new File([ blob ], "logo.jpg", { type: blob.type });
-                // Marcar el campo logo como "tocado" para vee-validate
-                logoInput.value?.dispatchEvent(new Event("change"));
-
+                try {
+                    const responseLogo = await fetch(eventData.logo);
+                    const blob = await responseLogo.blob();
+                    const fileName = eventData.logo.split("/").pop() || "logo.jpg";
+                    logo.value = new File([ blob ], fileName, { type: blob.type });
+                } catch (logoError) {
+                    // Si falla la conversión (ej. CORS), logo.value queda como string URL
+                    console.error("Error al convertir el logo en un objeto File:", logoError);
+                }
             }
         } catch (error) {
             console.error("Error al cargar los datos del evento:", error);

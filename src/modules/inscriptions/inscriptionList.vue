@@ -205,14 +205,14 @@ const optionsActions = (data: InscriptionsMembers) => {
             }, class: IconMaterialSymbolsPersonRemove as unknown
         }
     ];
-    if (userDataValue.profile_description === "ADMINISTRADOR" || userDataValue.is_superuser) {
+    if (userDataValue?.profile_description === "ADMINISTRADOR" || userDataValue?.is_superuser) {
         options.unshift({
             label: "Cambiar Voucher", value: 5, command: () => {
                 onChangeVoucher(data);
             }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
         });
     }
-    if (userDataValue.profile_description === "ADMINISTRADOR" || userDataValue.is_superuser) {
+    if (userDataValue?.profile_description === "ADMINISTRADOR" || userDataValue?.is_superuser) {
         options.push({
             label: "Eliminar", value: 6, command: () => {
                 onChangeStatusMember(data, "", true);

@@ -52,7 +52,7 @@ watch(() => route.fullPath, () => {
         >
             <!-- Header sidebar -->
             <div class="flex items-center justify-between p-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800">
-                <h1 class="text-2xl font-bold">Joshelito admin</h1>
+                <h1 class="text-2xl font-bold italic">Regis</h1>
                 <button class="md:hidden p-1" @click="isSidebarOpen = false">
                     <i class="i-ic-round-close"></i>
                 </button>

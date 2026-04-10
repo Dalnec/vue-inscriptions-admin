@@ -118,7 +118,7 @@ const onGetRates = async() => {
 onMounted(async() => {
     await onGetRates();
     await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
-    const rateSelected = storeRate().rate;
+    const rateSelected = storeRate().getRates(route.params.slug as string);
     const dataRate = Array.isArray(rateSelected) ? rateSelected.find(rt => rt.selected) : undefined;
     if (dataRate) {
         setRate(dataRate?.id as number);
@@ -168,9 +168,9 @@ onMounted(async() => {
                     <i class="pi pi-credit-card text-blue-400"></i>
                     <h3 class="text-lg font-semibold dark:text-white text-surface-900">Método de Pago</h3>
                 </div>
-                <ValidateFormItem label="Seleccione el método de pago" :error="errors.paymentmethod">
+                <ValidateFormItem label="Seleccione el método de pago" name="paymentmethod" v-slot="{ error}">
                     <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
-                            size="large" @value-change="(value) => onValueSelectPayment(value)"
+                            size="large" @value-change="(value) => onValueSelectPayment(value)" :invalid="!!error"
                             placeholder="Seleccione un método..."/>
                 </ValidateFormItem>
                 <Transition name="fade">

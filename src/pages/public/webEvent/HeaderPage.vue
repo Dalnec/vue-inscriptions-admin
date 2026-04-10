@@ -49,7 +49,7 @@ onUnmounted(() => {
         <nav class="container mx-auto flex items-center justify-between py-3 px-4">
 
             <!-- Logo -->
-            <router-link to="/camp2026" class="flex items-center gap-3">
+            <router-link :to="`/${infoActivity.shortname}`" class="flex items-center gap-3">
                 <img :src="infoActivity.logo ?? '../../../assets/images/kadosh.png'" class="h-12" alt=""/>
                 <div class="hidden sm:flex flex-col">
                     <span class="text-white font-semibold text-lg">{{ infoActivity.shortname }}</span>

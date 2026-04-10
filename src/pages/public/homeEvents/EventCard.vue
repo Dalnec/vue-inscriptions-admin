@@ -55,7 +55,7 @@ const onRedirectEvent =async () => {
 
             <div class="event-card__location">
                 <i-material-symbols-location-on-rounded/>
-                <span>{{ event.location }}</span>
+                <span>{{ event.location_text }}</span>
             </div>
 
             <button class="event-card__button" @click="onRedirectEvent">

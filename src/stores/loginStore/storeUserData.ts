@@ -3,6 +3,7 @@ import useGlobalToast from "@/composables/toastEvent.ts";
 import { type InterfaceLogin, type PermissionsInfo } from "@/types/InterfaceLogin.ts";
 import { type RouteLocationNormalizedLoaded } from "vue-router";
 import router from "@/router";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 export const useUserDataConfigStore = defineStore("userDataConfig", {
     state: () => ({
@@ -23,6 +24,7 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
             sessionStorage.removeItem("userDataConfig");
 
             await router.push(`/${ context.slug }/login`);
+            await useUserConsoleStore().logoutUserConsole(false);
 
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {

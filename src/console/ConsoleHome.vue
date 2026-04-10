@@ -24,7 +24,7 @@ const items = ref<MenuItem[]>([
     {
         label: "Cerrar sesión",
         command: () => {
-            useUserStore.logoutUserConsole();
+            useUserStore.logoutUserConsole(true);
         }
     }
 ]);

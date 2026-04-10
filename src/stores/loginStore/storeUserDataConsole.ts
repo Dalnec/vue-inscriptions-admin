@@ -16,12 +16,11 @@ export const useUserConsoleStore = defineStore("useUserConsoleStore", {
             useGlobalToast({ summary: `Bienvenido ${ this.userInfo.user?.username }` });
         },
 
-        async logoutUserConsole() {
+        async logoutUserConsole(redirect: boolean = true) {
             this.userInfo = {} as InterfaceLogin;
             localStorage.removeItem("useUserConsoleStore");
             sessionStorage.removeItem("useUserConsoleStore");
-
-            await router.push("/console/login");
+            if (redirect) await router.push("/console/login");
 
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {

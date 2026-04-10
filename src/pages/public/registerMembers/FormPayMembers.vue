@@ -13,7 +13,6 @@ import * as yup from "yup";
 import type { FileUploadSelectEvent } from "primevue";
 import type { PaymentMethod } from "@/types/interfaceActivities.ts";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 
 type VoucherImageType = { file: File; objectURL: string; };
@@ -124,7 +123,6 @@ onMounted(async() => {
 
 <template>
     <main class="bg-slate-900 text-white min-h-screen flex flex-col">
-        <HeaderPage/>
         <div class="form-wrapper">
             <!-- HEADER -->
             <div class="form-header-pay">

@@ -171,7 +171,6 @@ watch(() => membersStoreOptions.selectedMember, (member) => {
 
 onMounted(async() => {
     await useStoreRates.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
-    console.log(useStoreRates.rate);
     if (useStoreRates.rate.length === 0) {
         toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
         await router.replace(`/${ route.params.slug }/home/inscriptions`);

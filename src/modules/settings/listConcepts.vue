@@ -9,11 +9,12 @@ const listConcepts = ref([
     { label: "Iglesias", value: "church" },
     { label: "Tipos de miembros", value: "kindMember" },
     { label: "Tipos de documento", value: "documentType" },
-    { label: "Etiquetas", value: "tag" },
+    { label: "Etiquetas", value: "tag" }
 ]);
 
 const emit = defineEmits([ "onConceptClick" ]);
 
+defineExpose({ selectedConcept });
 </script>
 
 <template>

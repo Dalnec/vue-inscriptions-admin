@@ -15,6 +15,7 @@ import { Api } from "@/api/connection";
 import TagForm from "@/modules/settings/TagForm.vue";
 
 const conceptSelect = ref("paymentMethod");
+const refListConcept = ref();
 const refGeneralTablePaymentMethod = ref();
 const refGeneralTableRate = ref();
 const refGeneralTableChurch = ref();
@@ -86,6 +87,15 @@ const fetchTags = async() => {
     }
 };
 
+const onCheckConcept = (concept: string | null) => {
+    if (concept === null) {
+        conceptSelect.value = "paymentMethod";
+        refListConcept.value.selectedConcept = "paymentMethod";
+    } else {
+        conceptSelect.value = concept;
+    }
+};
+
 onMounted(() => {
     activity.value = route.params.slug as string || "";
     fetchTags();
@@ -104,7 +114,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="align-items-form">
-            <list-concepts @onConceptClick="(value)=>conceptSelect = value?.concept || 'paymentMethod'" class="max-cols-3"/>
+            <list-concepts @onConceptClick="(dt)=>onCheckConcept(dt.concept)" ref="refListConcept" class="max-cols-3"/>
             <Card v-if="conceptSelect === 'paymentMethod' || !conceptSelect" class="max-cols-9" #content>
                 <div class="align-header mb-4">
                     <p> Métodos de pago </p>

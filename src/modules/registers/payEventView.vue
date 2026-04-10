@@ -149,7 +149,8 @@ function refocus($event: InputNumberInputEvent) {
 const onGetRates = async() => {
     const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
     if (response && response?.status === 200) {
-        useStoreRates.rate = response.data;
+        const results = response.data?.results ?? response.data;
+        useStoreRates.rate = Array.isArray(results) ? results : [];
         if (useStoreRates.rate.length === 0) {
             toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
             await router.push({ name: "webPage", params: { slug: route.params.slug } });
@@ -162,7 +163,7 @@ onMounted(async() => {
     await usePaymentMethodStore.getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
     await useStoreActivities.getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = useStoreRates.rate;
-    const dataRate = rateSelected.find(rt => rt.selected);
+    const dataRate = Array.isArray(rateSelected) ? rateSelected.find(rt => rt.selected) : undefined;
     if (dataRate?.id) {
         setRate(dataRate.id);
         onSelected({ idRate: tarifa.value, priceRate: dataRate.price, nameRate: dataRate.description });

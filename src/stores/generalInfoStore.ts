@@ -85,7 +85,8 @@ export const storeRate = defineStore("storeRate", {
                 }
             });
             if (response && response.status === 200) {
-                this.rate = response.data.results;
+                const results = response.data.results ?? response.data;
+                this.rate = Array.isArray(results) ? results : [];
             }
         }
     }
@@ -97,7 +98,8 @@ export const storePriceRate = defineStore("storePriceRate", {
     }),
     actions: {
         calculateRate(isPage: boolean): number {
-            const dataRate = storeRate().rate.find(rt => rt.selected);
+            const rates = storeRate().rate;
+            const dataRate = Array.isArray(rates) ? rates.find(rt => rt.selected) : undefined;
             const totalMembers = isPage ? useMembersStorePage().membersData.length : useMembersStore().membersData.length;
             if ( !dataRate) return 0;
             return this.totalPrice = parseFloat(dataRate.price) * totalMembers;

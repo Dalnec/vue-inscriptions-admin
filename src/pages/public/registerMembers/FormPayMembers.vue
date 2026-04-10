@@ -106,7 +106,8 @@ const onValueSelectPayment = (id: number) => {
 const onGetRates = async() => {
     const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
     if (response && response?.status === 200) {
-        useStoreRates.rate = response.data;
+        const results = response.data?.results ?? response.data;
+        useStoreRates.rate = Array.isArray(results) ? results : [];
         if (useStoreRates.rate.length === 0) {
             toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
             await router.push({ name: "webPage", params: { slug: route.params.slug } });
@@ -118,7 +119,7 @@ onMounted(async() => {
     await onGetRates();
     await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = storeRate().rate;
-    const dataRate = rateSelected.find(rt => rt.selected);
+    const dataRate = Array.isArray(rateSelected) ? rateSelected.find(rt => rt.selected) : undefined;
     if (dataRate) {
         setRate(dataRate?.id as number);
     }
@@ -127,40 +128,70 @@ onMounted(async() => {
 </script>
 
 <template>
-    <main class="bg-slate-900 text-white min-h-screen flex flex-col">
+    <main class="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white min-h-screen flex flex-col py-10">
         <div class="form-wrapper">
             <!-- HEADER -->
-            <div class="form-header-pay">
-                <h2>Pago de Inscripción</h2>
-                <p>Completa los datos de pago para finalizar tu inscripción</p>
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
+                    <i-material-symbols-account-balance-wallet class="text-green-400 text-2xl"/>
+                </div>
+                <h2 class="text-3xl md:text-4xl text-white font-bold tracking-tight">Pago de Inscripción</h2>
+                <p class="text-slate-400 mt-2 text-base">Completa los datos de pago para finalizar tu inscripción</p>
             </div>
 
-            <!-- INFORMACIÓN DE PAGO -->
-            <div class="form-card">
-                <h3 class="form-section-title">Resumen de Pago</h3>
-                <div class="text-center mb-4">
-                    <p class="text-2xl font-bold text-white">Persona(s) agregadas: {{ storeDataMembers.membersData.length }}</p>
-                    <p class="text-3xl font-semibold text-green-400">Total S/. {{ useStoreTotalRate.calculateRate(false) }}</p>
+            <!-- RESUMEN DE PAGO -->
+            <div class="form-card relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none"></div>
+                <div class="relative">
+                    <div class="flex items-center gap-2 mb-5">
+                        <i class="pi pi-receipt text-green-400"></i>
+                        <h3 class="text-lg font-semibold dark:text-white text-surface-900">Resumen de Pago</h3>
+                    </div>
+                    <div class="flex flex-col items-center gap-3 py-4">
+                        <div class="flex items-center gap-2 bg-surface-200/50 dark:bg-white/5 rounded-xl px-5 py-3">
+                            <i class="pi pi-users text-slate-400"></i>
+                            <span class="text-lg font-medium dark:text-slate-200 text-surface-700">
+                                {{ storeDataMembers.membersData.length }} persona(s) agregadas
+                            </span>
+                        </div>
+                        <Divider class="!my-1"/>
+                        <div class="text-center">
+                            <span class="text-sm text-slate-400 uppercase tracking-wider font-medium">Total a pagar</span>
+                            <p class="text-4xl font-bold text-green-400 mt-1">S/. {{ useStoreTotalRate.calculateRate(false) }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="form-card">
-                <h3 class="form-section-title">Método de Pago</h3>
+                <div class="flex items-center gap-2 mb-5">
+                    <i class="pi pi-credit-card text-blue-400"></i>
+                    <h3 class="text-lg font-semibold dark:text-white text-surface-900">Método de Pago</h3>
+                </div>
                 <ValidateFormItem label="Seleccione el método de pago" :error="errors.paymentmethod">
                     <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
-                            size="large" @value-change="(value) => onValueSelectPayment(value)"/>
+                            size="large" @value-change="(value) => onValueSelectPayment(value)"
+                            placeholder="Seleccione un método..."/>
                 </ValidateFormItem>
-                <div v-if="paymentmethod" class="mt-4">
-                    <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
-                                          :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
-                                          :active="dataForViewPayment.active"/>
-                </div>
+                <Transition name="fade">
+                    <div v-if="paymentmethod" class="mt-5 rounded-xl overflow-hidden border dark:border-white/10 border-surface-200">
+                        <view-payment-methods :description="dataForViewPayment.description" :account="dataForViewPayment.account"
+                                              :icon="dataForViewPayment.icon" :cci="dataForViewPayment.cci" :id="dataForViewPayment.id"
+                                              :active="dataForViewPayment.active"/>
+                    </div>
+                </Transition>
             </div>
 
             <!-- VOUCHER -->
             <div class="form-card">
-                <h3 class="form-section-title">Comprobante de Pago</h3>
-                <ValidateFormItem label="Suba el voucher de pago" :error="errors.voucherfile">
+                <div class="flex items-center gap-2 mb-5">
+                    <i class="pi pi-image text-amber-400"></i>
+                    <h3 class="text-lg font-semibold dark:text-white text-surface-900">Comprobante de Pago</h3>
+                </div>
+                <p class="text-sm dark:text-slate-400 text-surface-500 mb-4">
+                    Suba una imagen del voucher de pago (PNG, JPG). Máximo 1MB.
+                </p>
+                <ValidateFormItem label="" hide-label :error="errors.voucherfile">
                     <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full"
                                 ref="refVoucherImage" @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])"
                                 :show-cancel-button="false" @remove="setVoucherImage({})" :show-upload-button="false" input-id="voucherfile"
@@ -170,13 +201,15 @@ onMounted(async() => {
             </div>
 
             <!-- ACCIONES -->
-            <div class="form-actions">
-                <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"
+            <div class="flex flex-col md:flex-row gap-3 mt-2 mb-8">
+                <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer" size="large"
                         v-if="storeDataMembers.membersData.length >= 1" fluid #icon>
-                    <i-material-symbols-list-alt-check/>
+                    <i class="pi pi-list-check"></i>
                 </Button>
-                <Button label="Enviar y Pagar" @click="saveAllMembers()" fluid :disabled="loadingSave" :loading="loadingSave" #icon>
-                    <i-material-symbols-sync-saved-locally/>
+                <Button label="Enviar y Pagar" @click="saveAllMembers()" fluid size="large"
+                        :disabled="loadingSave" :loading="loadingSave"
+                        class="!bg-green-500 !border-green-500 hover:!bg-green-600" #icon>
+                    <i class="pi pi-check-circle"></i>
                 </Button>
             </div>
         </div>
@@ -185,21 +218,13 @@ onMounted(async() => {
     </main>
 </template>
 
-<style>
-
-.form-header-pay {
-    @apply text-center mb-10;
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.form-header-pay h2 {
-    @apply text-3xl md:text-4xl text-white font-semibold;
-}
-
-.form-header-pay p {
-    @apply text-slate-400 mt-2;
-}
-
-.form-actions {
-    @apply flex flex-col md:flex-row gap-3 my-6;
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
 }
 </style>

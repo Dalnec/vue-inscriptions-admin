@@ -117,6 +117,7 @@ const onGetRates = async() => {
 
 onMounted(async() => {
     await onGetRates();
+    await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
     await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = storeRate().getRates(route.params.slug as string);
     const dataRate = Array.isArray(rateSelected) ? rateSelected.find(rt => rt.selected) : undefined;

@@ -36,6 +36,7 @@ const onSavePayments = handleSubmit(async() => {
     const formData = new FormData();
     formData.append("account", account.value || "");
     formData.append("cci", cci.value || "");
+    formData.append("activity", String(activity.value));
     formData.append("description", description.value || "");
     formData.append("active", "true");
 
@@ -104,7 +105,7 @@ onMounted(async() => {
             <ToggleSwitch v-model="active" fluid/>
         </ValidateFormItem>
         <ValidateFormItem label="Actividad" span="5" v-if="userData.userData.user.is_staff">
-            <Select v-model="activity" :options="activitiesOptions" optionLabel="title" optionValue="id" fluid/>
+            <Select v-model="activity" :options="activitiesOptions" optionLabel="shortname" optionValue="id" fluid/>
         </ValidateFormItem>
         <ValidateFormItem label="Icono" span="7">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"

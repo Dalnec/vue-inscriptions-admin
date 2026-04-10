@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import { storeActivities, storeChurches, storeDocumentType, storeKind, storePaymentMethod } from "@/stores/generalInfoStore.ts";
+import { storeActivities, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
 import { computed, onMounted, ref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
@@ -12,6 +12,7 @@ import type { SelectFilterEvent } from "primevue";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import * as yup from "yup";
+import router from "@/router";
 
 const route = useRoute();
 const refDrawerMembersSaved = ref();
@@ -52,6 +53,7 @@ const { value: email } = useField<string>("email");
 const optionsDocuments = computed(() => storeDocumentType().documentType);
 const optionsChurches = computed(() => storeChurches().churches);
 const optionsKinds = computed(() => storeKind().kinds);
+const useStoreRates = computed(() => storeRate());
 
 const addDataFromReniec = async(): Promise<void> => {
     loadingSearch.value = true;
@@ -136,6 +138,11 @@ watch(doc_num, () => {
 });
 
 onMounted(async() => {
+    await useStoreRates.value.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
+    if (useStoreRates.value.rate.length === 0) {
+        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+        await router.push({ name: "webPage", params: { slug: route.params.slug } });
+    }
     await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
     await storeActivities().getActivities(route.params?.slug as string);
 });

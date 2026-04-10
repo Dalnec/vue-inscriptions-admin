@@ -3,7 +3,7 @@
 import { Api } from "@/api/connection.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 import { computed, onMounted, ref, watch } from "vue";
-import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
+import { storeChurches, storeDocumentType, storeKind, storeRate } from "@/stores/generalInfoStore.ts";
 import { useField, useForm } from "vee-validate";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
 import useGlobalToast from "@/composables/toastEvent";
@@ -12,6 +12,9 @@ import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/get
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import * as yup from "yup";
 import type { SelectFilterEvent } from "primevue";
+import toastEvent from "@/composables/toastEvent.ts";
+import router from "@/router";
+import { useRoute } from "vue-router";
 
 const filteredOptions = ref<{ id: number, description: string, active: boolean }[]>([]);
 const selectRef = ref();
@@ -23,6 +26,9 @@ const wasDniChecked = ref(false);
 const useStoreDocumentType = storeDocumentType();
 const useStoreChurches = storeChurches();
 const useStoreKind = storeKind();
+const useStoreRates = storeRate();
+
+const route = useRoute();
 
 const props = defineProps({
     closeModal: { default: () => ({}), required: false, type: Function },
@@ -164,6 +170,12 @@ watch(() => membersStoreOptions.selectedMember, (member) => {
 }, { immediate: true });
 
 onMounted(async() => {
+    await useStoreRates.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
+    console.log(useStoreRates.rate);
+    if (useStoreRates.rate.length === 0) {
+        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+        await router.replace(`/${ route.params.slug }/home/inscriptions`);
+    }
     await useStoreDocumentType.getDocumentType();
     await useStoreChurches.getDataChurches();
     await useStoreKind.getKinds();

@@ -29,6 +29,7 @@ const dataForViewPayment = ref<Partial<PaymentMethod>>({ account: "", active: tr
 const usePaymentMethodStore = storePaymentMethod();
 const useStoreTotalRate = storePriceRate();
 const useStoreActivities = storeActivities();
+const useStoreRates = storeRate();
 
 const validationSchema = ref(yup.object({
     paymentmethod: yup.number().required("Seleccione el método de pago"),
@@ -104,7 +105,13 @@ const onValueSelectPayment = (id: number) => {
 };
 
 onMounted(async() => {
-    await storeRate().getRates();
+    await storeRate().getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
+    await useStoreRates.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
+    console.log(useStoreRates.rate);
+    if (useStoreRates.rate.length === 0) {
+        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+        await router.push({ name: "webPage", params: { slug: route.params.slug } });
+    }
     await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = storeRate().rate;
     const dataRate = rateSelected.find(rt => rt.selected);

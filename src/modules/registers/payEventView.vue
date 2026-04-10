@@ -146,7 +146,11 @@ function refocus($event: InputNumberInputEvent) {
 }
 
 onMounted(async() => {
-    await useStoreRates.getRates();
+    await useStoreRates.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
+    if (useStoreRates.rate.length === 0) {
+        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+        await router.push({ name: "webPage", params: { slug: route.params.slug } });
+    }
     await usePaymentMethodStore.getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
     await useStoreActivities.getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = useStoreRates.rate;

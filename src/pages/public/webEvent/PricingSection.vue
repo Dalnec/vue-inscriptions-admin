@@ -8,7 +8,7 @@ const handleCTA = (plan: any) => {
     if (plan.whatsapp_link) {
         window.open(plan.whatsapp_link, "_blank");
     } else {
-        router.push({ name: "inscription-members" });
+        router.push({ name: "inscribirse" });
     }
 };
 </script>

@@ -102,7 +102,7 @@ const menuItems = [
                 </h2>
                 <Button label="INSCRIBIRSE AHORA"
                         class="bg-amber-400 text-slate-950 hover:bg-amber-500 rounded-xl font-bold px-8 py-3"
-                        @click="$router.push({ name: 'inscription-members' })"/>
+                        @click="$router.push({ name: 'inscribirse' })"/>
             </div>
         </div>
 

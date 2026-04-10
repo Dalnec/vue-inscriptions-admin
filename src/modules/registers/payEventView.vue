@@ -145,9 +145,8 @@ function refocus($event: InputNumberInputEvent) {
     target.focus();
 }
 
-
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
+    const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: route.params.slug } });
     if (response && response?.status === 200) {
         const results = response.data?.results ?? response.data;
         useStoreRates.rate = Array.isArray(results) ? results : [];
@@ -163,7 +162,7 @@ onMounted(async() => {
     await usePaymentMethodStore.getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
     await useStoreActivities.getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = useStoreRates.rate;
-    const dataRate = Array.isArray(rateSelected) ? rateSelected.find(rt => rt.selected) : undefined;
+    const dataRate = rateSelected.find(rt => rt.selected);
     if (dataRate?.id) {
         setRate(dataRate.id);
         onSelected({ idRate: tarifa.value, priceRate: dataRate.price, nameRate: dataRate.description });

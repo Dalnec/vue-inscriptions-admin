@@ -17,18 +17,13 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
             useGlobalToast({ summary: `Bienvenido ${ this.userData.user?.username }` });
         },
 
-        async logout(context?: { isConsole?: boolean; slug?: string }) {
+        async logout(context: { isConsole: boolean; slug: string }) {
             this.userData = {} as InterfaceLogin;
             localStorage.removeItem("userDataConfig");
             sessionStorage.removeItem("userDataConfig");
 
-            if (context?.isConsole) {
-                await router.push("/console/login");
-            } else if (context?.slug) {
-                await router.push(`/${ context.slug }/login`);
-            } else {
-                await router.push("/");
-            }
+            await router.push(`/${ context.slug }/login`);
+
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {
             const perm = permName.trim().toLowerCase();

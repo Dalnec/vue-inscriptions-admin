@@ -33,7 +33,7 @@ const isChildActive = (childrenRoutes: MenuItem[]): boolean => {
 const confirm1 = () => {
     confirm.require({
         accept: () => {
-            userDataStore.logout({ isConsole: isConsole.value, slug: slug.value });
+            userDataStore.logout({ isConsole: false, slug: slug.value as string });
             useGlobalToast({ severity: "info", summary: "Sesión expirada", detail: "Vuelva a iniciar sesión", life: 3000 });
         },
         acceptProps: {

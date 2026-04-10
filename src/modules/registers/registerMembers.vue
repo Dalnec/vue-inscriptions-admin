@@ -88,17 +88,20 @@ const addDataFromReniec = async(): Promise<void> => {
     const result = dataConsult.data;
 
     if ("doc_num" in result && "names" in result && "lastnames" in result) {
+        handleReset();
         const dataConsultDNI = result as MemberExist;
         setValues({
             names: dataConsultDNI.names, lastnames: `${ dataConsultDNI.lastnames }`, phone: dataConsultDNI.phone, kind: dataConsultDNI.kind,
-            gender: dataConsultDNI.gender, church: dataConsultDNI.church
+            gender: dataConsultDNI.gender, church: dataConsultDNI.church, doc_num: dataConsultDNI.doc_num
         }, false);
     }
 
     if ("nombre_completo" in result) {
         const dataConsultDNI = result as DataDNI;
+        // handleReset()
         setValues({
-            names: dataConsultDNI.nombres, lastnames: `${ dataConsultDNI.apellido_paterno } ${ dataConsultDNI.apellido_materno }`
+            names: dataConsultDNI.nombres, lastnames: `${ dataConsultDNI.apellido_paterno } ${ dataConsultDNI.apellido_materno }`,
+            doc_num: dataConsultDNI.numero
         }, false);
     }
 
@@ -160,7 +163,7 @@ const onEnter = () => {
 
 
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
+    const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: route.params.slug } });
     if (response && response?.status === 200) {
         useStoreRates.rate = response.data;
         if (useStoreRates.rate.length === 0) {

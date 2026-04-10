@@ -139,7 +139,7 @@ axiosInstance.interceptors.response.use((response) => response, async(error: Axi
     const slug = computed(() => route.params.slug as string | undefined);
     if (status === 403) {
         abortAllRequests();
-        await storeUserInfo.logout({ isConsole: isConsole.value, slug: slug.value });
+        await storeUserInfo.logout({ isConsole: isConsole.value, slug: slug.value as string });
         showToast("warn", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
         return Promise.reject(error);
     }

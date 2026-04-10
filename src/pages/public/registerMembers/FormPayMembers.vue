@@ -76,7 +76,7 @@ const saveAllMembers = handleSubmit(async() => {
         if (response && response?.status === 201) {
             toastEvent({ severity: "success", summary: `${ response.data.message }` });
             storeDataMembers.membersData = [];
-            await router.push({ name: "inscription-members" });
+            await router.push({ name: "inscribirse" });
             refVoucherImage.value.remove();
             resetForm();
             loadingSave.value = false;
@@ -104,7 +104,7 @@ const onValueSelectPayment = (id: number) => {
 };
 
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
+    const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: route.params.slug } });
     if (response && response?.status === 200) {
         const results = response.data?.results ?? response.data;
         useStoreRates.rate = Array.isArray(results) ? results : [];
@@ -119,8 +119,7 @@ onMounted(async() => {
     await onGetRates();
     await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
     await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
-    const rateSelected = storeRate().getRates(route.params.slug as string);
-    const dataRate = Array.isArray(rateSelected) ? rateSelected.find(rt => rt.selected) : undefined;
+    const dataRate = useStoreRates.rate.find(rt => rt.selected);
     if (dataRate) {
         setRate(dataRate?.id as number);
     }

@@ -43,7 +43,7 @@ const onLogin = handleSubmit(async(values) => {
 
         if (isConsole.value) {
             await useLoginConsoleStore.loginUserData(response.data);
-            await router.replace("/console/home");
+            await router.replace("/console-dashboard");
         } else {
             await useLoginStore.loginUserData(response.data);
             await router.replace(`/${ slug.value }/home`);

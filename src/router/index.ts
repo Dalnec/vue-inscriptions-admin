@@ -271,15 +271,6 @@ const router = createRouter({
                     component: () => import("@/modules/settings/concepts.vue"),
                     name: "concepts",
                     path: "concepts"
-                },
-                {
-                    component: () => import("@/modules/activities/activities.vue"),
-                    meta: {
-                        icon: IconMaterialSymbolsEventNoteOutline,
-                        label: "Actividades"
-                    },
-                    name: "activities",
-                    path: "activities"
                 }
             ]
         },

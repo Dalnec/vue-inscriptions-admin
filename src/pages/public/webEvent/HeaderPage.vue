@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from "vue";
 import router from "@/router";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRoute } from "vue-router";
+import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
+
+const props = defineProps<{ infoActivity: InterfaceActivities }>();
 
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
@@ -47,9 +50,9 @@ onUnmounted(() => {
 
             <!-- Logo -->
             <router-link to="/camp2026" class="flex items-center gap-3">
-                <img src="../../../assets/images/kadosh.png" class="h-12" alt=""/>
+                <img :src="infoActivity.logo ?? '../../../assets/images/kadosh.png'" class="h-12" alt=""/>
                 <div class="hidden sm:flex flex-col">
-                    <span class="text-white font-semibold text-lg">Kadosh</span>
+                    <span class="text-white font-semibold text-lg">{{ infoActivity.shortname }}</span>
                     <span class="text-xs text-slate-400">Evento Cristiano</span>
                 </div>
             </router-link>

@@ -11,6 +11,7 @@ export interface InterfaceActivities {
         lng: number | null;
     };
     location_text: string;
+    logo: string | null;
     modified: null | Date;
     settings: Settings;
     shortname: string;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { LMap, LTileLayer, LMarker } from "@maxel01/vue-leaflet";
@@ -23,7 +23,9 @@ const schema = yup.object({
     logo: yup.mixed().test("logo", "El logo es obligatorio", (value) => {
         return value !== null && (value instanceof File || value instanceof Blob || typeof (value as unknown) === "string");
     }),
-    shortname: yup.string().required("El nombre corto es obligatorio"),
+    shortname: yup.string()
+        .required("El nombre corto es obligatorio")
+        .matches(/^[a-zA-Z0-9]+$/, "Solo letras y números, sin espacios ni caracteres especiales"),
     start_date: yup.date().required("La fecha de inicio es obligatoria"),
     tags: yup.array().of(
         yup.object({
@@ -52,6 +54,8 @@ const previewLogo = ref("");
 const logoInput = ref<HTMLInputElement | null>(null);
 const itemsEmail = ref<string[]>([]);
 const searchQuery = ref<string>("");
+const showMap = ref(false);
+const hasLocationSelected = computed(() => location.value.lat !== 0 || location.value.lng !== 0);
 const tagsOptions = ref<{ color: string, id: number, name: string }[]>([]);
 
 const search = (event: AutoCompleteCompleteEvent) => {
@@ -110,7 +114,8 @@ const onSubmit = handleSubmit(async(values) => {
         const { response } = await method({ route: routeToSend, data: formData });
         if (response && [ 200, 201 ].includes(response.status)) {
             loading.value = false;
-            useGlobalToast({ summary: isEdit ? "Actividad actualizada" : "Actividad creada", severity: "success" });
+            await router.push({ name: "console-events-list" });
+            useGlobalToast({ summary: isEdit ? "Actividad actualizada" : "Actividad creada", severity: "success", life: 7000 });
             ClearForm();
         }
     } catch (error) {
@@ -134,9 +139,7 @@ const ClearForm = () => {
         }
     };
     location.value = { lat: 0, lng: 0 };
-
-    // Remove the route parameter by navigating to the same route without the id
-    router.push({ name: "console-events" });
+    showMap.value = false;
 };
 
 // Corrección para manejar el clic en el input de archivo
@@ -256,6 +259,14 @@ watch(selectedTags, (newSelectedTags) => {
     tags.value = tagsOptions.value.filter(tag => newSelectedTags.includes(tag.id));
 });
 
+// Sanitizar shortname en tiempo real: solo letras y números
+watch(() => shortname.value, (val) => {
+    if (val) {
+        const sanitized = val.replace(/[^a-zA-Z0-9]/g, "");
+        if (sanitized !== val) shortname.value = sanitized;
+    }
+});
+
 onMounted(async() => {
     await onGetAllTags();
     await onGetAllTags();
@@ -274,8 +285,9 @@ onMounted(async() => {
                 <ValidateFormItem label="Nombre" span="12" name="title" mark v-slot="{ error }">
                     <InputText v-model="title" :invalid="!!error" placeholder="Ingrese el nombre de la actividad" fluid/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Nombre corto" span="12" name="shortname" mark v-slot="{ error }">
-                    <InputText v-model="shortname" :invalid="!!error" placeholder="Ingrese un nombre corto" fluid/>
+                <ValidateFormItem label="Nombre corto" span="12" name="shortname" mark v-slot="{ error }"
+                                  helpText="Solo letras y números, sin espacios ni caracteres especiales">
+                    <InputText v-model="shortname" :invalid="!!error" placeholder="Ej: camp2025" fluid/>
                 </ValidateFormItem>
                 <ValidateFormItem label="Descripción" span="12" name="description" mark v-slot="{ error }">
                     <Textarea v-model="description" :invalid="!!error" rows="4" placeholder="Describa la actividad" fluid/>
@@ -296,23 +308,86 @@ onMounted(async() => {
             <!-- Ubicación -->
             <Card #content>
                 <h3 class="text-lg font-semibold mb-4 border-b pb-2">Ubicación</h3>
-                <ValidateFormItem label="Nombre del lugar" span="12" name="location_text" mark v-slot="{ error }">
-                    <InputText v-model="location_text" :invalid="!!error" placeholder="Ingrese el nombre del lugar" fluid/>
-                </ValidateFormItem>
-                <Card #content>
-                    <h3 class="text-lg font-semibold mb-4">Buscar Ubicación</h3>
-                    <div class="flex gap-2 mb-4">
-                        <InputText v-model="searchQuery" placeholder="Ingrese una ubicación" fluid
-                                   @keyup.enter="searchLocation(searchQuery)"/>
-                        <Button label="Buscar" @click="() => searchLocation(searchQuery)"/>
+
+                <!-- Nombre del lugar (texto visible para el público) -->
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                        <i-material-symbols-location-on-outline class="inline text-base align-middle mr-1"/>
+                        Nombre visible del lugar donde se realizará la actividad (ej. "Centro de Convenciones", "Iglesia Central").
+                    </p>
+                    <ValidateFormItem label="Nombre del lugar" span="12" name="location_text" mark v-slot="{ error }">
+                        <InputText v-model="location_text" :invalid="!!error" placeholder="Ej: Coliseo Gran Chimú, Moyobamba" fluid/>
+                    </ValidateFormItem>
+                </div>
+
+                <!-- Resumen de coordenadas seleccionadas -->
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium">Coordenadas en el mapa</span>
+                        <Tag v-if="hasLocationSelected" severity="success" value="Seleccionada" icon="pi pi-check"/>
+                        <Tag v-else severity="warn" value="Sin seleccionar" icon="pi pi-exclamation-triangle"/>
                     </div>
-                    <LMap style="height: 300px; width: 100%;" :zoom="13" :center="[location.lat, location.lng]" @click="onMapClick">
+
+                    <!-- Panel de resumen cuando hay coordenadas -->
+                    <div v-if="hasLocationSelected && !showMap"
+                         class="flex items-center justify-between rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-3">
+                        <div class="flex items-center gap-3">
+                            <i-material-symbols-location-on-rounded class="text-2xl text-green-600 dark:text-green-400"/>
+                            <div>
+                                <p class="text-sm font-medium">{{ location_text || 'Ubicación seleccionada' }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    Lat: {{ location.lat.toFixed(6) }}, Lng: {{ location.lng.toFixed(6) }}
+                                </p>
+                            </div>
+                        </div>
+                        <Button label="Cambiar" icon="pi pi-map" severity="secondary" size="small" outlined
+                                @click="showMap = true"/>
+                    </div>
+
+                    <!-- Panel vacío cuando no hay coordenadas -->
+                    <div v-if="!hasLocationSelected && !showMap"
+                         class="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30 p-6 text-center">
+                        <i-material-symbols-location-on-outline class="text-4xl text-gray-400 mb-2"/>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                            Aún no has seleccionado una ubicación en el mapa.
+                        </p>
+                        <Button label="Seleccionar en el mapa" icon="pi pi-map-marker" severity="info" size="small"
+                                @click="showMap = true"/>
+                    </div>
+                </div>
+
+                <!-- Mapa colapsable -->
+                <div v-if="showMap" class="rounded-lg border p-4 bg-gray-50 dark:bg-gray-800/20">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-semibold flex items-center gap-2">
+                            <i class="pi pi-map"/>
+                            Buscar y seleccionar ubicación
+                        </h4>
+                        <Button icon="pi pi-times" severity="secondary" text rounded size="small"
+                                @click="showMap = false" v-tooltip="'Cerrar mapa'"/>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                        Busca una dirección o haz clic / arrastra el marcador en el mapa para seleccionar las coordenadas exactas.
+                    </p>
+                    <div class="flex gap-2 mb-3">
+                        <InputText v-model="searchQuery" placeholder="Buscar dirección o ciudad..." fluid
+                                   @keyup.enter="searchLocation(searchQuery)"/>
+                        <Button label="Buscar" icon="pi pi-search" @click="() => searchLocation(searchQuery)"/>
+                    </div>
+                    <LMap style="height: 300px; width: 100%; border-radius: 8px;" :zoom="13"
+                          :center="[location.lat, location.lng]" @click="onMapClick">
                         <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution="&copy; OpenStreetMap contributors"/>
                         <LMarker :lat-lng="[location.lat, location.lng]" draggable @update:latLng="onMarkedDragged"/>
                     </LMap>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Lat: {{ location.lat }}, Lng: {{ location.lng }}</p>
-                </Card>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            Lat: {{ location.lat.toFixed(6) }}, Lng: {{ location.lng.toFixed(6) }}
+                        </p>
+                        <Button v-if="hasLocationSelected" label="Confirmar ubicación" icon="pi pi-check" severity="success"
+                                size="small" @click="showMap = false"/>
+                    </div>
+                </div>
             </Card>
 
             <!-- Tags -->

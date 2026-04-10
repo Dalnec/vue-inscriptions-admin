@@ -7,6 +7,7 @@ import useGlobalToast from "@/composables/toastEvent.ts";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
 import type { ConceptsInterface, ConceptsInterfaceResponse } from "@/types/ConceptsInterface.ts";
 import * as yup from "yup";
+import { useRoute } from "vue-router";
 
 const props = defineProps<{
     closeModal: () => void;
@@ -17,6 +18,8 @@ const props = defineProps<{
 }>();
 
 const loading = ref(false);
+const activity = ref<number | null>(null);
+const route = useRoute();
 
 const schemaValidate = yup.object().shape({
     description: yup.string().required("Descripción es requerida")
@@ -51,7 +54,16 @@ const saveConcept = handleSubmit(async(values) => {
     }
 }, ({ errors }) => castFormErrors(errors));
 
-onMounted(() => {
+const onGetActivity = async(shortname: string): Promise<void> => {
+    const { response } = await Api.Get({ route: "activity", params: { shortname } });
+    if (response && response.status === 200) {
+        const activities = response.data.data;
+        activity.value = activities.length > 0 ? activities[0].id : null;
+    }
+};
+
+onMounted(async() => {
+    await onGetActivity(route.params.slug as string);
     if (props?.defaultType) concept_type.value = props.defaultType;
     if (props.formData?.id) {
         setValues({ ...props.formData });

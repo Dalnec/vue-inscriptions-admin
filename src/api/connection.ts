@@ -6,6 +6,8 @@ import { abortAllRequests, getAbortSignal } from "@/composables/abortManager.ts"
 import { pinia } from "@/pinia.ts";
 import { format, isValid, parseISO } from "date-fns";
 import { authChannel } from "@/api/authChannel.ts";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
 // Base URL taken from an environment variable
 let baseURL: string = import.meta.env.VITE_API_URL;
@@ -132,10 +134,12 @@ async function handleServerSideError(error: AxiosError) {
 axiosInstance.interceptors.response.use((response) => response, async(error: AxiosError) => {
     const storeUserInfo = useUserDataConfigStore(pinia);
     const status = error.response?.status;
-
+    const route = useRoute();
+    const isConsole = computed(() => route.path.startsWith("/console"));
+    const slug = computed(() => route.params.slug as string | undefined);
     if (status === 403) {
         abortAllRequests();
-        await storeUserInfo.logout();
+        await storeUserInfo.logout({ isConsole: isConsole.value, slug: slug.value });
         showToast("warn", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
         return Promise.reject(error);
     }

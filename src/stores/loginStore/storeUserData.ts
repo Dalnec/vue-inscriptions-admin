@@ -19,8 +19,8 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
 
         async logout(context?: { isConsole?: boolean; slug?: string }) {
             this.userData = {} as InterfaceLogin;
-            localStorage.clear();
-            sessionStorage.clear();
+            localStorage.removeItem("userDataConfig");
+            sessionStorage.removeItem("userDataConfig");
 
             if (context?.isConsole) {
                 await router.push("/console/login");

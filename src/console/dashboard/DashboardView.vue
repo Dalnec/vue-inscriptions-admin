@@ -17,7 +17,7 @@ interface Event {
     id: number;
     title: string;
     description: string;
-    location: string;
+    location_text: string;
     date: string;
     status: string;
 }
@@ -38,7 +38,7 @@ const onGetEvents = async() => {
             id: e.id,
             title: e.title,
             description: e.description,
-            location: e.location,
+            location_text: e.location_text,
             date: new Date(e.start_date).toLocaleDateString("es-PE", {
                 day: "2-digit",
                 month: "short",
@@ -164,7 +164,7 @@ onMounted(async() => {
                      class="bg-white dark:bg-gray-800 p-4 rounded-lg flex justify-between items-center shadow">
                     <div>
                         <p class="font-semibold text-gray-900 dark:text-white">{{ event.title }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ event.date }} • {{ event.location }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ event.date }} • {{ event.location_text }}</p>
                         <p class="text-xs text-gray-400 dark:text-gray-300">{{ event.description }}</p>
                     </div>
                     <div class="flex flex-col items-end gap-1">

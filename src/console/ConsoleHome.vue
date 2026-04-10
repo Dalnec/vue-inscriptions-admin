@@ -4,39 +4,33 @@ import { computed, ref, watch } from "vue";
 import { useDark } from "@vueuse/core";
 import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 import { RouterLink, RouterView, useRoute } from "vue-router";
-import router from "@/router";
+import type { MenuItem } from "primevue/menuitem";
 
 const useUserStore = useUserConsoleStore();
 
 navBarStore().createOptionsMenu();
-const menuOptions = computed(() => navBarStore().options);
 const isDark = useDark({ disableTransition: false, initialValue: "light" });
 const isSidebarOpen = ref(false);
+const menuOptions = computed(() => navBarStore().options);
 
 function toggleDarkMode() {
     isDark.value = !isDark.value;
 }
 
-function routeIsActive(path: string) {
-    return router.currentRoute.value.path.startsWith(path);
-}
-
 const route = useRoute();
 
-const menu = ref();
-const items = ref([
+const menuRef = ref();
+const items = ref<MenuItem[]>([
     {
-        label: "Refresh",
-        icon: "pi pi-refresh"
-    },
-    {
-        label: "Export",
-        icon: "pi pi-upload"
+        label: "Cerrar sesión",
+        command: () => {
+            useUserStore.logoutUserConsole();
+        }
     }
 ]);
 
 const toggle = (event: MouseEvent) => {
-    menu.value.toggle(event);
+    menuRef.value.toggle(event);
 };
 
 watch(() => route.fullPath, () => {
@@ -79,7 +73,7 @@ watch(() => route.fullPath, () => {
                 <Button @click="toggle" class="h-12 w-12" rounded severity="secondary" #icon>
                     <i-material-symbols-account-circle-full class="text-lg"/>
                 </Button>
-                <Menu ref="menu" id="overlay_menu" :model="items" :popup="true"/>
+                <Menu ref="menuRef" id="overlay_menu" :model="items" :popup="true"/>
                 <div class="flex flex-col">
                     <span class="text-sm font-semibold truncate">{{ useUserStore.userInfo.user?.username }}</span>
                 </div>

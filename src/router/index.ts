@@ -328,7 +328,7 @@ router.beforeEach(async(to) => {
     // -------------------------
     if (isPublicRoute) {
         if (to.name === "console-login" && isAuthConsole) return { name: "console-users" };
-        if (to.name === "event-login" && isAuthEvent && slug) return { name: "webPage", params: { slug } };
+        if (to.name === "event-login" && isAuthEvent && slug) return { name: "newRegister", params: { slug } };
         return true;
     }
 
@@ -357,9 +357,8 @@ router.beforeEach(async(to) => {
         const validSlug = await validateSlug(slug);
         if ( !validSlug) return { name: "not-found", replace: true };
 
-        // sesión de evento → solo rutas de evento
+        // sesión de evento → permitir acceso a rutas del evento
         if (isAuthEvent) {
-            if (to.meta?.allowConsoleAccess) return { name: "not-found", replace: true };
             return true;
         }
 

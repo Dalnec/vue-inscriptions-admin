@@ -134,7 +134,7 @@ const onEnter = () => {
 };
 
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug} });
+    const { response } = await Api.Get({ route: "tarifa" });
     if (response && response?.status === 200) {
         useStoreRates.value.rate = response.data;
         if (useStoreRates.value.rate.length === 0) {

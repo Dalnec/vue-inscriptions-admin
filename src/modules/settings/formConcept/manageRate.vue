@@ -9,12 +9,14 @@ import toastEvent from "@/composables/toastEvent.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useRoute } from "vue-router";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const props = defineProps<{ formData?: InterfaceRates, closeModal: () => void, refreshData: () => Promise<void> }>();
 const loading = ref(false);
 const fieldInitial = ref<InterfaceRates>({ active: true, description: "", price: "", selected: true });
 const activitiesOptions = ref<InterfaceActivities[]>([]);
-const userData = useUserDataConfigStore();
+const { userData } = useUserDataConfigStore();
+const { userInfo: userConsoleData } = useUserConsoleStore();
 const route = useRoute();
 
 const validationSchema = yup.object({
@@ -35,7 +37,7 @@ const onSavePayments = handleSubmit(async(values) => {
     const route = `tarifa${ isUpdate ? `/${ props.formData.id }` : "" }`;
     const method = isUpdate ? Api.Put : Api.Post;
     const { response } = await method({ route, data: { ...values } });
-    
+
     if (response && [ 200, 201 ].includes(response.status)) {
         loading.value = false;
         toastEvent({ severity: "success", summary: `Datos ${ isUpdate ? "editados" : "agregados" }` });
@@ -52,7 +54,7 @@ const onGetActivities = async() => {
     return [] as InterfaceActivities[];
 };
 
-onMounted(async () => {
+onMounted(async() => {
     if (props.formData?.id) setValues({ ...props.formData });
     activitiesOptions.value = await onGetActivities();
     activity.value = activitiesOptions.value.find((item) => item.shortname === route.params?.slug)?.id || null;
@@ -74,7 +76,7 @@ onMounted(async () => {
         <ValidateFormItem label="Activo" span="3">
             <ToggleSwitch fluid v-model="active"/>
         </ValidateFormItem>
-        <ValidateFormItem label="Actividad" span="12" v-if="userData.userData.user.is_staff">
+        <ValidateFormItem label="Actividad" span="12" v-if="userData.user?.is_staff || userConsoleData.user.is_staff">
             <Select v-model="activity" :options="activitiesOptions" optionLabel="title" optionValue="id" fluid/>
         </ValidateFormItem>
         <ValidateFormItem hide-label hide-error span="6">

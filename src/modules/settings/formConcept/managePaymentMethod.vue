@@ -8,13 +8,15 @@ import toastEvent from "@/composables/toastEvent.ts";
 import type { InterfaceActivities, InterfaceResponseActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
 import * as yup from "yup";
 import { useRoute } from "vue-router";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const props = defineProps<{ formData?: PaymentMethod, closeModal: () => void, refreshData: () => Promise<void> }>();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
 const uploadedFile = ref<File | null>(null);
 const activitiesOptions = ref<InterfaceActivities[]>([]);
-const userData = useUserDataConfigStore();
+const { userData } = useUserDataConfigStore();
+const { userInfo: userConsoleData } = useUserConsoleStore();
 const route = useRoute();
 
 const fieldInitial = ref<Partial<PaymentMethod>>({ account: "", cci: "", description: "", icon: "", active: true });
@@ -104,7 +106,7 @@ onMounted(async() => {
         <ValidateFormItem label="Activo" span="2">
             <ToggleSwitch v-model="active" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Actividad" span="5" v-if="userData.userData.user.is_staff">
+        <ValidateFormItem label="Actividad" span="5" v-if="userData.user?.is_staff || userConsoleData.user.is_staff">
             <Select v-model="activity" :options="activitiesOptions" optionLabel="shortname" optionValue="id" fluid/>
         </ValidateFormItem>
         <ValidateFormItem label="Icono" span="7">

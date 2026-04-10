@@ -12,6 +12,7 @@ import type { SelectFilterEvent } from "primevue";
 import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/getDataReniec.ts";
 import * as yup from "yup";
 import router from "@/router";
+import { Api } from "@/api/connection.ts";
 
 const route = useRoute();
 const refDrawerMembersSaved = ref();
@@ -132,16 +133,23 @@ const onEnter = () => {
     selectRef.value?.hide();
 };
 
+const onGetRates = async() => {
+    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug} });
+    if (response && response?.status === 200) {
+        useStoreRates.value.rate = response.data;
+        if (useStoreRates.value.rate.length === 0) {
+            toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+            await router.push({ name: "webPage", params: { slug: route.params.slug } });
+        }
+    }
+};
+
 watch(doc_num, () => {
     wasDniChecked.value = false;
 });
 
 onMounted(async() => {
-    await useStoreRates.value.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
-    if (useStoreRates.value.rate.length === 0) {
-        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
-        await router.push({ name: "webPage", params: { slug: route.params.slug } });
-    }
+    await onGetRates();
     await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
     await storeActivities().getActivities(route.params?.slug as string);
 });

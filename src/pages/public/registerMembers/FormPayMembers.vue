@@ -103,13 +103,19 @@ const onValueSelectPayment = (id: number) => {
     dataForViewPayment.value = found;
 };
 
-onMounted(async() => {
-    await storeRate().getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
-    await useStoreRates.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
-    if (useStoreRates.rate.length === 0) {
-        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
-        await router.push({ name: "webPage", params: { slug: route.params.slug } });
+const onGetRates = async() => {
+    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
+    if (response && response?.status === 200) {
+        useStoreRates.rate = response.data;
+        if (useStoreRates.rate.length === 0) {
+            toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+            await router.push({ name: "webPage", params: { slug: route.params.slug } });
+        }
     }
+};
+
+onMounted(async() => {
+    await onGetRates();
     await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = storeRate().rate;
     const dataRate = rateSelected.find(rt => rt.selected);

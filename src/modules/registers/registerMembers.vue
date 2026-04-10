@@ -158,6 +158,19 @@ const onEnter = () => {
     selectRef.value?.hide();
 };
 
+
+const onGetRates = async() => {
+    const { response } = await Api.Get({ route: "tarifa", params: { shortname: route.params.slug } });
+    if (response && response?.status === 200) {
+        useStoreRates.rate = response.data;
+        if (useStoreRates.rate.length === 0) {
+            toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
+            await router.push({ name: "webPage", params: { slug: route.params.slug } });
+        }
+    }
+};
+
+
 watch(doc_num, () => {
     wasDniChecked.value = false;
 });
@@ -170,11 +183,7 @@ watch(() => membersStoreOptions.selectedMember, (member) => {
 }, { immediate: true });
 
 onMounted(async() => {
-    await useStoreRates.getRates(route.params.slug === "console" ? undefined : route.params.slug as string);
-    if (useStoreRates.rate.length === 0) {
-        toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
-        await router.replace(`/${ route.params.slug }/home/inscriptions`);
-    }
+    await onGetRates();
     await useStoreDocumentType.getDocumentType();
     await useStoreChurches.getDataChurches();
     await useStoreKind.getKinds();

@@ -6,17 +6,14 @@ import * as yup from "yup";
 import { onMounted, ref } from "vue";
 import { Api } from "@/api/connection.ts";
 import toastEvent from "@/composables/toastEvent.ts";
-import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useRoute } from "vue-router";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
-import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const props = defineProps<{ formData?: InterfaceRates, closeModal: () => void, refreshData: () => Promise<void> }>();
 const loading = ref(false);
 const fieldInitial = ref<InterfaceRates>({ active: true, description: "", price: "", selected: true });
 const activitiesOptions = ref<InterfaceActivities[]>([]);
-const { userData } = useUserDataConfigStore();
-const { userInfo: userConsoleData } = useUserConsoleStore();
+
 const route = useRoute();
 
 const validationSchema = yup.object({
@@ -75,9 +72,6 @@ onMounted(async() => {
         </ValidateFormItem>
         <ValidateFormItem label="Activo" span="3">
             <ToggleSwitch fluid v-model="active"/>
-        </ValidateFormItem>
-        <ValidateFormItem label="Actividad" span="12" v-if="userData.user?.is_staff || userConsoleData.user.is_staff">
-            <Select v-model="activity" :options="activitiesOptions" optionLabel="title" optionValue="id" fluid/>
         </ValidateFormItem>
         <ValidateFormItem hide-label hide-error span="6">
             <Button label="Cancelar" @click="props.closeModal()" fluid/>

@@ -5,12 +5,13 @@ import { castFormErrors } from "@/composables/castFormErrors.ts";
 import { onMounted, provide, ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import { useDebounceFn } from "@vueuse/core";
+import { useRoute } from "vue-router";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import type { InterfaceProfile, UsersActionsProfile, UsersActiosMembersActions, InterfaceUsers } from "@/types/interfaceUsers.ts";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
-import PermissionsManager from "@/modules/users/PermissionsManager.vue";
-import * as yup from "yup";
 import type { PermissionsInfo } from "@/types/InterfaceLogin.ts";
+import * as yup from "yup";
+import PermissionsManager from "@/modules/users/PermissionsManager.vue";
 
 /* general variables */
 const profileOptions = ref<InterfaceProfile[]>([]);
@@ -18,6 +19,7 @@ const activityOptions = ref<InterfaceActivities[]>([]);
 const props = defineProps<{ closeModal: () => void; refreshData: () => Promise<void>; formData?: InterfaceUsers }>();
 const refPermissions = ref();
 const checkAll = ref(false);
+const route = useRoute();
 
 /**
  * Scheme of rules to be evaluated
@@ -62,7 +64,7 @@ const { handleSubmit, resetForm, setValues } = useForm<InterfaceUsers>({
 const { value: names, handleBlur: namesBlur } = useField<string>("names");
 const { value: email } = useField<string>("email");
 const { value: profile, handleBlur: profileBlur } = useField<string>("profile");
-const { value: activity, handleBlur: activityBlur } = useField<string>("activity");
+const { value: activity, handleBlur: activityBlur } = useField<number | null>("activity");
 const { value: username, handleBlur: usernameBlur } = useField<string>("username");
 const { value: permissions, handleBlur: handleBlurPermissions } = useField<PermissionsInfo[]>("permissions");
 const { value: lastname } = useField<string>("lastname");
@@ -116,6 +118,8 @@ onMounted(async() => {
     profileOptions.value = await getProfilesList();
     activityOptions.value = await onGetAllActivities();
 
+    activity.value = activityOptions.value.find((item) => item.shortname === route.params?.slug)?.id || null;
+
     // Check if the form has an existing ID (editing mode)
     if (props.formData?.id) {
         setValues({ ...props.formData }, false);
@@ -143,16 +147,12 @@ provide("permissions", { permissions, handleBlurPermissions, checkAll });
                 <ValidateFormItem label="Apellidos" span="6">
                     <InputText v-model="lastname" id="lastname" fluid autocomplete="off"/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Correo" span="5">
+                <ValidateFormItem label="Correo" span="4">
                     <InputText v-model="email" id="email" fluid autocomplete="off"/>
                 </ValidateFormItem>
                 <ValidateFormItem label="Perfil" span="4" mark name="profile" v-slot="{ error }">
                     <Select v-model="profile" label-id="profile" :invalid="!!error" :options="profileOptions" name="profile" fluid
                             optionLabel="description" optionValue="id" @blur="profileBlur($event, true)" show-clear/>
-                </ValidateFormItem>
-                <ValidateFormItem label="Actividad" span="3" mark name="activity" v-slot="{ error }">
-                    <Select v-model="activity" label-id="activity" :invalid="!!error" :options="activityOptions" name="activity" fluid
-                            optionLabel="title" optionValue="id" @blur="activityBlur($event, true)" show-clear/>
                 </ValidateFormItem>
                 <ValidateFormItem v-if="!props.formData?.id" label="Usuario" mark span="4" name="username" v-slot="{ error }">
                     <InputText v-model="username" id="username" :invalid="!!error" fluid @blur="usernameBlur($event, true)"
@@ -160,11 +160,11 @@ provide("permissions", { permissions, handleBlurPermissions, checkAll });
                 </ValidateFormItem>
                 <ValidateFormItem v-if="!props.formData?.id" label="Contraseña" mark span="4" name="password" v-slot="{ error }">
                     <Password v-model="password" input-id="password" :invalid="!!error" class="w-full" :toggleMask="true"
-                              :feedback="false" @blur="passwordBlur($event, true)" input-class="w-full !py-1.5"/>
+                              :feedback="false" @blur="passwordBlur($event, true)" input-class="w-full"/>
                 </ValidateFormItem>
                 <ValidateFormItem v-if="!props.formData?.id" label="Confirmar" mark span="4" name="passwordConfirm" v-slot="{ error }">
                     <Password v-model="passwordConfirm" input-id="confirm" :invalid="!!error" class="w-full" :toggleMask="true"
-                              :feedback="false" @blur="passwordConfirmBlur($event, true)" input-class="w-full !py-1.5"/>
+                              :feedback="false" @blur="passwordConfirmBlur($event, true)" input-class="w-full"/>
                 </ValidateFormItem>
             </TabPanel>
             <TabPanel value="permissions">

@@ -1,22 +1,18 @@
 <script setup lang="ts">
 import { Api } from "@/api/connection.ts";
-import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { onMounted, ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import { setDefaultImages } from "@/composables/convertImageToUpload.ts";
+import { useRoute } from "vue-router";
 import toastEvent from "@/composables/toastEvent.ts";
 import type { InterfaceActivities, InterfaceResponseActivities, PaymentMethod } from "@/types/interfaceActivities.ts";
 import * as yup from "yup";
-import { useRoute } from "vue-router";
-import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const props = defineProps<{ formData?: PaymentMethod, closeModal: () => void, refreshData: () => Promise<void> }>();
 const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
 const uploadedFile = ref<File | null>(null);
 const activitiesOptions = ref<InterfaceActivities[]>([]);
-const { userData } = useUserDataConfigStore();
-const { userInfo: userConsoleData } = useUserConsoleStore();
 const route = useRoute();
 
 const fieldInitial = ref<Partial<PaymentMethod>>({ account: "", cci: "", description: "", icon: "", active: true });
@@ -106,10 +102,7 @@ onMounted(async() => {
         <ValidateFormItem label="Activo" span="2">
             <ToggleSwitch v-model="active" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Actividad" span="5" v-if="userData.user?.is_staff || userConsoleData.user.is_staff">
-            <Select v-model="activity" :options="activitiesOptions" optionLabel="shortname" optionValue="id" fluid/>
-        </ValidateFormItem>
-        <ValidateFormItem label="Icono" span="7">
+        <ValidateFormItem label="Icono" span="5">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"
                         ref="refVoucherImage" @select="handleFileSelect" :show-upload-button="false" :show-cancel-button="false"
                         @remove="() => { setValueIcon(''); uploadedFile = null }" invalid-file-size-message="Peso de imagen invalido"

@@ -2,17 +2,20 @@
 import { LMap, LMarker, LTileLayer } from "@maxel01/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import happyYoung from "@/assets/images/imgYoungs.jpg";
-import pageConfig from "@/assets/page_config.json";
+import { inject, computed, type Ref } from "vue";
+import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 
-const { location } = pageConfig;
+const infoActivity = inject<Ref<InterfaceActivities>>("infoActivity");
 
-const lat = -6.41778842961999;
-const lng = -76.52805907116408;
-
+const lat = computed(() => infoActivity?.value?.location?.lat ?? 0);
+const lng = computed(() => infoActivity?.value?.location?.lng ?? 0);
+const locationText = computed(() => infoActivity?.value?.location_text || "Ubicación del evento");
+const hasValidCoords = computed(() => lat.value !== 0 || lng.value !== 0);
+const mapCenter = computed(() => [lat.value, lng.value] as [number, number]);
 </script>
 
 <template>
-    <section class="bg-slate-950 py-20 px-4" id="location">
+    <section class="bg-event-bg-dark py-20 px-4" id="location">
         <div class="max-w-6xl mx-auto">
 
             <!-- HEADER -->
@@ -20,8 +23,8 @@ const lng = -76.52805907116408;
                 <h2 class="text-3xl md:text-5xl font-info text-white">
                     ¿Dónde será el evento?
                 </h2>
-                <p class="mt-4 text-slate-400 max-w-2xl mx-auto">
-                    {{ location.description }}
+                <p class="mt-4 text-white/60 max-w-2xl mx-auto">
+                    {{ locationText }}
                 </p>
             </div>
 
@@ -30,12 +33,15 @@ const lng = -76.52805907116408;
 
                 <!-- MAPA -->
                 <div class="relative h-[300px] md:h-[400px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-
-                    <LMap :zoom="18" :center="[lat, lng]" :use-global-leaflet="false" class="w-full h-full">
-                        <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-                        <LMarker :lat-lng="[lat, lng]"/>
-                    </LMap>
-
+                    <template v-if="hasValidCoords">
+                        <LMap :zoom="15" :center="mapCenter" :use-global-leaflet="false" class="w-full h-full">
+                            <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                            <LMarker :lat-lng="mapCenter"/>
+                        </LMap>
+                    </template>
+                    <div v-else class="flex items-center justify-center h-full bg-event-bg text-white/40">
+                        <p>Ubicación no disponible</p>
+                    </div>
                 </div>
 
                 <!-- TEXTO -->
@@ -47,33 +53,21 @@ const lng = -76.52805907116408;
                     <!-- contenido -->
                     <div class="relative p-8 text-white">
 
-                        <h3 class="text-2xl md:text-4xl font-info mb-4"> {{ location.city }} </h3>
+                        <h3 class="text-2xl md:text-4xl font-info mb-4"> {{ locationText }} </h3>
 
-                        <p class="text-slate-300 leading-relaxed">
-                            <span class="text-amber-400 font-semibold">{{ location.place_name }}</span>
-                            - {{ location.address }}
+                        <p class="text-white/70 leading-relaxed">
+                            <span class="text-event-accent font-semibold">{{ infoActivity?.title }}</span>
+                            — {{ locationText }}
                         </p>
 
-                        <p class="mt-4 text-slate-400 text-sm">
-                            {{ location.description }}
+                        <p v-if="infoActivity?.description" class="mt-4 text-white/50 text-sm">
+                            {{ infoActivity.description }}
                         </p>
-
-                        <!-- AMENIDADES -->
-                        <div v-if="location.amenities && location.amenities.length > 0" class="mt-6 space-y-2">
-                            <h4 class="text-amber-400 font-semibold mb-3">Comodidades:</h4>
-                            <ul>
-                                <li v-for="(amenity, index) in location.amenities" :key="index"
-                                    class="text-slate-300 flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
-                                    {{ amenity }}
-                                </li>
-                            </ul>
-                        </div>
 
                         <!-- CTA opcional -->
-                        <Button as="a" href="https://maps.app.goo.gl/wiF8SMgAuynaJ83T7" target="_blank" label="Ver en Google Maps"
-                                class="mt-6"/>
-
+                        <Button v-if="hasValidCoords" as="a"
+                                :href="`https://www.google.com/maps?q=${lat},${lng}`"
+                                target="_blank" label="Ver en Google Maps" class="mt-6"/>
                     </div>
                 </div>
 

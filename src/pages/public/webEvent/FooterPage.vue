@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import pageConfig from "@/assets/page_config.json";
+import { inject, computed, type Ref } from "vue";
+import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 
-const { footer, location } = pageConfig;
+const infoActivity = inject<Ref<InterfaceActivities>>("infoActivity");
+
+const locationText = computed(() => infoActivity?.value?.location_text || "");
+const eventTitle = computed(() => infoActivity?.value?.title);
 
 const menuItems = [
     { currentPage: "#about", label: "¿De qué se trata?" },
@@ -11,7 +15,7 @@ const menuItems = [
 </script>
 
 <template>
-    <footer class="bg-slate-950 text-white border-t border-white/10">
+    <footer class="bg-event-bg-dark text-white border-t border-white/10">
 
         <div class="max-w-6xl mx-auto px-4 py-16">
 
@@ -21,7 +25,9 @@ const menuItems = [
                 <!-- LOGOS -->
                 <div class="flex items-center gap-8">
                     <img src="../../../assets/images/jni.jpg" class="h-16 object-contain opacity-90" alt=""/>
-                    <img src="../../../assets/images/kadosh.png" class="h-14 object-contain opacity-90" alt=""/>
+                    <img v-if="infoActivity?.logo" :src="infoActivity.logo" :alt="infoActivity.title"
+                         class="h-14 object-contain opacity-90"/>
+                    <img v-else src="../../../assets/images/kadosh.png" class="h-14 object-contain opacity-90" alt=""/>
                 </div>
 
                 <!-- REDES -->
@@ -49,9 +55,6 @@ const menuItems = [
                             <a href="https://www.instagram.com/jni.dpno/" target="_blank" class="footer-link">
                                 Instagram
                             </a>
-                        </li>
-                        <li>
-                            <a href="#" class="footer-link">NYI</a>
                         </li>
                     </ul>
                 </div>
@@ -88,20 +91,20 @@ const menuItems = [
                     <h3 class="footer-title">Contacto</h3>
                     <p class="flex items-start gap-2 text-white/70 leading-relaxed">
                         <i class="pi pi-map-marker text-base mt-1"></i>
-                        {{ location.address }}
+                        {{ locationText }}
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- CTA SECTION -->
-        <div class="dark:bg-slate-400/10  border-y border-slate-400/20 px-4 py-12">
+        <div class="bg-white/5 border-y border-white/10 px-4 py-12">
             <div class="max-w-6xl mx-auto text-center">
                 <h2 class="text-2xl md:text-4xl font-info text-white mb-4">
-                    {{ footer.cta_title }}
+                    ¿ESTÁS LISTO PARA TU RENOVACIÓN?
                 </h2>
-                <Button label="INSCRIBIRSE AHORA"
-                        class="bg-amber-400 text-slate-950 hover:bg-amber-500 rounded-xl font-bold px-8 py-3"
+                <Button label="INSCRIBIRSE AHORA" unstyled
+                        class="bg-event-accent text-event-bg-dark hover:bg-event-accent-red rounded-xl font-bold px-8 py-3"
                         @click="$router.push({ name: 'inscribirse' })"/>
             </div>
         </div>
@@ -110,7 +113,7 @@ const menuItems = [
         <div class="border-t border-white/10">
             <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center text-xs text-white/60">
 
-                <p> © {{ footer.year }} {{ footer.organization }}. Todos los derechos reservados </p>
+                <p> © {{ new Date().getFullYear() }} {{ eventTitle }}. Todos los derechos reservados </p>
 
                 <p class="flex items-center gap-2">
                     Powered by

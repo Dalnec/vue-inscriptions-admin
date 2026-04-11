@@ -30,7 +30,7 @@ onUnmounted(() => clearInterval(interval));
 </script>
 
 <template>
-    <section class="bg-slate-950 py-16 px-4">
+    <section class="bg-event-bg-dark py-16 px-4">
 
         <div class="max-w-6xl mx-auto">
 
@@ -38,9 +38,9 @@ onUnmounted(() => clearInterval(interval));
             <div class="text-center max-w-3xl mx-auto mb-10">
                 <h2 class="text-3xl md:text-5xl text-white"> Conoce a nuestro equipo </h2>
 
-                <p class="mt-6 text-slate-400 text-lg leading-relaxed">
+                <p class="mt-6 text-white/60 text-lg leading-relaxed">
                     Personas comprometidas con un mismo propósito:
-                    <span class="text-amber-400 font-semibold"> guiarte a una experiencia real con Dios </span>
+                    <span class="text-event-accent font-semibold"> guiarte a una experiencia real con Dios </span>
                 </p>
             </div>
 
@@ -66,7 +66,7 @@ onUnmounted(() => clearInterval(interval));
                 <div class="mt-6 text-center px-6 py-4 rounded-xl bg-white/5 border border-white/10">
                     <h3 class="text-xl md:text-2xl text-white font-semibold"> {{ team[currentIndex].name }} </h3>
 
-                    <p class="text-slate-400 mt-2 text-sm md:text-base max-w-2xl mx-auto">
+                    <p class="text-white/50 mt-2 text-sm md:text-base max-w-2xl mx-auto">
                         Un equipo dispuesto a servir, guiar y acompañarte en cada momento del evento.
                     </p>
                 </div>
@@ -74,7 +74,7 @@ onUnmounted(() => clearInterval(interval));
                 <!-- dots -->
                 <div class="flex justify-center gap-2 mt-4">
                     <span v-for="(item, index) in team" :key="item.name" class="h-2 rounded-full transition-all"
-                          :class="index === currentIndex ? 'w-6 bg-amber-400' : 'w-2 bg-white/30'"/>
+                          :class="index === currentIndex ? 'w-6 bg-event-accent' : 'w-2 bg-white/30'"/>
                 </div>
             </div>
         </div>

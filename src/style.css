@@ -30,6 +30,13 @@ body {
 }
 
 :root {
+    /* ── Evento público ── */
+    --event-bg: #252146;
+    --event-bg-dark: #1a1735;
+    --event-accent: #F2780C;
+    --event-accent-red: #F25116;
+    --event-accent-burnt: #E1782C;
+
     --p-primary-50: #FFFBEB;
     --p-primary-100: #FEF3C7;
     --p-primary-200: #FDE68A;

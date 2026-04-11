@@ -1,14 +1,30 @@
-<script setup lang="ts"> import { ref, onMounted, onUnmounted } from "vue";
+<script setup lang="ts"> import { ref, onMounted, onUnmounted, watch } from "vue";
 import { intervalToDuration, isBefore } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 
+const props = defineProps<{ targetDate?: string | Date | null }>();
+
 const countdown = ref({ days: 0, hours: 0, minutes: 0, months: 0, seconds: 0 });
 const limaTimeZone = "America/Lima";
-const targetDateString = "2026-07-25T19:00:00";
-const targetDateUTC = fromZonedTime(new Date(targetDateString), limaTimeZone);
+let targetDateUTC: Date | null = null;
 let interval: ReturnType<typeof setInterval>;
 
+const parseTarget = () => {
+    if (!props.targetDate) {
+        targetDateUTC = null;
+        return;
+    }
+    let d: Date;
+    if (props.targetDate instanceof Date) {
+        d = props.targetDate;
+    } else {
+        d = new Date(String(props.targetDate).replace(" ", "T"));
+    }
+    targetDateUTC = fromZonedTime(d, limaTimeZone);
+};
+
 const updateCountdown = () => {
+    if (!targetDateUTC) return;
     const now = new Date();
 
     if (isBefore(targetDateUTC, now)) {
@@ -17,10 +33,7 @@ const updateCountdown = () => {
         return;
     }
 
-    const duration = intervalToDuration({
-        start: now,
-        end: targetDateUTC
-    });
+    const duration = intervalToDuration({ start: now, end: targetDateUTC });
 
     countdown.value = {
         days: duration.days || 0,
@@ -31,7 +44,13 @@ const updateCountdown = () => {
     };
 };
 
+watch(() => props.targetDate, () => {
+    parseTarget();
+    updateCountdown();
+});
+
 onMounted(() => {
+    parseTarget();
     updateCountdown();
     interval = setInterval(updateCountdown, 1000);
 });
@@ -87,6 +106,6 @@ onUnmounted(() => {
 }
 
 .time-box small {
-    @apply text-[10px] md:text-xs text-slate-400 uppercase;
+    @apply text-[10px] md:text-xs text-white/50 uppercase;
 }
 </style>

@@ -16,6 +16,13 @@ export default {
         },
         extend: {
             colors: {
+                /* ── Paleta del evento público ── */
+                "event-bg": "#252146",
+                "event-bg-dark": "#1a1735",
+                "event-accent": "#F2780C",
+                "event-accent-red": "#F25116",
+                "event-accent-burnt": "#E1782C",
+
                 "on-tertiary-fixed": "#1b1c1c",
                 "on-secondary": "#ffffff",
                 "surface": "#f9f9f9",

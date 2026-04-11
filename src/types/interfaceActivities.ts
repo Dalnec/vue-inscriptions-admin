@@ -1,5 +1,12 @@
 import type { InterfaceAxiosApi, InterfaceAxiosApiResponse } from "@/types/InterfaceAxiosApi.ts";
 
+export interface ActivityTag {
+    id: number;
+    name: string;
+    slug: string;
+    color: string;
+}
+
 export interface InterfaceActivities {
     created: null | Date;
     description: string;
@@ -16,6 +23,7 @@ export interface InterfaceActivities {
     settings: Settings;
     shortname: string;
     start_date: null | Date;
+    tags?: ActivityTag[];
     title: string;
 }
 

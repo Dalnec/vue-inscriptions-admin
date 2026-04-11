@@ -44,7 +44,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="bg-slate-900 min-h-screen text-white">
+    <div class="bg-event-bg min-h-screen text-white">
         <HeaderPage v-if="showHeader" :infoActivity="infoActivity" />
         <router-view />
     </div>

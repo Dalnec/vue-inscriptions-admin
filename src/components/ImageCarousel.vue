@@ -60,7 +60,7 @@ onUnmounted(() => {
     <div class="relative group"
          @mouseenter="stopAutoplay"
          @mouseleave="hasMultipleImages && startAutoplay()">
-        <div class="absolute -inset-2 bg-amber-400/10 blur-2xl rounded-3xl"></div>
+        <div class="absolute -inset-2 bg-event-accent/10 blur-2xl rounded-3xl"></div>
 
         <div class="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl h-[250px] md:h-[350px]">
             <!-- IMAGENES -->
@@ -101,15 +101,15 @@ onUnmounted(() => {
                             @click="goToImage(index - 1)"
                             :class="[
                                 'w-2 h-2 rounded-full transition-all duration-300',
-                                index - 1 === currentImageIndex ? 'bg-amber-400 w-8' : 'bg-white/40 hover:bg-white/60'
+                                index - 1 === currentImageIndex ? 'bg-event-accent w-8' : 'bg-white/40 hover:bg-white/60'
                             ]"
                             :aria-label="`Ir a imagen ${index}`"/>
                 </div>
             </div>
 
             <!-- FALLBACK -->
-            <div v-else class="w-full h-full text-center flex items-center justify-center bg-slate-800">
-                <p class="text-slate-400">No hay imágenes disponibles</p>
+            <div v-else class="w-full h-full text-center flex items-center justify-center bg-event-bg-dark">
+                <p class="text-white/40">No hay imágenes disponibles</p>
             </div>
         </div>
     </div>

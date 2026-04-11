@@ -45,7 +45,7 @@ onUnmounted(() => {
 <template>
     <header class="sticky top-0 z-50 transition-all duration-300"
             :class="isScrolled
-                ? 'bg-slate-950/85 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/40' : 'bg-transparent'">
+                ? 'bg-event-bg-dark/90 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/40' : 'bg-transparent'">
         <nav class="container mx-auto flex items-center justify-between py-3 px-4">
 
             <!-- Logo -->
@@ -53,7 +53,7 @@ onUnmounted(() => {
                 <img :src="infoActivity.logo ?? '../../../assets/images/kadosh.png'" class="h-12" alt=""/>
                 <div class="hidden sm:flex flex-col">
                     <span class="text-white font-semibold text-lg">{{ infoActivity.shortname }}</span>
-                    <span class="text-xs text-slate-400">Evento Cristiano</span>
+                    <span class="text-xs text-white/50">Evento Cristiano</span>
                 </div>
             </router-link>
 
@@ -68,7 +68,7 @@ onUnmounted(() => {
             <!-- Desktop -->
             <ul class="hidden md:flex items-center gap-6">
                 <li v-for="(item, index) in menuItems" :key="index">
-                    <router-link :to="{ path:'/camp2026', hash: item.currentPage }" class="menu-items-effect">
+                    <router-link :to="{ path: `/${infoActivity.shortname}`, hash: item.currentPage }" class="menu-items-effect">
                         {{ item.label }}
                     </router-link>
                 </li>
@@ -81,12 +81,12 @@ onUnmounted(() => {
             <div v-if="isMobileMenuOpen" class="fixed inset-0 z-40 md:hidden">
                 <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="isMobileMenuOpen = false"/>
                 <div class="relative z-50 flex justify-center mt-24 px-4">
-                    <div class="w-full max-w-md rounded-2xl bg-slate-950/95 backdrop-blur-xl p-6 shadow-2xl border border-white/10">
+                    <div class="w-full max-w-md rounded-2xl bg-event-bg-dark/95 backdrop-blur-xl p-6 shadow-2xl border border-white/10">
 
                         <ul class="flex flex-col gap-4 text-center">
                             <li v-for="(item, index) in menuItems" :key="index">
-                                <router-link :to="{ path:'/camp2026', hash: item.currentPage }"
-                                             class="block text-slate-300 hover:text-white transition text-lg"
+                                <router-link :to="{ path: `/${infoActivity.shortname}`, hash: item.currentPage }"
+                                             class="block text-white/70 hover:text-white transition text-lg"
                                              @click="isMobileMenuOpen = false"> {{ item.label }}
                                 </router-link>
                             </li>
@@ -103,8 +103,8 @@ onUnmounted(() => {
 <style>
 
 .menu-items-effect {
-    @apply relative text-slate-300 hover:text-white text-base font-medium transition-colors duration-200
-    after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-amber-400
+    @apply relative text-white/70 hover:text-white text-base font-medium transition-colors duration-200
+    after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-event-accent
     after:transition-all after:duration-300 hover:after:w-full;
 }
 

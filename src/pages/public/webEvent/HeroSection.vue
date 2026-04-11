@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, inject, computed, type Ref } from "vue";
 import pageConfig from "@/assets/page_config.json";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
+
+const infoActivity = inject<Ref<InterfaceActivities>>("infoActivity");
 
 const images = ref<string[]>([]);
 const currentIndex = ref(0);
@@ -41,6 +46,18 @@ onMounted(async() => {
 onUnmounted(() => stopAutoplay());
 
 const { hero } = pageConfig;
+
+const eventTitle = computed(() => infoActivity?.value?.title || hero.motto);
+const eventDateLabel = computed(() => {
+    const start = infoActivity?.value?.start_date;
+    const end = infoActivity?.value?.end_date;
+    if (!start) return hero.date_label;
+    const s = new Date(start);
+    const e = end ? new Date(end) : null;
+    const startFormatted = format(s, "MMMM d", { locale: es });
+    const endFormatted = e ? ` - ${ format(e, "d, yyyy", { locale: es }) }` : `, ${ format(s, "yyyy", { locale: es }) }`;
+    return `${ startFormatted }${ endFormatted }`.toUpperCase();
+});
 </script>
 
 <template>
@@ -70,11 +87,11 @@ const { hero } = pageConfig;
 
         <!-- CONTENIDO HERO -->
         <div class="hero-text-wrapper">
-            <h1 class="hero-title motto-font">{{ hero.motto }}</h1>
+            <h1 class="hero-title motto-font">{{ eventTitle }}</h1>
             <p class="hero-verse">"{{ hero.verse }}"</p>
             <p class="hero-citation">{{ hero.citation }}</p>
             <div class="hero-date-badge">
-                <p>📅 {{ hero.date_label }}</p>
+                <p>📅 {{ eventDateLabel }}</p>
             </div>
         </div>
     </section>
@@ -91,11 +108,11 @@ const { hero } = pageConfig;
 
     background: linear-gradient(
         to bottom,
-        #0f172a 0%,
-        #0f172a 60%,
-        rgba(15, 23, 42, 0.8) 75%,
-        rgba(15, 23, 42, 0.4) 90%,
-        #0f172a 100%
+        var(--event-bg) 0%,
+        var(--event-bg) 60%,
+        rgba(37, 33, 70, 0.8) 75%,
+        rgba(37, 33, 70, 0.4) 90%,
+        var(--event-bg) 100%
     );
     mask-image: linear-gradient(
         to bottom,
@@ -243,9 +260,9 @@ const { hero } = pageConfig;
     absolute bottom-5 left-1/2 -translate-x-1/2 z-50
     py-6 px-8 rounded-xl shadow-lg;
 
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(37, 33, 70, 0.88);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(242, 120, 12, 0.2);
 }
 
 /* TEXTOS */
@@ -257,18 +274,20 @@ const { hero } = pageConfig;
 }
 
 .hero-verse {
-    @apply text-xl md:text-2xl text-amber-300 font-semibold italic;
+    @apply text-xl md:text-2xl font-semibold italic;
+    color: var(--event-accent);
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .hero-citation {
-    @apply text-lg md:text-xl text-slate-300 mb-2;
+    @apply text-lg md:text-xl text-white/70 mb-2;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .hero-date-badge {
-    @apply text-amber-300 font-bold text-lg md:text-xl;
-    border-top: 2px solid rgba(251, 191, 36, 0.5);
+    @apply font-bold text-lg md:text-xl;
+    color: var(--event-accent);
+    border-top: 2px solid rgba(242, 120, 12, 0.4);
     padding-top: 1rem;
     margin-top: 0.5rem;
     width: 100%;

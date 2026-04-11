@@ -15,6 +15,7 @@ const route = useRoute();
 const dataUsers = ref<InterfaceUsers[]>([]);
 const loading = ref<boolean>(false);
 const { openModal, closeModal } = useModal();
+const props = defineProps<{ onlyStaff: boolean }>();
 
 /**
  * Carga datos de la API de usuarios.
@@ -36,7 +37,16 @@ const loadUserList = useDebounceFn(async(): Promise<void> => {
         route: "user"
     });
     if (response && response.status === 200) {
-        dataUsers.value = response.data.results;
+        const users = response.data.results;
+
+        if (props.onlyStaff !== undefined) {
+            const onlyStaff = props.onlyStaff;
+
+            dataUsers.value = users.filter(user => user?.is_staff === onlyStaff);
+        } else {
+            dataUsers.value = users;
+        }
+
         loading.value = false;
     }
 }, 250);
@@ -46,6 +56,7 @@ const addParametersUserModal = (data: InterfaceUsers): void => {
         breakpoints: { "1400px": "94vw", "1100px": "96vw", "640px": "99vw" },
         component: h(addUsers, {
             closeModal,
+            showStaff: props.onlyStaff,
             refreshData: () => loadUserList(),
             formData: <InterfaceUsers> {
                 ...data

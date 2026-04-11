@@ -77,12 +77,12 @@ onMounted(async() => {
         <ValidateFormItem mark span="12" label="Descripción" name="description" v-slot="{ error }">
             <InputText v-model="description" fluid id="description" :invalid="!!error"/>
         </ValidateFormItem>
-        <ValidateFormItem mark span="6" label="Tipo de Concepto" name="concept_type" v-slot="{ error }">
+        <ValidateFormItem mark span="6" label="Tipo de Concepto" name="concept_type" v-slot="{ error }" v-if="props.defaultType">
             <Select v-model="concept_type" :options="conceptTypeOptions" optionLabel="label" optionValue="value" placeholder="Seleccionar"
                     labelId="concept_type" fluid :invalid="!!error" :disabled="!!props.formData || !!props.defaultType"/>
         </ValidateFormItem>
-        <ValidateFormItem mark span="6" label="Es Interno" name="is_internal" v-slot="{ error }">
-            <ToggleSwitch v-model="is_internal" input-id="is_internal" :invalid="!!error" :disabled="!!props.formData || disableInternal"/>
+        <ValidateFormItem mark span="6" label="Es Interno" name="is_internal" v-slot="{ error }" v-if="props.disableInternal">
+            <ToggleSwitch v-model="is_internal" input-id="is_internal" :invalid="!!error" :disabled="!!props.formData?.id || props.disableInternal"/>
         </ValidateFormItem>
     </div>
     <div class="align-buttons-submit">

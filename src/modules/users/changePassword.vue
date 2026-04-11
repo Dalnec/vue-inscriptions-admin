@@ -15,12 +15,12 @@ const schemaValidate = ref(yup.object({
     password: yup.string().trim().when("$isNew", {
         is: () => props.userID,
         otherwise: (schema) => schema.notRequired(),
-        then: (schema) => schema.required("Ingrese su contraseña").min(4, "Ingresa al menos 4 caracteres")
+        then: (schema) => schema.required("Ingrese su contraseña").min(5, "Ingresa al menos 5 caracteres")
     }).label("Contraseña"),
     confirm: yup.string().trim().when("$isNew", {
         is: () => props.userID,
         otherwise: (schema) => schema.notRequired(),
-        then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(4, "Ingresa al menos 4 caracteres")
+        then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(5, "Ingresa al menos 5 caracteres")
     }).label("Confirm. Contraseña")
 }));
 

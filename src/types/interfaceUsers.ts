@@ -5,9 +5,10 @@ export interface InterfaceUsers {
     email: string;
     id?: number;
     is_active: boolean;
+    is_staff: boolean;
     lastname: string;
-    names: string;
     readonly login_name: string;
+    names: string;
     password?: string;
     passwordConfirm?: string;
     profile: number | null;

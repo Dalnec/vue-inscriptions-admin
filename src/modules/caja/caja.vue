@@ -193,11 +193,11 @@ onMounted(async() => {
             </div>
             <div class="custom-card text-center">
                 <div class="custom-card-title">Total Inscripciones</div>
-                <div class="custom-card-content text-blue-600">S/. {{ meta.total_inscriptions }}</div>
+                <div class="custom-card-content text-green-600">S/. {{ meta.total_inscriptions }}</div>
             </div>
             <div class="custom-card text-center">
                 <div class="custom-card-title">Total en Caja</div>
-                <div class="custom-card-content text-purple-600">S/. {{ meta.cash_total }}</div>
+                <div class="custom-card-content text-indigo-600">S/. {{ meta.cash_total }}</div>
             </div>
             <div class="custom-card text-center">
                 <div class="custom-card-title">Total Movimientos</div>

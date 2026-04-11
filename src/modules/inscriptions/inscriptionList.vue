@@ -291,7 +291,7 @@ defineExpose({ loadInscriptionsList });
         <Column style="width: 15%" header="M. Pago" #body="{ data }">
             <div class="flex items-center justify-between gap-2">
                 <p class="font-bold">{{ data.group.paymentmethod.description }}</p>
-                <Button v-if="data.group.paymentmethod.id !== 1" @click="onShowVoucher(data)" #icon>
+                <Button v-if="data.group.paymentmethod.description.toLowerCase() !== 'efectivo'" @click="onShowVoucher(data)" #icon>
                     <i-material-symbols-sticky-note-2-outline-rounded/>
                 </Button>
             </div>

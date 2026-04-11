@@ -16,7 +16,7 @@ import PermissionsManager from "@/modules/users/PermissionsManager.vue";
 /* general variables */
 const profileOptions = ref<InterfaceProfile[]>([]);
 const activityOptions = ref<InterfaceActivities[]>([]);
-const props = defineProps<{ closeModal: () => void; refreshData: () => Promise<void>; formData?: InterfaceUsers }>();
+const props = defineProps<{ closeModal: () => void; refreshData: () => Promise<void>; formData?: InterfaceUsers, showStaff?: boolean }>();
 const refPermissions = ref();
 const checkAll = ref(false);
 const route = useRoute();
@@ -30,17 +30,17 @@ const schemaValidate = ref(yup.object({
         password: yup.string().trim().when("$isNew", {
             is: () => !props.formData?.id,
             otherwise: (schema) => schema.notRequired(),
-            then: (schema) => schema.required("Ingrese su contraseña").min(4, "Ingresa al menos 4 caracteres")
+            then: (schema) => schema.required("Ingrese su contraseña").min(5, "Ingresa al menos 5 caracteres")
         }).label("Contraseña"),
         passwordConfirm: yup.string().trim().when("$isNew", {
             is: () => !props.formData?.id,
-            then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(4, "Ingresa al menos 4 caracteres"),
+            then: (schema) => schema.required("Ingrese la confirmación").oneOf([ yup.ref("password") ], "La contraseña no coincide").min(5, "Ingresa al menos 5 caracteres"),
             otherwise: (schema) => schema.notRequired()
         }).label("Confirm. Contraseña"),
         profile: yup.string().trim().required("Seleccione un perfil").label("Perfil"),
         username: yup.string().trim().when("$isNew", {
             is: () => !props.formData?.id,
-            then: (schema) => schema.required("Ingrese su usuario").min(4, "Ingresa al menos 8 caracteres"),
+            then: (schema) => schema.required("Ingrese su usuario").min(5, "Ingresa al menos 5 caracteres"),
             otherwise: (schema) => schema.notRequired()
         }).label("Usuario")
     })
@@ -97,7 +97,12 @@ const onSubmit = handleSubmit(async(values) => {
     const url = isUpdate ? `user/${ props.formData?.id }` : "user";
     const method = isUpdate ? Api.Put : Api.Post;
 
-    const { response }: UsersActiosMembersActions = await method({ route: url, data: { ...values } });
+    const { response }: UsersActiosMembersActions = await method({
+        route: url, data: {
+            ...values,
+            is_staff: props.showStaff
+        }
+    });
     if (response && [ 200, 201 ].includes(response.status)) {
         useGlobalToast({ life: 5000, summary: `${ response.data.names } actualizado`, severity: "success" });
         reloadData();

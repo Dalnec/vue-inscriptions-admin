@@ -4,7 +4,7 @@ import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 
-const props = defineProps<{ infoActivity: InterfaceActivities }>();
+defineProps<{ infoActivity: InterfaceActivities }>();
 
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
@@ -24,7 +24,7 @@ const menuItems = [
 const specialItem = { label: "Inscríbete" };
 
 const onInscriptions = () => {
-    // useGlobalToast({ life: 10000, severity: "warn", summary: "Las Inscripciones por este medio están inactivas" });
+    isMobileMenuOpen.value = false;
     router.push({ name: "event-inscription", params: { slug: route.params.slug } });
 };
 
@@ -38,6 +38,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     w.removeEventListener("scroll", handleScroll);
+    document.body.style.overflow = "";
 });
 
 </script>
@@ -91,7 +92,7 @@ onUnmounted(() => {
                                 </router-link>
                             </li>
 
-                            <Button @click="onInscriptions" :label="specialItem.label" class="mt-4 rounded-xl font-semibold"/>
+                            <Button @click="isMobileMenuOpen = false; onInscriptions()" :label="specialItem.label" class="mt-4 rounded-xl font-semibold"/>
                         </ul>
                     </div>
                 </div>

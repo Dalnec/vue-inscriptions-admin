@@ -51,7 +51,7 @@ const eventTitle = computed(() => infoActivity?.value?.title || hero.motto);
 const eventDateLabel = computed(() => {
     const start = infoActivity?.value?.start_date;
     const end = infoActivity?.value?.end_date;
-    if (!start) return hero.date_label;
+    if ( !start) return hero.date_label;
     const s = new Date(start);
     const e = end ? new Date(end) : null;
     const startFormatted = format(s, "MMMM d", { locale: es });
@@ -61,40 +61,45 @@ const eventDateLabel = computed(() => {
 </script>
 
 <template>
-    <section class="section-hero" @mouseenter="stopAutoplay"
-             @mouseleave="startAutoplay">
-        <!-- SLIDER -->
-        <div class="hero-container">
-            <div v-for="(img, index) in images" :key="img" :class="['hero-layer', index === currentIndex ? 'is-active' : 'is-hidden']">
-                <div class="hero-image-wrapper">
-                    <img :src="img" class="hero-bg" alt=""/>
-                    <img :src="img" class="hero-blur-overlay" alt=""/>
-                    <img :src="img" class="hero-main" alt=""/>
+    <div>
+
+        <section class="section-hero" @mouseenter="stopAutoplay"
+                 @mouseleave="startAutoplay">
+            <!-- SLIDER -->
+            <div class="hero-container">
+                <div v-for="(img, index) in images" :key="img" :class="['hero-layer', index === currentIndex ? 'is-active' : 'is-hidden']">
+                    <div class="hero-image-wrapper">
+                        <img :src="img" class="hero-bg" alt=""/>
+                        <img :src="img" class="hero-blur-overlay" alt=""/>
+                        <img :src="img" class="hero-main" alt=""/>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- CONTROLES -->
-        <Button @click="prevImage" rounded class="nav-btn left" #icon>
-            <i-material-symbols-arrow-back-ios-new-rounded/>
-        </Button>
+            <!-- CONTROLES -->
+            <Button @click="prevImage" rounded class="nav-btn left" #icon>
+                <i-material-symbols-arrow-back-ios-new-rounded/>
+            </Button>
 
-        <Button @click="nextImage" rounded class="nav-btn right" #icon>
-            <i-material-symbols-arrow-forward-ios-rounded/>
-        </Button>
+            <Button @click="nextImage" rounded class="nav-btn right" #icon>
+                <i-material-symbols-arrow-forward-ios-rounded/>
+            </Button>
 
-        <div class="hero-overlay"></div>
+            <div class="hero-overlay"></div>
+        </section>
 
-        <!-- CONTENIDO HERO -->
-        <div class="hero-text-wrapper">
+    <!-- CONTENIDO HERO — fuera del slider para no taparlo -->
+    <div class="hero-text-wrapper">
+        <div class="hero-text-inner">
             <h1 class="hero-title motto-font">{{ eventTitle }}</h1>
             <p class="hero-verse">"{{ hero.verse }}"</p>
             <p class="hero-citation">{{ hero.citation }}</p>
             <div class="hero-date-badge">
-                <p>📅 {{ eventDateLabel }}</p>
+                <span>📅 {{ eventDateLabel }}</span>
             </div>
         </div>
-    </section>
+    </div>
+    </div>
 </template>
 
 <style>
@@ -105,40 +110,14 @@ const eventDateLabel = computed(() => {
     max-height: 85vh;
     position: relative;
     z-index: 20;
-
-    background: linear-gradient(
-        to bottom,
-        var(--event-bg) 0%,
-        var(--event-bg) 60%,
-        rgba(37, 33, 70, 0.8) 75%,
-        rgba(37, 33, 70, 0.4) 90%,
-        var(--event-bg) 100%
-    );
-    mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 1) 0%,
-        rgba(0, 0, 0, 1) 75%,
-        rgba(0, 0, 0, 0.9) 85%,
-        rgba(0, 0, 0, 0.6) 92%,
-        rgba(0, 0, 0, 0.2) 97%,
-        rgba(0, 0, 0, 0) 100%
-    );
-
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 1) 0%,
-        rgba(0, 0, 0, 1) 75%,
-        rgba(0, 0, 0, 0.9) 85%,
-        rgba(0, 0, 0, 0.6) 92%,
-        rgba(0, 0, 0, 0.2) 97%,
-        rgba(0, 0, 0, 0) 100%
-    );
+    background: var(--event-bg);
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {
     .section-hero {
-        aspect-ratio: 4 / 5;
-        max-height: 75vh;
+        aspect-ratio: 9 / 12;
+        max-height: 70vh;
     }
 }
 
@@ -172,126 +151,87 @@ const eventDateLabel = computed(() => {
     object-fit: contain;
     object-position: center;
     z-index: 2;
-    mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 1) 45%,
-        rgba(0, 0, 0, 0.85) 60%,
-        rgba(0, 0, 0, 0.6) 70%,
-        rgba(0, 0, 0, 0.3) 80%,
-        rgba(0, 0, 0, 0.1) 90%,
-        rgba(0, 0, 0, 0) 100%
-    );
-
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 1) 45%,
-        rgba(0, 0, 0, 0.85) 60%,
-        rgba(0, 0, 0, 0.6) 70%,
-        rgba(0, 0, 0, 0.3) 80%,
-        rgba(0, 0, 0, 0.1) 90%,
-        rgba(0, 0, 0, 0) 100%
-    );
 }
 
 .hero-bg {
     @apply absolute inset-0 w-full h-full;
     object-fit: cover;
-    filter: blur(30px) brightness(0.6);
+    filter: blur(30px) brightness(0.5);
     transform: scale(1.1);
 }
 
 .hero-blur-overlay {
-    @apply absolute inset-0 w-full h-full;
-    object-fit: contain;
-    object-position: center;
-    z-index: 3;
-
-    filter: blur(25px) brightness(0.6);
-    transform: scale(1.08);
-
-    mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 40%,
-        rgba(0, 0, 0, 0.2) 60%,
-        rgba(0, 0, 0, 0.5) 75%,
-        rgba(0, 0, 0, 0.8) 90%,
-        rgba(0, 0, 0, 1) 100%
-    );
-
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 40%,
-        rgba(0, 0, 0, 0.2) 60%,
-        rgba(0, 0, 0, 0.5) 75%,
-        rgba(0, 0, 0, 0.8) 90%,
-        rgba(0, 0, 0, 1) 100%
-    );
+    display: none;
 }
 
 .hero-overlay {
+    @apply absolute inset-x-0 bottom-0;
+    height: 15%;
     z-index: 4;
-
+    pointer-events: none;
     background: linear-gradient(
         to bottom,
-        rgba(0, 0, 0, 0) 50%,
-        rgba(0, 0, 0, 0.15) 65%,
-        rgba(0, 0, 0, 0.4) 80%,
-        rgba(0, 0, 0, 0.7) 92%,
-        rgba(0, 0, 0, 0.95) 100%
+        transparent 0%,
+        var(--event-bg) 100%
     );
 }
 
 /* BOTONES */
 .nav-btn {
-    @apply absolute top-1/2 -translate-y-1/2 z-20 w-12 h-12;
+    @apply absolute top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12;
 
     &.left {
-        @apply left-4;
+        @apply left-2 md:left-4;
     }
 
     &.right {
-        @apply right-4;
+        @apply right-2 md:right-4;
     }
 }
 
-/* CARD HERO */
+/* BANNER INFO — debajo del slider */
 .hero-text-wrapper {
-    @apply text-center text-white flex flex-col items-center gap-3
-    absolute bottom-5 left-1/2 -translate-x-1/2 z-50
-    py-6 px-8 rounded-xl shadow-lg;
+    @apply text-center flex flex-col items-center w-full;
+    position: relative;
+    z-index: 30;
+    background: var(--event-bg);
+    padding: 1.25rem 1rem 1.5rem;
+}
 
-    background: rgba(37, 33, 70, 0.88);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(242, 120, 12, 0.2);
+@media (min-width: 768px) {
+    .hero-text-wrapper {
+        padding: 1.5rem 2rem 2rem;
+    }
+}
+
+.hero-text-inner {
+    @apply flex flex-col items-center gap-2 md:gap-3 w-full;
+    max-width: 700px;
 }
 
 /* TEXTOS */
 .hero-title {
-    @apply text-3xl md:text-6xl font-bold mb-2 text-white;
+    @apply text-2xl md:text-4xl font-bold text-white;
     font-family: 'Poppins', sans-serif;
     letter-spacing: -0.5px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-verse {
-    @apply text-xl md:text-2xl font-semibold italic;
+    @apply text-sm md:text-lg font-semibold italic;
     color: var(--event-accent);
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .hero-citation {
-    @apply text-lg md:text-xl text-white/70 mb-2;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    @apply text-xs md:text-base text-white/60;
 }
 
 .hero-date-badge {
-    @apply font-bold text-lg md:text-xl;
+    @apply inline-flex items-center gap-2 font-bold text-sm md:text-base
+    rounded-full mt-2;
     color: var(--event-accent);
-    border-top: 2px solid rgba(242, 120, 12, 0.4);
-    padding-top: 1rem;
-    margin-top: 0.5rem;
-    width: 100%;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    background: rgba(242, 120, 12, 0.1);
+    border: 1px solid rgba(242, 120, 12, 0.25);
+    padding: 0.4rem 1.2rem;
 }
 
 </style>

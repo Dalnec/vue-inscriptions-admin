@@ -14,7 +14,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="mx-auto max-w-6xl px-4 md:px-0">
+    <div class="mx-auto md:px-6 container">
         <!-- HEADER -->
         <div class="text-center md:text-left px-2 md:px-0">
             <h2 class="text-3xl md:text-5xl font-info text-white leading-tight">

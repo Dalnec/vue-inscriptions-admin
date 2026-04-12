@@ -9,7 +9,6 @@ const eventTitle = computed(() => infoActivity?.value?.title);
 
 const menuItems = [
     { currentPage: "#about", label: "¿De qué se trata?" },
-    { currentPage: "#pricing", label: "Tarifas" },
     { currentPage: "#location", label: "Ubícanos" }
 ];
 </script>
@@ -105,7 +104,7 @@ const menuItems = [
                 </h2>
                 <Button label="INSCRIBIRSE AHORA" unstyled
                         class="bg-event-accent text-event-bg-dark hover:bg-event-accent-red rounded-xl font-bold px-8 py-3"
-                        @click="$router.push({ name: 'inscribirse' })"/>
+                        @click="$router.push({ name: 'event-inscription' })"/>
             </div>
         </div>
 

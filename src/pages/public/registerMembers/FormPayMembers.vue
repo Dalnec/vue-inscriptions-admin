@@ -76,11 +76,11 @@ const saveAllMembers = handleSubmit(async() => {
 
         if (response && response?.status === 201) {
             toastEvent({ severity: "success", summary: `${ response.data.message }` });
-            storeDataMembers.membersData = [];
-            await router.push({ name: "inscribirse" });
             refVoucherImage.value.remove();
+            storeDataMembers.membersData = [];
             resetForm();
             loadingSave.value = false;
+            await router.push({ name: "event-inscription" });
         } else {
             console.error("Fail", response);
             loadingSave.value = false;

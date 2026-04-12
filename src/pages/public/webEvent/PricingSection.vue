@@ -46,12 +46,12 @@ onMounted(() => fetchRates());
                 <div class="w-32 h-1 bg-event-accent mx-auto mb-6 rounded-full"></div>
 
                 <h2 class="text-3xl md:text-5xl font-info text-white leading-tight motto-font">
-                    Tarifas disponibles
+                    INSCRIBITE YA!<!-- Tarifas disponibles -->
                 </h2>
 
-                <p class="mt-4 text-white/60 max-w-2xl mx-auto">
+                <!-- <p class="mt-4 text-white/60 max-w-2xl mx-auto">
                     Elige el plan que mejor se adapte a ti
-                </p>
+                </p> -->
             </div>
 
             <!-- LOADING -->

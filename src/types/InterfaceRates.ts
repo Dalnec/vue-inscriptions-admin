@@ -1,3 +1,5 @@
+import type { InterfaceAxiosApiPaginate } from "@/types/InterfaceAxiosApi.ts";
+
 export interface InterfaceRates {
     active: boolean,
     created?: string,
@@ -7,3 +9,5 @@ export interface InterfaceRates {
     price: string,
     selected: boolean
 }
+
+export type InterfaceRatesResponse = InterfaceAxiosApiPaginate<InterfaceRates>

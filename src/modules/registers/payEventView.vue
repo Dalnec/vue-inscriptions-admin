@@ -15,6 +15,7 @@ import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
 import * as yup from "yup";
+import type { InterfaceRatesResponse } from "@/types/InterfaceRates.ts";
 
 export type VoucherImageType = { file: File; objectURL: string; };
 
@@ -146,10 +147,12 @@ function refocus($event: InputNumberInputEvent) {
 }
 
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: route.params.slug } });
+    const { response }: InterfaceRatesResponse = await Api.Get({
+        params: { active: true, activity_shortname: route.params.slug },
+        route: "tarifa"
+    });
     if (response && response?.status === 200) {
-        const results = response.data?.results ?? response.data;
-        useStoreRates.rate = Array.isArray(results) ? results : [];
+        useStoreRates.rate = response.data.results;
         if (useStoreRates.rate.length === 0) {
             toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
             await router.push({ name: "webPage", params: { slug: route.params.slug } });

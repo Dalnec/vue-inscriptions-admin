@@ -15,6 +15,7 @@ import type { SelectFilterEvent } from "primevue";
 import toastEvent from "@/composables/toastEvent.ts";
 import router from "@/router";
 import { useRoute } from "vue-router";
+import type { InterfaceRatesResponse } from "@/types/InterfaceRates.ts";
 
 const filteredOptions = ref<{ id: number, description: string, active: boolean }[]>([]);
 const selectRef = ref();
@@ -163,9 +164,12 @@ const onEnter = () => {
 
 
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: route.params.slug } });
+    const { response }: InterfaceRatesResponse = await Api.Get({
+        params: { activity_shortname: route.params.slug, active: true },
+        route: "tarifa"
+    });
     if (response && response?.status === 200) {
-        useStoreRates.rate = response.data;
+        useStoreRates.rate = response.data.results;
         if (useStoreRates.rate.length === 0) {
             toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
             await router.push({ name: "webPage", params: { slug: route.params.slug } });

@@ -81,7 +81,8 @@ export const storeRate = defineStore("storeRate", {
             const { response } = await Api.Get({
                 route: "tarifa", params: {
                     page_size: 666,
-                    activity_shortname: shortname
+                    activity_shortname: shortname,
+                    active: true
                 }
             });
             if (response && response.status === 200) {

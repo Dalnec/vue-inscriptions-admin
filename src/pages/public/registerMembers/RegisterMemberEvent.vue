@@ -13,6 +13,7 @@ import { type DataDNI, getDataReniec, type MemberExist } from "@/composables/get
 import * as yup from "yup";
 import router from "@/router";
 import { Api } from "@/api/connection.ts";
+import type { InterfaceRatesResponse } from "@/types/InterfaceRates.ts";
 
 const route = useRoute();
 const refDrawerMembersSaved = ref();
@@ -134,9 +135,13 @@ const onEnter = () => {
 };
 
 const onGetRates = async() => {
-    const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: route.params.slug} });
+    const { response }: InterfaceRatesResponse = await Api.Get({
+        params: {
+            active: true, activity_shortname: route.params.slug
+        }, route: "tarifa"
+    });
     if (response && response?.status === 200) {
-        useStoreRates.value.rate = response.data;
+        useStoreRates.value.rate = response.data.results;
         if (useStoreRates.value.rate.length === 0) {
             toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
             await router.push({ name: "webPage", params: { slug: route.params.slug } });

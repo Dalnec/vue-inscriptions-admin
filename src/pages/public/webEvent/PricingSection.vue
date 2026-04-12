@@ -2,7 +2,7 @@
 import { Api } from "@/api/connection.ts";
 import { inject, onMounted, ref, type Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import type { InterfaceRates } from "@/types/InterfaceRates.ts";
+import type { InterfaceRates, InterfaceRatesResponse } from "@/types/InterfaceRates.ts";
 import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 
 const route = useRoute();
@@ -19,9 +19,12 @@ const fetchRates = async() => {
     if ( !shortname) return;
     try {
         loading.value = true;
-        const { response } = await Api.Get({ route: "tarifa", params: { activity_shortname: shortname } });
-        if (response?.status === 200) {
-            rates.value = response.data.results ?? [];
+        const { response }: InterfaceRatesResponse = await Api.Get({
+            route: "tarifa",
+            params: { active: true, activity_shortname: shortname }
+        });
+        if (response && response?.status === 200) {
+            rates.value = response.data.results;
         }
     } catch (e) {
         console.error("Error al obtener tarifas:", e);

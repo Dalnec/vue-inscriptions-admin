@@ -177,7 +177,7 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
         });
         if (response && response.status === 200) {
             await loadInscriptionsList();
-            useGlobalToast({ detail: "Estado actualizado correctamente", severity: "success" });
+            useGlobalToast({ summary: "Estado actualizado correctamente", severity: "success" });
         }
     }
 };

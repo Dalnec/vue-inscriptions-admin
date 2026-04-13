@@ -9,7 +9,7 @@ import type { InterfaceActivities, InterfaceResponseActivities, PaymentMethod } 
 import * as yup from "yup";
 
 const props = defineProps<{ formData?: PaymentMethod, closeModal: () => void, refreshData: () => Promise<void> }>();
-const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
+const fileAccept = ref<string>("image/png, image/jpeg, image/jpg, image/ico, image/web");
 const refVoucherImage = ref();
 const uploadedFile = ref<File | null>(null);
 const activitiesOptions = ref<InterfaceActivities[]>([]);
@@ -68,7 +68,12 @@ const handleFileSelect = (event: any) => {
 };
 
 const onGetActivities = async() => {
-    const { response }: InterfaceResponseActivities = await Api.Get({ route: "activity" });
+    const { response }: InterfaceResponseActivities = await Api.Get({
+        route: "activity",
+        params: {
+            shortname: route.params?.slug || ""
+        }
+    });
     if (response && response.status === 200) {
         return response.data;
     }

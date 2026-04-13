@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import { type InterfaceLogin, type PermissionsInfo } from "@/types/InterfaceLogin.ts";
-import { type RouteLocationNormalizedLoaded } from "vue-router";
 import router from "@/router";
 import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
@@ -23,9 +22,8 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
             localStorage.removeItem("userDataConfig");
             sessionStorage.removeItem("userDataConfig");
 
-            await router.push(`/${ context.slug }/login`);
             await useUserConsoleStore().logoutUserConsole(false);
-
+            await router.push(`/${ context.slug }/login`);
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {
             const perm = permName.trim().toLowerCase();
@@ -45,14 +43,3 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
         }
     }
 });
-
-export const getRouteContext = (route: RouteLocationNormalizedLoaded) => {
-    const isConsole = route.path.startsWith("/console");
-    const slug = route.params.slug as string | undefined;
-
-    return {
-        isConsole,
-        isEvent: !isConsole,
-        slug
-    };
-};

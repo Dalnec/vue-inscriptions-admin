@@ -1,17 +1,25 @@
 <script setup lang="ts">
 import { navBarStore } from "@/stores/optionsMenu";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
-import { computed, ref } from "vue";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 import { useRoute } from "vue-router";
 import { useConfirm } from "primevue";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import AppConfig from "@/components/app/appConfig.vue";
 import type { MenuItem } from "primevue/menuitem";
+import { computed, ref } from "vue";
 
 const route = useRoute();
 const userDataStore = useUserDataConfigStore();
+const consoleStore = useUserConsoleStore();
 const confirm = useConfirm();
 const menu = ref();
+
+const isConsoleAuth = computed(() =>
+    !!consoleStore.userInfo?.token &&
+    !!consoleStore.userInfo?.user &&
+    Object.keys(consoleStore.userInfo.user).length > 0
+);
 
 const isConsole = computed(() => route.path.startsWith("/console"));
 const slug = computed(() => route.params.slug as string | undefined);
@@ -97,7 +105,12 @@ const onShowOptions = (event: MouseEvent) => {
         </template>
 
         <template #end>
-            <div class="flex space-x-1">
+            <div class="flex items-center space-x-1">
+                <router-link v-if="isConsoleAuth" :to="{ name: 'console-events-list' }">
+                    <Button size="small" severity="info" class="!h-8" v-tooltip.bottom="'Ir a Console'" #icon>
+                        <i-material-symbols-admin-panel-settings-outline-rounded/>
+                    </Button>
+                </router-link>
                 <Button :label="userDataStore.userData.user?.username" size="small" severity="secondary" class="!h-8" @click="onShowOptions"
                         aria-haspopup="true" aria-controls="overlayMenu" #icon>
                     <i-material-symbols-person-outline-rounded/>

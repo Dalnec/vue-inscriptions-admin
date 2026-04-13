@@ -86,7 +86,7 @@ const onManageConcept = (concept?: ConceptsInterface) => {
             defaultType: props.isIncome ? "I" : "E",
             refreshData: () => useConceptStore.getConcepts()
         }),
-        header: concept?.id ? "Editar Concepto" : `Agregar Nuevo Concepto de ${ props.isIncome ? "Ingreso" : "Egreso" }`,
+        header: concept?.id ? "Editar Concepto" : `Crear Nuevo Concepto de ${ props.isIncome ? "Ingreso" : "Egreso" }`,
         width: "50vw"
     });
 };

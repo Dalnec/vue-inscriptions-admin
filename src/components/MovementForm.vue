@@ -33,7 +33,7 @@ const schemaValidate = yup.object({
 
 const { handleSubmit } = useForm<TillMovements>({
     initialValues: {
-        user: userStore.userData.user.id
+        user: userStore.userData.user?.id
     },
     validationSchema: schemaValidate
 });
@@ -80,7 +80,7 @@ const onGetConceptSelected = (conceptId: number) => {
 const onManageConcept = (concept?: ConceptsInterface) => {
     openModal({
         component: h(ConceptsForm, {
-            closeModal,
+            closeModal: () => closeModal(),
             formData: concept?.id ? { ...concept } : undefined,
             disableInternal: true,
             defaultType: props.isIncome ? "I" : "E",

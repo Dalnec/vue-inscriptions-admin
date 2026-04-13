@@ -8,6 +8,7 @@ import { castFormErrors } from "@/composables/castFormErrors.ts";
 import type { ConceptsInterface, ConceptsInterfaceResponse } from "@/types/ConceptsInterface.ts";
 import * as yup from "yup";
 import { useRoute } from "vue-router";
+import type { InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
 
 const props = defineProps<{
     closeModal: () => void;
@@ -55,10 +56,10 @@ const saveConcept = handleSubmit(async(values) => {
 }, ({ errors }) => castFormErrors(errors));
 
 const onGetActivity = async(shortname: string): Promise<void> => {
-    const { response } = await Api.Get({ route: "activity", params: { shortname } });
+    const { response }: InterfaceResponseActivities = await Api.Get({ route: "activity", params: { shortname } });
     if (response && response.status === 200) {
-        const activities = response.data.data;
-        activity.value = activities.length > 0 ? activities[0].id : null;
+        const activities = response.data;
+        activity.value = activities[0]?.id ? activities[0]?.id : null;
     }
 };
 
@@ -77,11 +78,11 @@ onMounted(async() => {
         <ValidateFormItem mark span="12" label="Descripción" name="description" v-slot="{ error }">
             <InputText v-model="description" fluid id="description" :invalid="!!error"/>
         </ValidateFormItem>
-        <ValidateFormItem mark span="6" label="Tipo de Concepto" name="concept_type" v-slot="{ error }" v-if="props.defaultType">
+        <ValidateFormItem mark span="6" label="Tipo de Concepto" name="concept_type" v-slot="{ error }" v-if="!props.defaultType">
             <Select v-model="concept_type" :options="conceptTypeOptions" optionLabel="label" optionValue="value" placeholder="Seleccionar"
                     labelId="concept_type" fluid :invalid="!!error" :disabled="!!props.formData || !!props.defaultType"/>
         </ValidateFormItem>
-        <ValidateFormItem mark span="6" label="Es Interno" name="is_internal" v-slot="{ error }" v-if="props.disableInternal">
+        <ValidateFormItem mark span="6" label="Es Interno" name="is_internal" v-slot="{ error }" v-if="!props.disableInternal">
             <ToggleSwitch v-model="is_internal" input-id="is_internal" :invalid="!!error" :disabled="!!props.formData?.id || props.disableInternal"/>
         </ValidateFormItem>
     </div>

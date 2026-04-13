@@ -59,7 +59,7 @@ onMounted(async() => {
     <NavbarEvents ref="refHeader" @update:search="onGetAllActivities()"/>
 
     <main class="pt-20 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
-        <HeroSectionEvents/>
+        <HeroSectionEvents :activities="allActivities"/>
         <CategoryNavEvents :categories="tagOptions" v-model="filters.tags" @update:modelValue="onGetAllActivities"/>
         <section class="events-layout">
             <FiltersSidebarEvents ref="refFilterSidebar" :modelValue="filters" :clear-filters="onClearFilters"

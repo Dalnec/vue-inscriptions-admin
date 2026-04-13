@@ -3,6 +3,7 @@ import { computed, onMounted, provide, ref } from "vue";
 import { useRoute } from "vue-router";
 import { Api } from "@/api/connection.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
+import EventDisabled from "@/pages/public/webEvent/EventDisabled.vue";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
 
 const route = useRoute();
@@ -13,6 +14,12 @@ const infoActivity = ref<InterfaceActivities>({
         inscription: { emails: [""], send_email: false, show_tarifas: false }
     }, shortname: "", start_date: null, title: ""
 });
+
+const dataLoaded = ref(false);
+
+const isEventDisabled = computed(() =>
+    dataLoaded.value && !infoActivity.value.is_active
+);
 
 const onGetInfoFromActivity = async () => {
     const slug = route.params.slug as string;
@@ -27,6 +34,7 @@ const onGetInfoFromActivity = async () => {
             infoActivity.value = info;
         }
     }
+    dataLoaded.value = true;
 };
 
 // Proveer la info de la actividad a todas las vistas hijas
@@ -45,7 +53,12 @@ onMounted(() => {
 
 <template>
     <div class="bg-event-bg min-h-screen text-white">
-        <HeaderPage v-if="showHeader" :infoActivity="infoActivity" />
-        <router-view />
+        <template v-if="isEventDisabled">
+            <EventDisabled />
+        </template>
+        <template v-else>
+            <HeaderPage v-if="showHeader" :infoActivity="infoActivity" />
+            <router-view />
+        </template>
     </div>
 </template>

@@ -59,7 +59,7 @@ const saveAllMembers = handleSubmit(async() => {
     try {
 
         loadingSave.value = true;
-        const dataActivity = useStoreActivities.activities.find(act => act.is_active);
+        const dataActivity = useStoreActivities.activities.find(act => act.shortname === route.params.slug);
         const payload: Record<string, any> = {
             activity: dataActivity?.id,
             paymentmethod: paymentmethod.value,
@@ -120,8 +120,8 @@ const onGetRates = async() => {
 
 onMounted(async() => {
     await onGetRates();
-    await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
-    await storeActivities().getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
+    await usePaymentMethodStore.getPaymentMethod(route.params?.slug as string);
+    await useStoreActivities.getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const dataRate = useStoreRates.rate.find(rt => rt.selected);
     if (dataRate) {
         setRate(dataRate?.id as number);

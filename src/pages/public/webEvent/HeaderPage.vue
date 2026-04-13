@@ -16,7 +16,6 @@ const toggleMobileMenu = () => isMobileMenuOpen.value = !isMobileMenuOpen.value;
 
 const menuItems = [
     { currentPage: "#about", label: "¿De qué se trata?" },
-    { currentPage: "", label: "Agenda" },
     { currentPage: "#team", label: "Nuestro equipo" },
     { currentPage: "#location", label: "Ubicanos" }
 ];

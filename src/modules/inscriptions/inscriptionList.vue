@@ -244,7 +244,7 @@ const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
 }, 250);
 
 onMounted(async() => {
-    await storeActivities().getActivities();
+    await useStoreActivities.getActivities();
     if (route.params.slug === "console" ? undefined : route.params.slug as string) {
         activitySelected.value = useStoreActivities.activities.find(activity => activity.shortname === route.params.slug);
     }

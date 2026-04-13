@@ -6,12 +6,12 @@ import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
 import { computed, h, onMounted, ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import { useModal } from "@/composables/useModal.ts";
+import { useRoute } from "vue-router";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import type { TillMovementActions, TillMovements } from "@/types/TillMovements.ts";
 import type { ConceptsInterface } from "@/types/ConceptsInterface.ts";
 import ConceptsForm from "@/modules/tillConcept/ConceptsForm.vue";
 import * as yup from "yup";
-import { useRoute } from "vue-router";
 
 const props = defineProps<{ closeModal: () => void; isIncome: boolean; refreshData: () => Promise<void>; }>();
 
@@ -19,6 +19,7 @@ const route = useRoute();
 const userStore = useUserDataConfigStore();
 const useConceptStore = storeConcepts();
 const usePaymentMethod = storePaymentMethod();
+const useStoreActivities = storeActivities();
 const { openModal, closeModal } = useModal();
 
 const conceptSelected = ref<ConceptsInterface>();
@@ -50,14 +51,15 @@ const conceptsOptions = computed(() => useConceptStore.concepts.map(c => ({
 })).filter(d => d.concept_type === (props.isIncome ? "I" : "E")));
 
 const saveMovement = handleSubmit(async(values) => {
-    const activeActivity = storeActivities().activities.find(a => a.is_active);
-    if ( !activeActivity) {
+    const dataActivity = useStoreActivities.activities.find(act => act.shortname === route.params.slug);
+
+    if ( !dataActivity) {
         useGlobalToast({ severity: "error", summary: "No hay actividad activa" });
         return;
     }
     const data = {
         ...values,
-        activity: activeActivity.id,
+        activity: dataActivity.id,
         status: "POSTED",
         user: userStore.userData.user.id
     };

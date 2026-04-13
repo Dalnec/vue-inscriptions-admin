@@ -30,7 +30,7 @@ onUnmounted(() => clearInterval(interval));
 </script>
 
 <template>
-    <section class="bg-event-bg-dark py-16 px-4">
+    <section id="team" class="bg-event-bg-dark py-16 px-4">
 
         <div class="max-w-6xl mx-auto">
 

@@ -61,6 +61,7 @@ export const storeActivities = defineStore("storeActivities", {
         async getActivities(shortname?: string) {
             const { response } = await Api.Get({
                 params: {
+                    is_active: true,
                     shortname: shortname ?? undefined
                 },
                 route: "activity"

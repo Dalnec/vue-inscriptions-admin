@@ -155,14 +155,13 @@ const onEditActivity = async(id: number) => {
                 <div class="flex gap-2 justify-between items-center">
                     <div class="flex gap-1">
                         <Button v-tooltip="'Editar actividad'" @click="onManageActivity(activity)" severity="info" size="small"
-                                v-if="!(route.name as string).startsWith('console')"
-                                #icon>
+                                v-if="!(route.name as string).startsWith('console')" #icon>
                             <i-material-symbols-edit-document-rounded/>
                         </Button>
-                        <Button size="small" :v-tooltip="activity.is_active ? 'Desactivar actividad' : 'Activar actividad'"
-                                @click="toggleActivityStatus(activity)" :severity="activity.is_active ? 'warning' : 'success'" #icon>
-                            <i-material-symbols-check-box-rounded v-if="activity.is_active"/>
-                            <i-material-symbols-cancel-outline-rounded v-else/>
+                        <Button size="small" v-tooltip="activity.is_active ? 'Desactivar actividad' : 'Activar actividad'"
+                                @click="toggleActivityStatus(activity)" :severity="activity.is_active ? 'danger' : 'success'" #icon>
+                            <i-material-symbols-cancel-outline-rounded v-if="activity.is_active"/>
+                            <i-material-symbols-check-box-rounded v-else/>
                         </Button>
                     </div>
                     <Tag :value="activity.is_active ? 'Activa' : 'Inactiva'"

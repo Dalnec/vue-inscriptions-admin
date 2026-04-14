@@ -21,6 +21,16 @@ const isEventDisabled = computed(() =>
     dataLoaded.value && !infoActivity.value.is_active
 );
 
+const setFavicon = (href: string) => {
+    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+    }
+    link.href = href;
+};
+
 const onGetInfoFromActivity = async () => {
     const slug = route.params.slug as string;
     if (!slug) return;
@@ -30,7 +40,8 @@ const onGetInfoFromActivity = async () => {
     if (response && response.status === 200) {
         const info = response.data[0];
         if (info) {
-            document.title = info.title;
+            document.title = info.shortname || info.title;
+            if (info.logo) setFavicon(info.logo);
             infoActivity.value = info;
         }
     }

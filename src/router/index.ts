@@ -379,4 +379,34 @@ router.beforeEach(async(to) => {
     return true;
 });
 
+// ─── Título dinámico y favicon según contexto de ruta ───
+import logoRegis from "@/assets/images/LogoRegis.png";
+import eventsCalendar from "@/assets/images/EventsCalendar.png";
+
+const setFavicon = (href: string) => {
+    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+    }
+    link.href = href;
+};
+
+router.afterEach((to) => {
+    const slug = to.params.slug as string | undefined;
+    const isConsoleRoute = to.path.startsWith("/console");
+
+    if (isConsoleRoute) {
+        document.title = "Regis | Panel administrativo";
+        setFavicon(logoRegis);
+    } else if (slug) {
+        // Título temporal con el slug; EventLayout lo sobreescribirá con shortname + logo
+        document.title = slug;
+    } else {
+        document.title = "Eventos disponibles";
+        setFavicon(eventsCalendar);
+    }
+});
+
 export default router;

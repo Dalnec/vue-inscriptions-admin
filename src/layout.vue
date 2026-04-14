@@ -1,5 +1,31 @@
 <script setup lang="ts">
 import TheNavbar from "@/components/TheNavbar.vue";
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { Api } from "@/api/connection.ts";
+
+const route = useRoute();
+
+const setFavicon = (href: string) => {
+    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+    }
+    link.href = href;
+};
+
+onMounted(async () => {
+    const slug = route.params.slug as string;
+    if (!slug) return;
+    const { response } = await Api.Get({ params: { shortname: slug }, route: "activity" });
+    if (response?.status === 200 && response.data[0]) {
+        const info = response.data[0];
+        document.title = info.shortname || info.title;
+        if (info.logo) setFavicon(info.logo);
+    }
+});
 
 </script>
 <template>

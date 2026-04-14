@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, provide, ref } from "vue";
+import { computed, onMounted, provide, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { Api } from "@/api/connection.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import EventDisabled from "@/pages/public/webEvent/EventDisabled.vue";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
+import { setFavicon } from "@/composables/useFavicon.ts";
 
 const route = useRoute();
 
 const infoActivity = ref<InterfaceActivities>({
     created: null, description: "", end_date: null, is_active: false, location: { lat: null, lng: null },
     location_text: "", logo: "", modified: null, settings: {
-        inscription: { emails: [""], send_email: false, show_tarifas: false }
+        inscription: { emails: [ "" ], send_email: false, show_tarifas: false }
     }, shortname: "", start_date: null, title: ""
 });
 
@@ -21,19 +22,11 @@ const isEventDisabled = computed(() =>
     dataLoaded.value && !infoActivity.value.is_active
 );
 
-const setFavicon = (href: string) => {
-    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
-    if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.head.appendChild(link);
-    }
-    link.href = href;
-};
 
-const onGetInfoFromActivity = async () => {
+const onGetInfoFromActivity = async() => {
     const slug = route.params.slug as string;
-    if (!slug) return;
+    if ( !slug) return;
+    dataLoaded.value = false;
     const { response }: InterfaceResponseActivities = await Api.Get({
         params: { shortname: slug }, route: "activity"
     });
@@ -41,7 +34,9 @@ const onGetInfoFromActivity = async () => {
         const info = response.data[0];
         if (info) {
             document.title = info.shortname || info.title;
-            if (info.logo) setFavicon(info.logo);
+            if (info.logo) {
+                setFavicon(info.logo);
+            }
             infoActivity.value = info;
         }
     }
@@ -54,7 +49,12 @@ provide("infoActivity", infoActivity);
 // Determinar si se debe mostrar el header (no en login ni en 404 del evento)
 const showHeader = computed(() => {
     const name = route.name as string;
-    return !["event-login", "event-not-found"].includes(name);
+    return ![ "event-login", "event-not-found" ].includes(name);
+});
+
+// Recargar datos al cambiar de slug (navegación entre eventos)
+watch(() => route.params.slug, () => {
+    onGetInfoFromActivity();
 });
 
 onMounted(() => {
@@ -65,11 +65,11 @@ onMounted(() => {
 <template>
     <div class="bg-event-bg min-h-screen text-white">
         <template v-if="isEventDisabled">
-            <EventDisabled />
+            <EventDisabled/>
         </template>
         <template v-else>
-            <HeaderPage v-if="showHeader" :infoActivity="infoActivity" />
-            <router-view />
+            <HeaderPage v-if="showHeader" :infoActivity="infoActivity"/>
+            <router-view/>
         </template>
     </div>
 </template>

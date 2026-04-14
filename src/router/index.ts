@@ -3,10 +3,13 @@ import { useMembersStore } from "@/stores/storeMembers.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 import { useEventSlugStore } from "@/stores/eventSlug.ts";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 import { createRouter, createWebHistory } from "vue-router";
 import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import toastEvent from "@/composables/toastEvent.ts";
-import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
+import { setFavicon } from "@/composables/useFavicon.ts";
+import logoRegis from "@/assets/images/LogoRegis.png";
+import eventsCalendar from "@/assets/images/EventsCalendar.png";
 
 const validatedSlugs = new Set<string>();
 
@@ -379,21 +382,10 @@ router.beforeEach(async(to) => {
     return true;
 });
 
-// ─── Título dinámico y favicon según contexto de ruta ───
-import logoRegis from "@/assets/images/LogoRegis.png";
-import eventsCalendar from "@/assets/images/EventsCalendar.png";
+// ─── Caché de logos por slug para evitar llamadas repetidas ───
+const slugLogoCache = new Map<string, string>();
 
-const setFavicon = (href: string) => {
-    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
-    if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.head.appendChild(link);
-    }
-    link.href = href;
-};
-
-router.afterEach((to) => {
+router.afterEach(async (to) => {
     const slug = to.params.slug as string | undefined;
     const isConsoleRoute = to.path.startsWith("/console");
 
@@ -401,8 +393,25 @@ router.afterEach((to) => {
         document.title = "Regis | Panel administrativo";
         setFavicon(logoRegis);
     } else if (slug) {
-        // Título temporal con el slug; EventLayout lo sobreescribirá con shortname + logo
         document.title = slug;
+
+        // Si ya tenemos el logo cacheado, usarlo de inmediato
+        if (slugLogoCache.has(slug)) {
+            setFavicon(slugLogoCache.get(slug)!);
+        } else {
+            // Obtener el logo del evento desde la API
+            try {
+                const { response } = await Api.Get({ route: "activity", params: { shortname: slug } });
+                if (response?.status === 200 && response.data[0]) {
+                    const info = response.data[0];
+                    document.title = info.shortname || info.title;
+                    if (info.logo) {
+                        slugLogoCache.set(slug, info.logo);
+                        setFavicon(info.logo);
+                    }
+                }
+            } catch { /* silencioso */ }
+        }
     } else {
         document.title = "Eventos disponibles";
         setFavicon(eventsCalendar);

@@ -3,18 +3,9 @@ import TheNavbar from "@/components/TheNavbar.vue";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { Api } from "@/api/connection.ts";
+import { setFavicon } from "@/composables/useFavicon.ts";
 
 const route = useRoute();
-
-const setFavicon = (href: string) => {
-    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
-    if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.head.appendChild(link);
-    }
-    link.href = href;
-};
 
 onMounted(async () => {
     const slug = route.params.slug as string;
@@ -28,6 +19,7 @@ onMounted(async () => {
 });
 
 </script>
+
 <template>
     <div class="h-screen flex flex-col dark:bg-surface-950">
         <!-- TheNavbar container -->

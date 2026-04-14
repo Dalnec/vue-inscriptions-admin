@@ -7,9 +7,16 @@ import { useConfirm } from "primevue";
 import useGlobalToast from "@/composables/toastEvent.ts";
 import AppConfig from "@/components/app/appConfig.vue";
 import type { MenuItem } from "primevue/menuitem";
-import { computed, ref } from "vue";
+import { computed, inject, ref, type Ref } from "vue";
 
 const route = useRoute();
+
+const eventLogo = inject<Ref<string | null>>("eventLogo", ref(null));
+
+const navbarLogo = computed(() => {
+    if (slug.value && eventLogo.value) return eventLogo.value;
+    return "/kadosh.png";
+});
 const userDataStore = useUserDataConfigStore();
 const consoleStore = useUserConsoleStore();
 const confirm = useConfirm();
@@ -79,7 +86,7 @@ const onShowOptions = (event: MouseEvent) => {
     <Menubar :model="menuOptions" class="text-[12px]" breakpoint="840px">
         <template #start>
             <div class="mr-1 flex h-9 w-14 items-center justify-center rounded-md">
-                <img src="/kadosh.png" class="h-8" alt="logo">
+                <img :src="navbarLogo" class="h-8 rounded object-contain" alt="logo">
             </div>
         </template>
         <template #item="{ item, props }">

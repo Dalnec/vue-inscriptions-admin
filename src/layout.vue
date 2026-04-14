@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import TheNavbar from "@/components/TheNavbar.vue";
-import { onMounted } from "vue";
+import { onMounted, provide, ref } from "vue";
 import { useRoute } from "vue-router";
 import { Api } from "@/api/connection.ts";
 import { setFavicon } from "@/composables/useFavicon.ts";
 
 const route = useRoute();
+
+const eventLogo = ref<string | null>(null);
+const eventShortname = ref<string | null>(null);
+
+provide("eventLogo", eventLogo);
+provide("eventShortname", eventShortname);
 
 onMounted(async () => {
     const slug = route.params.slug as string;
@@ -14,7 +20,11 @@ onMounted(async () => {
     if (response?.status === 200 && response.data[0]) {
         const info = response.data[0];
         document.title = info.shortname || info.title;
-        if (info.logo) setFavicon(info.logo);
+        eventShortname.value = info.shortname || info.title;
+        if (info.logo) {
+            setFavicon(info.logo);
+            eventLogo.value = info.logo;
+        }
     }
 });
 

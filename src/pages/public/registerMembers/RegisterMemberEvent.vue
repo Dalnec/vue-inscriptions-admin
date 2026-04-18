@@ -2,7 +2,7 @@
 
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import { storeActivities, storeChurches, storeDocumentType, storeKind, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
 import { castFormErrors } from "@/composables/castFormErrors.ts";
 import { useRoute } from "vue-router";
@@ -23,6 +23,10 @@ const isClickCard = ref(false);
 const wasDniChecked = ref(false);
 const filteredOptions = ref<{ id: number, description: string, active: boolean }[]>([]);
 const selectRef = ref();
+const useStoreDocuments = storeDocumentType();
+const useStoreChurches = storeChurches();
+const useStoreKinds = storeKind();
+const useStoreRates = storeRate();
 
 const props = defineProps<{ closeModal?: () => void, formData?: InterfaceMembers, refreshData?: () => Promise<void> }>();
 
@@ -51,10 +55,6 @@ const { value: phone } = useField<string>("phone");
 const { value: age } = useField<number | null>("age");
 const { value: email } = useField<string>("email");
 
-const optionsDocuments = computed(() => storeDocumentType().documentType);
-const optionsChurches = computed(() => storeChurches().churches);
-const optionsKinds = computed(() => storeKind().kinds);
-const useStoreRates = computed(() => storeRate());
 
 const addDataFromReniec = async(): Promise<void> => {
     loadingSearch.value = true;
@@ -122,7 +122,7 @@ const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer =
 const onFilter = (event: SelectFilterEvent) => {
     const query = (event.value || "").toString().toLowerCase().trim();
 
-    filteredOptions.value = optionsChurches.value.filter((dt) => dt.description.toLowerCase().includes(query));
+    filteredOptions.value = useStoreChurches.churches.filter((dt) => dt.description.toLowerCase().includes(query));
 };
 
 const onEnter = () => {
@@ -141,8 +141,8 @@ const onGetRates = async() => {
         }, route: "tarifa"
     });
     if (response && response?.status === 200) {
-        useStoreRates.value.rate = response.data.results;
-        if (useStoreRates.value.rate.length === 0) {
+        useStoreRates.rate = response.data.results;
+        if (useStoreRates.rate.length === 0) {
             toastEvent({ severity: "error", summary: "No hay tarifas disponibles, el registro no procederá" });
             await router.push({ name: "webPage", params: { slug: route.params.slug } });
         }
@@ -155,6 +155,9 @@ watch(doc_num, () => {
 
 onMounted(async() => {
     await onGetRates();
+    await useStoreDocuments.getDocumentType();
+    await useStoreChurches.getDataChurches();
+    await useStoreKinds.getKinds();
     await storePaymentMethod().getPaymentMethod(route.params?.slug as string);
     await storeActivities().getActivities(route.params?.slug as string);
 });
@@ -176,8 +179,8 @@ onMounted(async() => {
 
                 <div class="form-grid">
                     <ValidateFormItem label="Tipo de Documento">
-                        <Select v-model="documenttype" :options="optionsDocuments" optionLabel="description" optionValue="id" size="large"
-                                placeholder="Seleccione" fluid :disabled="isClickCard"/>
+                        <Select v-model="documenttype" :options="useStoreDocuments.documentType" optionLabel="description" optionValue="id"
+                                size="large" placeholder="Seleccione" fluid :disabled="isClickCard"/>
                     </ValidateFormItem>
 
                     <ValidateFormItem label="DNI">
@@ -238,7 +241,7 @@ onMounted(async() => {
 
                 <ValidateFormItem label="¿Perteneces a una iglesia?">
                     <div class="radio-group">
-                        <div v-for="kindData in optionsKinds" :key="kindData.id" class="flex items-center gap-2">
+                        <div v-for="kindData in useStoreKinds.kinds" :key="kindData.id" class="flex items-center gap-2">
                             <RadioButton v-model="kind" :value="kindData.id" :inputId="kindData.description" size="large"/>
                             <label class="cursor-pointer" :for="kindData.description">{{ kindData.description }}</label>
                         </div>
@@ -246,10 +249,9 @@ onMounted(async() => {
                 </ValidateFormItem>
 
                 <ValidateFormItem label="Iglesia" name="church">
-                    <Select v-model="church" :options="optionsChurches" optionLabel="description" optionValue="id" labelId="church"
-                            size="large" placeholder="Seleccione su iglesia" fluid filter autoFilterFocus resetFilterOnHide
-                            resetFilterOnClear highlightOnSelect checkmark focusOnHover @filter="onFilter"
-                            @keyup.enter="onEnter"/>
+                    <Select v-model="church" :options="useStoreChurches.churches" optionLabel="description" optionValue="id"
+                            labelId="church" size="large" placeholder="Seleccione su iglesia" fluid filter autoFilterFocus resetFilterOnHide
+                            resetFilterOnClear highlightOnSelect checkmark focusOnHover @filter="onFilter" @keyup.enter="onEnter"/>
                 </ValidateFormItem>
             </div>
 

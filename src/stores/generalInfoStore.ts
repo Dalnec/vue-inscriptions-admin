@@ -76,22 +76,7 @@ export const storeActivities = defineStore("storeActivities", {
 export const storeRate = defineStore("storeRate", {
     state: () => ({
         rate: [] as InterfaceRates[]
-    }),
-    actions: {
-        async getRates(shortname?: string) {
-            const { response } = await Api.Get({
-                route: "tarifa", params: {
-                    page_size: 666,
-                    activity_shortname: shortname,
-                    active: true
-                }
-            });
-            if (response && response.status === 200) {
-                const results = response.data.results ?? response.data;
-                this.rate = Array.isArray(results) ? results : [];
-            }
-        }
-    }
+    })
 });
 
 export const storePriceRate = defineStore("storePriceRate", {
@@ -127,18 +112,7 @@ export const storeActivityActive = defineStore("storeActivityActive", {
     state: () => ({
         showRatesActivity: false as boolean,
         activityId: null as number | null
-    }),
-    actions: {
-        async getActiveActivity() {
-            const activitiesStore = storeActivities();
-            const useStoreActivities = activitiesStore.activities.find(
-                act => act.is_active
-            );
-
-            this.showRatesActivity = useStoreActivities?.settings.inscription?.show_tarifas || false;
-            this.activityId = useStoreActivities?.id || null;
-        }
-    }
+    })
 });
 
 export const storeUsers = defineStore("storeUsers", {

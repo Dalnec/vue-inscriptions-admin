@@ -2,11 +2,8 @@
 import LoadingPage from "@/components/loadingPage.vue";
 import { ref, onMounted, watch } from "vue";
 import { useDark } from "@vueuse/core";
-import { useRoute } from "vue-router";
 import Toast from "primevue/toast";
-import { storeActivityActive, storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
 
-const route = useRoute();
 const loadingPage = ref(true);
 const isDark = useDark({ disableTransition: false, initialValue: "light" });
 
@@ -23,13 +20,6 @@ watch(isDark, (newVal) => {
     else document.body.classList.remove("dark");
 
 }, { immediate: true });
-
-onMounted(async() => {
-    await storeChurches().getDataChurches();
-    await storeDocumentType().getDocumentType();
-    await storeKind().getKinds();
-    await storeActivityActive().getActiveActivity();
-});
 
 </script>
 

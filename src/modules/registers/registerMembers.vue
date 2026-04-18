@@ -211,8 +211,7 @@ onMounted(async() => {
             <div class="form-grid-page">
                 <ValidateFormItem label="Tipo de Documento" name="documenttype">
                     <Select fluid v-model="documenttype" :options="optionsDocuments" optionLabel="description" option-value="id"
-                            size="large"
-                            :disabled="isClickCard"/>
+                            size="large" :disabled="isClickCard"/>
                 </ValidateFormItem>
                 <ValidateFormItem label="DNI" name="doc_num" v-slot="{ error }">
                     <InputGroup name="doc_num">

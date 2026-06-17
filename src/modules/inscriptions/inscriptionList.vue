@@ -20,6 +20,7 @@ import changeVoucher from "@/components/changeVoucher.vue";
 import notifyMember from "@/components/notifyMember.vue";
 import addObservations from "@/components/addObservations.vue";
 import registerMembers from "@/modules/registers/registerMembers.vue";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const route = useRoute();
 /* Defaults Variables */
@@ -34,6 +35,7 @@ const menus = ref<Record<number, any>>({});
 const confirm = useConfirm();
 const search = ref("");
 const userDataStore = useUserDataConfigStore();
+const userDataConsole = useUserConsoleStore();
 const userDataValue = userDataStore.userData.user;
 const { closeModal, openModal } = useModal();
 const activitySelected = ref<InterfaceActivities>();
@@ -183,6 +185,7 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
 };
 
 const optionsActions = (data: InscriptionsMembers) => {
+	const userConsole = userDataConsole?.userInfo?.user 
     const options = [
         {
             label: "Agregar Obs.", value: 1, command: () => {
@@ -205,14 +208,14 @@ const optionsActions = (data: InscriptionsMembers) => {
             }, class: IconMaterialSymbolsPersonRemove as unknown
         }
     ];
-    if (userDataValue?.profile_description === "ADMINISTRADOR" || userDataValue?.is_superuser) {
+    if (userDataValue?.profile_description === "ADMINISTRADOR" || userDataValue?.is_superuser || userConsole?.is_superuser || userConsole?.is_staff) {
         options.unshift({
             label: "Cambiar Voucher", value: 5, command: () => {
                 onChangeVoucher(data);
             }, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
         });
     }
-    if (userDataValue?.profile_description === "ADMINISTRADOR" || userDataValue?.is_superuser) {
+    if (userDataValue?.profile_description === "ADMINISTRADOR" || userDataValue?.is_superuser || userConsole?.is_superuser || userConsole?.is_staff) {
         options.push({
             label: "Eliminar", value: 6, command: () => {
                 onChangeStatusMember(data, "", true);

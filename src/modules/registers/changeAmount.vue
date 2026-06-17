@@ -16,7 +16,7 @@ const onChangeAmount = async() => {
     const { response }: InterfaceActionsInscriptions = await Api.Put({
         route: `inscription/${ props.formData.id }`, data: { ...props.formData, amount: newAmount.value }
     });
-    if (response && response.status === 200) {
+    if (response && [ 200, 201 ].includes(response.status)) {
         toastEvent({ severity: "success", summary: "Nuevo monto agregado" });
         props.refreshData();
         props.closeModal();

@@ -34,7 +34,7 @@ const updateVoucher = async(): Promise<void> => {
         data: { voucherfile: imageBase64 }
     });
 
-    if (response && response.status === 200) {
+    if (response && [ 200, 201 ].includes(response.status)) {
         toastEvent({ severity: "success", summary: "Voucher actualizado" });
         await props.refreshData();
         props.closeModal();

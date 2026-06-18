@@ -8,6 +8,7 @@ import { format, isValid, parseISO } from "date-fns";
 import { authChannel } from "@/api/authChannel.ts";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 // Base URL taken from an environment variable
 let baseURL: string = import.meta.env.VITE_API_URL;
@@ -54,11 +55,13 @@ function isFormData(data: any): data is FormData {
  * Automatically injects Authorization headers using token from store
  */
 axiosInstance.interceptors.request.use((conf: InternalAxiosRequestConfig) => {
-        const storeUser = useUserDataConfigStore(pinia);
+        const storeUser = useUserDataConfigStore();
+        const storeUserConsole = useUserConsoleStore();
         const token = storeUser.userData?.token;
+        const tokenConsole = storeUserConsole.userInfo?.token;
 
         if (token) {
-            conf.headers.authorization = `Bearer ${ token }`;
+            conf.headers.authorization = `Bearer ${ token  ?? tokenConsole }`;
         } else {
             delete conf.headers.authorization;
         }

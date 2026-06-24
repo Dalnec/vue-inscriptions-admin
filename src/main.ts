@@ -81,10 +81,10 @@ app.use(PrimeVue, {
     theme: "none"
 });
 
+app.use(prerender);
 app.use(pinia);
 app.use(ConfirmationService);
 app.use(ToastService);
 app.use(DialogService);
 app.use(router);
-app.use(prerender);
 app.mount("#app");

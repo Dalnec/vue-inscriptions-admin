@@ -12,4 +12,15 @@ services:
       - ./dist:/usr/share/nginx/html
       - ./prerender.json:/app/prerender.json
       - ./prerender-server.js:/app/prerender-server.js
+    command: >
+      sh -c "npm install && node preredner-server.js"
+
+  prerender:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./prerender.json:/app/prerender.json
+      - ./prerender-server.js:/app/prerender-server.js
     command: node preredner-server.js
+    ports:
+      - "3000:3000"

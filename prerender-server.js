@@ -1,4 +1,4 @@
-import prerender from "prerender-node";
+const prerender = require("prerender");
 
 // Configuración con mejor manejo de errores
 const options = {
@@ -33,20 +33,24 @@ const options = {
     }
 };
 
-console.log("🚀 Iniciando servidor prerender...");
-
-// Middleware para logs
+// Middleware para logs y debugging
 const onRequest = (req, res) => {
     console.log(`📝 ${ req.method } ${ req.url }`);
+    console.log(`📋 User-Agent: ${ req.headers["user-agent"] || "N/A" }`);
+
+    // Log completo de headers para debugging
+    console.log("📋 Headers:", JSON.stringify(req.headers, null, 2));
+
+    // Llamar al prerender original
     prerender.server.onRequest(req, res);
 };
 
 prerender.server.onRequest = onRequest;
 
 prerender.start(options).then(() => {
-    console.log("Server started in port 3000");
-    console.log("Crawlers will be redirect to prerender-node");
+    console.log("✅ Servidor prerender iniciado en el puerto 3000");
+    console.log("🌐 Crawlers serán redirigidos a prerender-node");
 }).catch(err => {
-    console.error("Failed tryng to start prerender server:", err);
+    console.error("❌ Error iniciando servidor prerender:", err);
     process.exit(1);
 });

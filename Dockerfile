@@ -20,5 +20,3 @@ COPY --from=build /app/dist /app/dist
 COPY server /app/server
 
 EXPOSE 80
-
-CMD ["node", "server/index.js"]

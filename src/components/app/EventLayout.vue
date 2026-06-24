@@ -6,6 +6,7 @@ import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import EventDisabled from "@/pages/public/webEvent/EventDisabled.vue";
 import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
 import { setFavicon } from "@/composables/useFavicon.ts";
+import { setMetaTags } from "@/composables/useMetaTags.ts";
 
 const route = useRoute();
 
@@ -34,6 +35,12 @@ const onGetInfoFromActivity = async() => {
         const info = response.data[0];
         if (info) {
             document.title = info.shortname || info.title;
+            setMetaTags({
+                title: info.title || info.shortname,
+                description: info.description,
+                image: info.logo || undefined,
+                url: window.location.href
+            });
             if (info.logo) {
                 setFavicon(info.logo);
             }

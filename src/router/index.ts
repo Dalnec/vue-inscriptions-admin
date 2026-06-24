@@ -8,6 +8,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import SearchValidRoute from "@/composables/searchRouteValid.ts";
 import toastEvent from "@/composables/toastEvent.ts";
 import { setFavicon } from "@/composables/useFavicon.ts";
+import { setMetaTags } from "@/composables/useMetaTags.ts";
 import logoRegis from "@/assets/images/LogoRegis.png";
 import eventsCalendar from "@/assets/images/EventsCalendar.png";
 
@@ -392,6 +393,7 @@ router.afterEach(async (to) => {
     if (isConsoleRoute) {
         document.title = "Regis | Panel administrativo";
         setFavicon(logoRegis);
+        setMetaTags({ title: "Regis | Panel administrativo" });
     } else if (slug) {
         document.title = slug;
 
@@ -405,6 +407,12 @@ router.afterEach(async (to) => {
                 if (response?.status === 200 && response.data[0]) {
                     const info = response.data[0];
                     document.title = info.shortname || info.title;
+                    setMetaTags({
+                        title: info.title || info.shortname,
+                        description: info.description,
+                        image: info.logo || undefined,
+                        url: window.location.href
+                    });
                     if (info.logo) {
                         slugLogoCache.set(slug, info.logo);
                         setFavicon(info.logo);
@@ -415,6 +423,7 @@ router.afterEach(async (to) => {
     } else {
         document.title = "Eventos disponibles";
         setFavicon(eventsCalendar);
+        setMetaTags({ title: "Eventos disponibles" });
     }
 });
 

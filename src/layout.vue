@@ -4,6 +4,7 @@ import { onMounted, provide, ref } from "vue";
 import { useRoute } from "vue-router";
 import { Api } from "@/api/connection.ts";
 import { setFavicon } from "@/composables/useFavicon.ts";
+import { setMetaTags } from "@/composables/useMetaTags.ts";
 
 const route = useRoute();
 
@@ -20,6 +21,12 @@ onMounted(async () => {
     if (response?.status === 200 && response.data[0]) {
         const info = response.data[0];
         document.title = info.shortname || info.title;
+        setMetaTags({
+            title: info.title || info.shortname,
+            description: info.description,
+            image: info.logo || undefined,
+            url: window.location.href
+        });
         eventShortname.value = info.shortname || info.title;
         if (info.logo) {
             setFavicon(info.logo);

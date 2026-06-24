@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./dist:/usr/share/nginx/html
+      - ./prerender.json:/app/prerender.json
+      - ./prerender-server.js:/app/prerender-server.js
+    command: node preredner-server.js

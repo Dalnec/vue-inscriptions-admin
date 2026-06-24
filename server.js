@@ -1,7 +1,28 @@
 const express = require('express');
 const prerenderNode = require('prerender-node');
 
-// Configuración con mejor manejo de errores
+const app = express();
+
+// Middleware para garantizar que existan headers en el request
+app.use((req, res, next) => {
+  // Garantizar que req.headers existe
+  if (!req.headers) {
+    req.headers = {};
+  }
+  
+  // Garantizar que user-agent existe
+  if (!req.headers['user-agent']) {
+    req.headers['user-agent'] = req.get('User-Agent') || 'unknown';
+  }
+  
+  // Log para debugging
+  console.log(`📝 ${req.method} ${req.url}`);
+  console.log(`📋 User-Agent: ${req.headers['user-agent']}`);
+  
+  next();
+});
+
+// Configuración de prerender-node
 const prerenderOptions = {
   port: 3000,
   crawlerPort: 3001,
@@ -34,13 +55,13 @@ const prerenderOptions = {
   }
 };
 
-const app = express();
-
-// Usar prerender-node middleware con opciones
+// Usar prerender-node como middleware con opciones
 app.use(prerenderNode(prerenderOptions));
 
+// Servir archivos estáticos
 app.use(express.static('dist'));
 
+// Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);

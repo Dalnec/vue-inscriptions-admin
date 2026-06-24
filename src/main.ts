@@ -6,7 +6,7 @@ import { createPinia, type Pinia } from "pinia";
 import { createPersistedState } from "pinia-plugin-persistedstate";
 import PrimeVue from "primevue/config";
 import { Tooltip, BadgeDirective, ConfirmationService, DialogService, FocusTrap, Ripple, ToastService, KeyFilter, StyleClass, AnimateOnScroll } from "primevue";
-import prerender from "prerender-node";
+// import prerender from "prerender-node";
 
 import CryptoJS from "crypto-js";
 import ValidateFormItem from "@/components/ValidateFormItem.vue";
@@ -81,7 +81,7 @@ app.use(PrimeVue, {
     theme: "none"
 });
 
-app.use(prerender);
+// app.use(prerender);
 app.use(pinia);
 app.use(ConfirmationService);
 app.use(ToastService);

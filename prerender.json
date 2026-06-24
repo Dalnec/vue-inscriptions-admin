@@ -14,7 +14,7 @@
   ],
   "maxConcurrentRenders": 8,
   "maxTotalRenders": 100,
-  "timeout": 30000,
+  "timeout": 60000,
   "saveData": true,
   "browserOptions": {
     "args": [
@@ -24,7 +24,8 @@
       "--disable-accelerated-2d-canvas",
       "--disable-gpu",
       "--disable-web-security",
-      "--disable-features=VizDisplayCompositor"
+      "--disable-features=VizDisplayCompositor",
+      "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     ]
   }
 }

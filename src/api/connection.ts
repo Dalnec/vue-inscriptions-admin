@@ -92,9 +92,9 @@ async function handleServerSideError(error: AxiosError) {
         const contentType = error.response?.headers["content-type"];
         const data = error.response?.data;
 
-        if (data && contentType?.includes("application/json")) {
+        if (data && (contentType as string)?.includes("application/json")) {
             await handleServerError(data);
-        } else if (data && contentType?.includes("text/html")) {
+        } else if (data && (contentType as string)?.includes("text/html")) {
             let errorMessage = "Error en el servidor.";
 
             try {

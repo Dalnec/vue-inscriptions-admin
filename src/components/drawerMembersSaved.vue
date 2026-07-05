@@ -10,11 +10,11 @@ import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 
 const props = defineProps<{ redirectUrl: string, isPage: boolean, urlToAdd: string }>();
 const visibleDrawer = ref(false);
-const membersStoreOptions = useMembersStore();
+const membersStore = useMembersStore();
 const membersStorePage = useMembersStorePage();
 const route = useRoute();
 
-const optionsToRender = computed(() => props.isPage ? membersStorePage.membersData : membersStoreOptions.membersData);
+const optionsToRender = computed(() => props.isPage ? membersStorePage.membersData : membersStore.membersData);
 
 const addMoreMembers = async() => {
     visibleDrawer.value = false;
@@ -48,7 +48,7 @@ defineExpose({ visibleDrawer });
                     <i-material-symbols-list-alt-add/>
                 </Button>
                 <Button label="Pagar" @click="routes.push({name: props.redirectUrl, force: true })" fluid
-                        v-if="route.name !== props.redirectUrl" #icon>
+                        v-if="(route.name !== props.redirectUrl) && optionsToRender.length" #icon>
                     <i-ic-baseline-payments/>
                 </Button>
             </div>

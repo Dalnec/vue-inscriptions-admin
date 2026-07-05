@@ -162,9 +162,9 @@ const onChangeStatusMember = async(data: InscriptionsMembers, status: string, is
 			},
 			accept: async() => {
 				const { response }: InterfaceActionsInscriptions = await Api.Destroy({ route: `inscription/${ data.id }` });
-				if (response && response.status === 204) {
-					await loadInscriptionsList();
+				if (response && [ 200, 201, 203, 204 ].includes(response.status)) {
 					useGlobalToast({ severity: "info", summary: "Éxito", detail: "Eliminado correctamente", life: 3000 });
+					await loadInscriptionsList();
 				}
 			},
 			reject: () => {

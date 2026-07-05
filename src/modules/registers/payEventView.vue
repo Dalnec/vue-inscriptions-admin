@@ -160,13 +160,21 @@ const onGetRates = async() => {
     }
 };
 
+const addDefaultPayment = () => {
+	const info = usePaymentMethodStore.paymentMethod.find(pm => pm.description === "EFECTIVO");
+	if ( !info) return;
+	paymentmethod.value = info?.id ?? null;
+	dataForViewPayment.value = info;
+};
+
 onMounted(async() => {
     await onGetRates();
     await usePaymentMethodStore.getPaymentMethod(route.params.slug === "console" ? undefined : route.params.slug as string);
     await useStoreActivities.getActivities(route.params.slug === "console" ? undefined : route.params.slug as string);
     const rateSelected = useStoreRates.rate;
     const dataRate = rateSelected.find(rt => rt.selected);
-    if (dataRate?.id) {
+	addDefaultPayment()
+	if (dataRate?.id) {
         setRate(dataRate.id);
         onSelected({ idRate: tarifa.value, priceRate: dataRate.price, nameRate: dataRate.description });
     }

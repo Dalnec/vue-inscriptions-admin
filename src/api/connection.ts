@@ -1,18 +1,18 @@
 import toastEventBus from "primevue/toasteventbus";
-import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig, ResponseType } from "axios";
-import axios, { type AxiosRequestConfig } from "axios";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData";
-import { abortAllRequests, getAbortSignal } from "@/composables/abortManager.ts";
-import { pinia } from "@/pinia.ts";
-import { format, isValid, parseISO } from "date-fns";
 import { authChannel } from "@/api/authChannel.ts";
-import { computed } from "vue";
-import { useRoute } from "vue-router";
 import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
+import { abortAllRequests, getAbortSignal } from "@/composables/abortManager.ts";
+import { format, isValid, parseISO } from "date-fns";
+import { useRoute } from "vue-router";
+import axios, { type AxiosRequestConfig } from "axios";
+import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig, ResponseType } from "axios";
+import { useEventSlugStore } from "@/stores/eventSlug.ts";
 
 // Base URL taken from an environment variable
 let baseURL: string = import.meta.env.VITE_API_URL;
 export const axiosInstance = axios.create({ baseURL });
+export const axiosInstanceBase = axios.create({ baseURL });
 
 const ISO_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
 
@@ -61,7 +61,7 @@ axiosInstance.interceptors.request.use((conf: InternalAxiosRequestConfig) => {
         const tokenConsole = storeUserConsole.userInfo?.token;
 
         if (token) {
-            conf.headers.authorization = `Bearer ${ token  ?? tokenConsole }`;
+            conf.headers.authorization = `Bearer ${ token ?? tokenConsole }`;
         } else {
             delete conf.headers.authorization;
         }
@@ -76,7 +76,7 @@ axiosInstance.interceptors.request.use((conf: InternalAxiosRequestConfig) => {
 );
 
 authChannel.onmessage = (event) => {
-    const storeUserInfo = useUserDataConfigStore(pinia);
+    const storeUserInfo = useUserDataConfigStore();
     const { token, refresh } = event.data;
     if (token) {
         storeUserInfo.userData = {
@@ -135,20 +135,19 @@ async function handleServerSideError(error: AxiosError) {
  * - Processes server error responses with specific handling for JSON payloads and network errors.
  */
 axiosInstance.interceptors.response.use((response) => response, async(error: AxiosError) => {
-    const storeUserInfo = useUserDataConfigStore(pinia);
     const status = error.response?.status;
-    const route = useRoute();
-    const isConsole = computed(() => route.path.startsWith("/console"));
-    const slug = computed(() => route.params.slug as string | undefined);
     if (status === 403) {
-        abortAllRequests();
-        await storeUserInfo.logout({ isConsole: isConsole.value, slug: slug.value as string });
+        await handleServerSideError(error);
+        return Promise.reject(error);
+    } else {
+        const storeUserInfo = useUserDataConfigStore();
+        const slugStore = useEventSlugStore();
+        // console.log(storeUserInfo);
         showToast("warn", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+        await storeUserInfo.logout({ slug: slugStore.slug as string });
+        abortAllRequests();
         return Promise.reject(error);
     }
-
-    await handleServerSideError(error);
-    return Promise.reject(error);
 });
 
 /**

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Api } from "@/api/connection.ts";
+import { axiosInstanceBase } from "@/api/connection.ts";
 import HeaderPage from "@/pages/public/webEvent/HeaderPage.vue";
 import EventDisabled from "@/pages/public/webEvent/EventDisabled.vue";
-import type { InterfaceActivities, InterfaceResponseActivities } from "@/types/interfaceActivities.ts";
+import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
 import { setFavicon } from "@/composables/useFavicon.ts";
 import { setMetaTags } from "@/composables/useMetaTags.ts";
 
@@ -19,19 +19,14 @@ const infoActivity = ref<InterfaceActivities>({
 
 const dataLoaded = ref(false);
 
-const isEventDisabled = computed(() =>
-    dataLoaded.value && !infoActivity.value.is_active
-);
-
+const isEventDisabled = computed(() => dataLoaded.value && !infoActivity.value.is_active);
 
 const onGetInfoFromActivity = async() => {
     const slug = route.params.slug as string;
     if ( !slug) return;
     dataLoaded.value = false;
-    const { response }: InterfaceResponseActivities = await Api.Get({
-        params: { shortname: slug }, route: "activity"
-    });
-    if (response && response.status === 200) {
+	const response = await axiosInstanceBase.get("api/activity", { params: { shortname: slug } });
+	if (response && response.status === 200) {
         const info = response.data[0];
         if (info) {
             document.title = info.shortname || info.title;

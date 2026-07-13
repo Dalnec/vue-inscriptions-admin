@@ -7,6 +7,7 @@ export async function exportInscriptionsToExcel(data: InscriptionsMembers[]) {
 
     // Definir encabezados con offset (desde columna B)
     const headers = [
+        "#",
         "Nombres",
         "Apellidos",
         "Documento",
@@ -41,6 +42,7 @@ export async function exportInscriptionsToExcel(data: InscriptionsMembers[]) {
     data.forEach((item, rowIndex) => {
         const row = worksheet.getRow(rowIndex + 3); // Comienza desde fila 3
         const values = [
+            ++rowIndex,
             item.person.names,
             item.person.lastnames,
             item.person.doc_num,

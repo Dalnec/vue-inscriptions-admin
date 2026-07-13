@@ -1,4 +1,4 @@
-import { Api } from "@/api/connection.ts";
+import { axiosInstanceBase } from "@/api/connection.ts";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
@@ -18,10 +18,7 @@ const validateSlug = async(slug: string) => {
     if (validatedSlugs.has(slug)) return true;
 
     try {
-        const { response } = await Api.Get({
-            route: "activity",
-            params: { shortname: slug }
-        });
+        const response = await axiosInstanceBase.get("api/activity", { params: { shortname: slug } });
 
         const isValid = response?.status === 200 && response.data.length > 0;
 
@@ -325,13 +322,13 @@ router.beforeEach(async(to) => {
     if (isAuthConsole && slug) {
         slugStore.setSlug(slug);
 
-        // si intenta entrar a login del evento → redirigir al inicio de configuración del evento
+        // sí intenta entrar a login del evento → redirigir al inicio de configuración del evento
         if (to.name === "event-login") {
             return { name: "newRegister", params: { slug } };
         }
 
         // cualquier otra ruta del evento → permitir acceso
-        if (!isConsoleRoute) return true;
+        if ( !isConsoleRoute) return true;
     }
 
     // -------------------------
@@ -383,10 +380,10 @@ router.beforeEach(async(to) => {
     return true;
 });
 
-// ─── Caché de logos por slug para evitar llamadas repetidas ───
+// — Caché de logos por slug para evitar llamadas repetidas
 const slugLogoCache = new Map<string, string>();
 
-router.afterEach(async (to) => {
+router.afterEach(async(to) => {
     const slug = to.params.slug as string | undefined;
     const isConsoleRoute = to.path.startsWith("/console");
 
@@ -403,7 +400,7 @@ router.afterEach(async (to) => {
         } else {
             // Obtener el logo del evento desde la API
             try {
-                const { response } = await Api.Get({ route: "activity", params: { shortname: slug } });
+                const response = await axiosInstanceBase.get("api/activity", { params: { shortname: slug } });
                 if (response?.status === 200 && response.data[0]) {
                     const info = response.data[0];
                     document.title = info.shortname || info.title;
@@ -418,7 +415,8 @@ router.afterEach(async (to) => {
                         setFavicon(info.logo);
                     }
                 }
-            } catch { /* silencioso */ }
+            } catch { /* silencioso */
+            }
         }
     } else {
         document.title = "Eventos disponibles";

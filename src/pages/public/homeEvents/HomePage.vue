@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { axiosInstance } from "@/api/connection.ts";
+import { axiosInstanceBase } from "@/api/connection.ts";
 import { onMounted, ref } from "vue";
 import NavbarEvents from "@/pages/public/homeEvents/NavbarEvents.vue";
 import EventGrid from "@/pages/public/homeEvents/EventGrid.vue";
@@ -20,14 +20,14 @@ const tagOptions = ref<TagInterface[]>([]);
 const allActivities = ref<InterfaceActivities[]>([]);
 
 const onGetAllTAg = async() => {
-	const response = await axiosInstance.get("/api/tag/");
+	const response = await axiosInstanceBase.get("/api/tag/");
 	if (response && response.status === 200) {
 		tagOptions.value = response.data;
 	}
 };
 
 const onGetAllActivities = async() => {
-	const response = await axiosInstance.get<InterfaceActivities[]>(
+	const response = await axiosInstanceBase.get<InterfaceActivities[]>(
 		"/api/activity/",
 		{
 			...filters.value,

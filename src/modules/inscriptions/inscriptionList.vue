@@ -2,6 +2,9 @@
 
 /* Imports */
 import { Api } from "@/api/connection";
+import { storeActivities } from "@/stores/generalInfoStore.ts";
+import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
+import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 import { ref, h, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { exportInscriptionsToExcel } from "@/composables/generateExcelMembers.ts";
@@ -12,15 +15,12 @@ import { type DataTablePageEvent, useConfirm } from "primevue";
 import type { InscriptionsMembers, InterfaceActionsInscriptions, InterfaceResponseInscriptions } from "@/modules/inscriptions/inscriptionsMembers.ts";
 import type { InterfaceMembers } from "@/types/interfaceMembers.ts";
 import type { InterfaceActivities } from "@/types/interfaceActivities.ts";
-import { storeActivityActive, storeActivities } from "@/stores/generalInfoStore.ts";
-import { useUserDataConfigStore } from "@/stores/loginStore/storeUserData.ts";
 import showVoucherFile from "@/components/showVoucherFile.vue";
 import changeAmount from "@/modules/registers/changeAmount.vue";
 import changeVoucher from "@/components/changeVoucher.vue";
 import notifyMember from "@/components/notifyMember.vue";
 import addObservations from "@/components/addObservations.vue";
 import registerMembers from "@/modules/registers/registerMembers.vue";
-import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 
 const route = useRoute();
 /* Defaults Variables */
@@ -29,7 +29,6 @@ const loading = ref<boolean>(false);
 const rows = ref(25);
 const currentPage = ref(1);
 const totalRecords = ref(0);
-const useStoreActivityActive = storeActivityActive();
 const useStoreActivities = storeActivities();
 const menus = ref<Record<number, any>>({});
 const confirm = useConfirm();
@@ -147,7 +146,7 @@ const onAddObservationMember = (data: InscriptionsMembers): void => {
 	});
 };
 
-const onChangeStatusMember = async(data: InscriptionsMembers, status: string, isForDelete?: boolean): Promise<void> => {
+const onChangeStatusMember = async(data: InscriptionsMembers, isForDelete?: boolean): Promise<void> => {
 	if (isForDelete) {
 		confirm.require({
 			message: `¿Estas seguro de eliminar a ${ data.person.names } ${ data.person.lastnames }?`,
@@ -204,12 +203,12 @@ const optionsActions = (data: InscriptionsMembers) => {
 		},
 		{
 			label: "Confirmar", value: 3, command: () => {
-				onChangeStatusMember(data, "C");
+				onChangeStatusMember(data);
 			}, class: IconMaterialSymbolsBookmarkCheck as unknown
 		},
 		{
 			label: "Rechazar", value: 4, command: () => {
-				onChangeStatusMember(data, "R");
+				onChangeStatusMember(data);
 			}, class: IconMaterialSymbolsPersonRemove as unknown
 		}
 	];
@@ -223,7 +222,7 @@ const optionsActions = (data: InscriptionsMembers) => {
 	if (canManage) {
 		options.push({
 			label: "Eliminar", value: 6, command: () => {
-				onChangeStatusMember(data, "", true);
+				onChangeStatusMember(data, true);
 			}, class: IconMaterialSymbolsAutoDeleteOutlineRounded as unknown
 		});
 	}
@@ -238,7 +237,7 @@ const addDataToGenerateExcel = useDebounceFn(async(): Promise<void> => {
 	loading.value = true;
 	const { response }: InterfaceResponseInscriptions = await Api.Get({
 		params: {
-			activity: useStoreActivityActive.activityId,
+			activity: activitySelected.value?.id,
 			page: 1,
 			page_size: 120417,
 			search: search.value

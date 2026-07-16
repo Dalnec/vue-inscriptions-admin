@@ -273,7 +273,7 @@ body {
 }
 
 .form-section-title {
-    @apply text-surface-900 dark:text-surface-50 text-lg font-semibold mb-4;;
+    @apply text-surface-900 dark:text-surface-50 text-lg font-semibold mb-4 flex gap-2 items-center leading-tight;
 }
 
 .form-grid {

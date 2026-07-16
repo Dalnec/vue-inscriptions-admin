@@ -46,7 +46,7 @@ const manageRates = (data?: InterfaceRates) => {
             refreshData: () => refGeneralTableRate.value.getDataTableGeneric()
         }),
         header: data?.id ? `Editar Tarifa: ${ data.description }` : "Agregar Nuevo",
-        width: "50vw"
+        width: "30vw"
     });
 };
 
@@ -138,6 +138,12 @@ onMounted(() => {
                 </div>
                 <general-table-module ref="refGeneralTableRate" route="tarifa" min-width="30rem" :filters="{ activity_shortname: activity}">
                     <Column header="Precio" field="price" style="width: 5%;"/>
+                    <Column header="Seleccionable en web" field="selected" style="width: 5%;" #body="{ data }">
+	                    {{ data.selected ? "Si" : "No" }}
+                    </Column>
+	                <Column header="Estado" field="active" style="width: 5%;" #body="{ data }">
+	                    {{ data.active ? "Activo" : "Inactivo" }}
+                    </Column>
                     <template #actions>
                         <Column style="width: 2%;" #body="{ data }">
                             <Button label="Editar" @click="manageRates(data)"/>

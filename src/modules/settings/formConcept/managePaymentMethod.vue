@@ -95,19 +95,19 @@ onMounted(async() => {
 
 <template>
     <div class="align-items-form">
-        <ValidateFormItem label="Nombre de cuenta" span="6" mark name="description">
+        <ValidateFormItem label="Nombre de cuenta" span="12" mark name="description">
             <InputText v-model="description" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Nro de cuenta" span="6">
+        <ValidateFormItem label="Nro de cuenta" span="12">
             <InputText v-model="account" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="CCI" span="5">
+        <ValidateFormItem label="CCI" span="12">
             <InputText v-model="cci" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Activo" span="2">
+        <ValidateFormItem label="Activo" span="4">
             <ToggleSwitch v-model="active" fluid/>
         </ValidateFormItem>
-        <ValidateFormItem label="Icono" span="5">
+        <ValidateFormItem label="Icono" span="4">
             <FileUpload name="icon" :accept="fileAccept" :max-file-size="1000000" :file-limit="1" class="w-full" input-id="icon"
                         ref="refVoucherImage" @select="handleFileSelect" :show-upload-button="false" :show-cancel-button="false"
                         @remove="() => { setValueIcon(''); uploadedFile = null }" invalid-file-size-message="Peso de imagen invalido"

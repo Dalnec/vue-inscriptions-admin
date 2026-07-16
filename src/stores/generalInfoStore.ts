@@ -108,13 +108,6 @@ export const storeKind = defineStore("storeKind", {
     }
 });
 
-export const storeActivityActive = defineStore("storeActivityActive", {
-    state: () => ({
-        showRatesActivity: false as boolean,
-        activityId: null as number | null
-    })
-});
-
 export const storeUsers = defineStore("storeUsers", {
     state: () => ({
         users: [] as { id: number, username: string, first_name: string, last_name: string }[]

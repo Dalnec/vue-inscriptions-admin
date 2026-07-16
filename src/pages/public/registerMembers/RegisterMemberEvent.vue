@@ -178,12 +178,12 @@ onMounted(async() => {
                 <h3 class="form-section-title">Identificación</h3>
 
                 <div class="form-grid">
-                    <ValidateFormItem label="Tipo de Documento">
+                    <ValidateFormItem label="Tipo de Documento" name="documenttype">
                         <Select v-model="documenttype" :options="useStoreDocuments.documentType" optionLabel="description" optionValue="id"
                                 size="large" placeholder="Seleccione" fluid :disabled="isClickCard"/>
                     </ValidateFormItem>
 
-                    <ValidateFormItem label="DNI">
+                    <ValidateFormItem label="DNI" name="doc_num">
                         <InputGroup>
                             <InputText v-model="doc_num" placeholder="Ej: 12345678" size="large" maxlength="8"
                                        @keyup.enter="addDataFromReniec()" :disabled="isClickCard && !isClickCard"/>
@@ -199,11 +199,11 @@ onMounted(async() => {
                 <h3 class="form-section-title">Datos personales</h3>
 
                 <div class="form-grid">
-                    <ValidateFormItem label="Nombres">
+                    <ValidateFormItem label="Nombres" name="names">
                         <InputText v-model="names" fluid size="large" placeholder="Juan" :disabled="!wasDniChecked && documenttype === 1"/>
                     </ValidateFormItem>
 
-                    <ValidateFormItem label="Apellidos">
+                    <ValidateFormItem label="Apellidos" name="lastnames">
                         <InputText v-model="lastnames" fluid size="large" placeholder="Picasso"
                                    :disabled="!wasDniChecked && documenttype === 1"/>
                     </ValidateFormItem>
@@ -212,7 +212,7 @@ onMounted(async() => {
                         <InputNumber v-model="age" fluid size="large" placeholder="ingrese una edad"/>
                     </ValidateFormItem>
 
-                    <ValidateFormItem label="Género">
+                    <ValidateFormItem label="Género" name="gender">
                         <div class="radio-group">
                             <RadioButton v-model="gender" value="M" size="large" inputId="Masculino"/>
                             <label for="Masculino" class="cursor-pointer"> Masculino</label>
@@ -227,10 +227,10 @@ onMounted(async() => {
             <div class="form-card">
                 <h3 class="form-section-title">Contacto</h3>
                 <div class="form-grid">
-                    <ValidateFormItem label="Celular">
+                    <ValidateFormItem label="Celular" name="phone">
                         <InputText v-model="phone" size="large" maxlength="9" fluid/>
                     </ValidateFormItem>
-                    <ValidateFormItem label="Correo">
+                    <ValidateFormItem label="Correo" name="email">
                         <InputText v-model="email" size="large" fluid/>
                     </ValidateFormItem>
                 </div>
@@ -239,7 +239,7 @@ onMounted(async() => {
             <div class="form-card">
                 <h3 class="form-section-title">Información adicional</h3>
 
-                <ValidateFormItem label="¿Perteneces a una iglesia?">
+                <ValidateFormItem label="¿Perteneces a una iglesia?" name="kind">
                     <div class="radio-group">
                         <div v-for="kindData in useStoreKinds.kinds" :key="kindData.id" class="flex items-center gap-2">
                             <RadioButton v-model="kind" :value="kindData.id" :inputId="kindData.description" size="large"/>

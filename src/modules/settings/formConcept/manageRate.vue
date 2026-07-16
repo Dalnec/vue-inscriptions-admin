@@ -62,12 +62,12 @@ onMounted(async() => {
 <template>
     <div class="align-items-form">
         <ValidateFormItem label="Descripción" span="12">
-            <InputText fluid v-model="description"/>
+            <Textarea fluid v-model="description"/>
         </ValidateFormItem>
         <ValidateFormItem label="Precio" span="6">
             <InputText fluid v-model="price" v-key-filter.num/>
         </ValidateFormItem>
-        <ValidateFormItem label="Seleccionable" span="3">
+        <ValidateFormItem label="Seleccionable en Pagina web" span="3">
             <ToggleSwitch fluid v-model="selected"/>
         </ValidateFormItem>
         <ValidateFormItem label="Activo" span="3">

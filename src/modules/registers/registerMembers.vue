@@ -241,7 +241,7 @@ onMounted(async() => {
                     <InputText fluid v-model="lastnames" :invalid="!!error" size="large"
                                :disabled="!wasDniChecked && !isClickCard  && documenttype === 1 && !props.formData?.id"/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Edad">
+                <ValidateFormItem label="Edad" name="age">
                     <InputNumber v-model="age" fluid size="large" placeholder="ingrese una edad"/>
                 </ValidateFormItem>
 
@@ -263,10 +263,10 @@ onMounted(async() => {
         <div class="form-card-page">
             <h3 class="form-section-title">Contacto</h3>
             <div class="form-grid-page">
-                <ValidateFormItem label="Celular" name="gender" v-slot="{ error }">
+                <ValidateFormItem label="Celular" name="phone" v-slot="{ error }">
                     <InputText fluid v-model="phone" maxlength="9" v-key-filter.num :invalid="!!error" size="large"/>
                 </ValidateFormItem>
-                <ValidateFormItem label="Correo" name="correo" v-slot="{ error }">
+                <ValidateFormItem label="Correo" name="email" v-slot="{ error }">
                     <InputText fluid v-model="email" :invalid="!!error" size="large"/>
                 </ValidateFormItem>
             </div>
@@ -285,7 +285,7 @@ onMounted(async() => {
                     </div>
                 </div>
             </ValidateFormItem>
-            <ValidateFormItem label="Iglesia" span="12" name="age" v-slot="{ error }">
+            <ValidateFormItem label="Iglesia" span="12" name="church" v-slot="{ error }">
                 <Select :options="optionsChurches" fluid v-model="church" filter show-clear size="large" :invalid="!!error"
                         resetFilterOnClear resetFilterOnHide autoFilterFocus optionLabel="description" option-value="id" @filter="onFilter"
                         @keyup.enter="onEnter"/>

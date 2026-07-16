@@ -1,9 +1,9 @@
 <script setup lang="ts">
 
 import router from "@/router/index.ts";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { Api } from "@/api/connection.ts";
-import { storeActivities, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
+import { storeActivities, storePaymentMethod, storeRate } from "@/stores/generalInfoStore.ts";
 import { useMembersStorePage } from "@/stores/StoreMembersPage.ts";
 import { useField, useForm } from "vee-validate";
 import { fileToBase64 } from "@/composables/convertImageToUpload.ts";
@@ -28,10 +28,10 @@ const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
 const refVoucherImage = ref();
 const dataForViewPayment = ref<Partial<PaymentMethod>>({ account: "", active: true, cci: null, description: "", icon: "", id: null });
 const usePaymentMethodStore = storePaymentMethod();
-const useStoreTotalRate = storePriceRate();
 const useStoreActivities = storeActivities();
 const useStoreRates = storeRate();
 const labelRateSelected = ref("");
+const totalToPay = ref(0);
 
 const filterRates = computed(() => {
 	return useStoreRates.rate.filter(rt => rt.active);
@@ -81,7 +81,7 @@ const saveAllMembers = handleSubmit(async() => {
 		const dataActivity = useStoreActivities.activities.find(act => act.is_active);
 
 		const payload: Record<string, any> = {
-			voucheramount: useStoreTotalRate.calculateRate(true),
+			voucheramount: totalToPay.value,
 			tarifa: tarifa.value,
 			activity: null,
 			paymentmethod: paymentmethod.value,
@@ -98,8 +98,8 @@ const saveAllMembers = handleSubmit(async() => {
 			toastEvent({ severity: "success", summary: `${ response.data.message }` });
 			storeDataMembers.membersData = [];
 			storeDataMembers.selectedMember = {} as InterfaceMembers;
+			refVoucherImage.value?.remove();
 			resetForm();
-			refVoucherImage.value.remove();
 			loadingSave.value = false;
 			await router.push({ name: "newRegister", force: true });
 		} else {
@@ -122,7 +122,8 @@ const filterPaymentMethods = computed(() => {
 const onSelected = (payload: { idRate: number, priceRate: string, nameRate: string }) => {
 	setRate(payload.idRate);
 	labelRateSelected.value = payload.nameRate;
-	setVoucheramount(parseFloat(payload.priceRate));
+	totalToPay.value = Number(payload.priceRate) * storeDataMembers.membersData.length;
+	setVoucheramount(payload.idRate);
 };
 
 const onValueSelectPayment = (id: number) => {
@@ -164,6 +165,11 @@ const addDefaultPayment = () => {
 	paymentmethod.value = info?.id ?? null;
 	dataForViewPayment.value = info;
 };
+
+watch(() => storeDataMembers.membersData, () => {
+	const rateSelected = useStoreRates.rate.find(pm => pm.description === labelRateSelected.value)?.price;
+	totalToPay.value = Number(rateSelected) * storeDataMembers.membersData.length;
+});
 
 onMounted(async() => {
 	await onGetRates();
@@ -243,9 +249,10 @@ onMounted(async() => {
 				<span class="font-semibold text-lg">Personas registradas</span>
 				<span class="font-semibold text-lg text-surface-700 dark:text-surface-200">{{ storeDataMembers.membersData.length }}</span>
 			</div>
-			<div class="mt-4 rounded-xl border-2 border-primary-200 bg-primary-50 p-4 text-center dark:border-primary-800 dark:bg-primary-950/30">
+			<div
+				class="mt-4 rounded-xl border-2 border-primary-200 bg-primary-50 p-4 text-center dark:border-primary-800 dark:bg-primary-950/30">
 				<span class="text-sm font-medium uppercase tracking-wider text-primary-600 dark:text-primary-300">Total a pagar</span>
-				<p class="mt-1 text-3xl font-bold text-primary-700 dark:text-primary-200">S/ {{ useStoreTotalRate.calculateRate(true) }}</p>
+				<p class="mt-1 text-3xl font-bold text-primary-700 dark:text-primary-200">S/ {{ totalToPay }}</p>
 			</div>
 		</div>
 
@@ -265,11 +272,11 @@ onMounted(async() => {
 
 <style>
 .form-card-page {
-    @apply bg-surface-100 dark:bg-white/5 backdrop-blur-md border border-surface-200 dark:border-white/10
-    rounded-2xl p-5 md:p-6 mb-6 text-surface-900 dark:text-white;
+	@apply bg-surface-100 dark:bg-white/5 backdrop-blur-md border border-surface-200 dark:border-white/10
+	rounded-2xl p-5 md:p-6 mb-6 text-surface-900 dark:text-white;
 }
 
 .form-actions-page {
-    @apply flex flex-col md:flex-row gap-3 my-6;
+	@apply flex flex-col md:flex-row gap-3 my-6;
 }
 </style>

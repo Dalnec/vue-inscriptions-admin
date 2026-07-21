@@ -4,7 +4,6 @@ import { authChannel } from "@/api/authChannel.ts";
 import { useUserConsoleStore } from "@/stores/loginStore/storeUserDataConsole.ts";
 import { abortAllRequests, getAbortSignal } from "@/composables/abortManager.ts";
 import { format, isValid, parseISO } from "date-fns";
-import { useRoute } from "vue-router";
 import axios, { type AxiosRequestConfig } from "axios";
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig, ResponseType } from "axios";
 import { useEventSlugStore } from "@/stores/eventSlug.ts";
@@ -136,18 +135,35 @@ async function handleServerSideError(error: AxiosError) {
  */
 axiosInstance.interceptors.response.use((response) => response, async(error: AxiosError) => {
     const status = error.response?.status;
+
     if (status === 403) {
         await handleServerSideError(error);
         return Promise.reject(error);
-    } else {
+    }
+
+    if (status === 401) {
         const storeUserInfo = useUserDataConfigStore();
+        const storeUserConsole = useUserConsoleStore();
         const slugStore = useEventSlugStore();
-        // console.log(storeUserInfo);
-        showToast("warn", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-        await storeUserInfo.logout({ slug: slugStore.slug as string });
-        abortAllRequests();
+
+        const hasConsoleSession = !!storeUserConsole.userInfo?.token;
+        const hasEventSession = !!storeUserInfo.userData?.token;
+
+        if (hasEventSession) {
+            showToast("warn", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+            const slug = slugStore.slug || (storeUserInfo.userData?.user as any)?.activity_shortname || "";
+            await storeUserInfo.logout({ slug });
+            abortAllRequests();
+        } else if (hasConsoleSession) {
+            showToast("warn", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+            await storeUserConsole.logoutUserConsole(true);
+            abortAllRequests();
+        }
+
         return Promise.reject(error);
     }
+
+    return Promise.reject(error);
 });
 
 /**

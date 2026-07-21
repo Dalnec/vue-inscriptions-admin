@@ -24,7 +24,12 @@ export const useUserDataConfigStore = defineStore("userDataConfig", {
             sessionStorage.removeItem("userDataConfig");
 
             await useInfoConsole.logoutUserConsole(false);
-            await router.push(`/${ context.slug }/login`);
+
+            if (context.slug) {
+                await router.push(`/${ context.slug }/login`);
+            } else {
+                await router.push("/");
+            }
         },
         hasRoutePermission(routeName: string, permName: string, routes: PermissionsInfo[] = []): boolean {
             const perm = permName.trim().toLowerCase();

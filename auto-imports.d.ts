@@ -17,6 +17,7 @@ declare global {
   const IconMaterialSymbolsEventAvailableOutlineRounded: typeof import('~icons/material-symbols/event-available-outline-rounded').default
   const IconMaterialSymbolsEventNoteOutline: typeof import('~icons/material-symbols/event-note-outline').default
   const IconMaterialSymbolsFrameInspectRounded: typeof import('~icons/material-symbols/frame-inspect-rounded').default
+  const IconMaterialSymbolsGridViewRounded: typeof import('~icons/material-symbols/grid-view-rounded').default
   const IconMaterialSymbolsGroupOutlineRounded: typeof import('~icons/material-symbols/group-outline-rounded').default
   const IconMaterialSymbolsPersonRemove: typeof import('~icons/material-symbols/person-remove').default
   const IconMaterialSymbolsTableEdit: typeof import('~icons/material-symbols/table-edit')['default']

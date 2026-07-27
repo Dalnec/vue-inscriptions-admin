@@ -220,6 +220,15 @@ const router = createRouter({
 
             children: [
                 {
+                    path: "dashboard",
+                    name: "event-dashboard",
+                    component: () => import("@/modules/dashboard/DashboardEvent.vue"),
+                    meta: {
+                        icon: IconMaterialSymbolsGridViewRounded,
+                        label: "Dashboard"
+                    }
+                },
+                {
                     path: "register",
                     name: "newRegister",
                     component: () => import("@/modules/registers/registersCard.vue"),
